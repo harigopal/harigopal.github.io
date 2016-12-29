@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xml" href="https://blog.harigopal.in/feed.xslt.xml"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.3.1">Jekyll</generator><link href="https://blog.harigopal.in/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.harigopal.in/" rel="alternate" type="text/html" /><updated>2016-12-30T00:54:11+05:30</updated><id>https://blog.harigopal.in//</id><title type="html">Hari Gopal</title><subtitle>Description pending. :-|
+</subtitle><entry><title type="html">Mixing React with jQuery</title><link href="https://blog.harigopal.in/guides/2016/12/29/mixing-react-with-jquery.html" rel="alternate" type="text/html" title="Mixing React with jQuery" /><published>2016-12-29T00:00:00+05:30</published><updated>2016-12-29T00:00:00+05:30</updated><id>https://blog.harigopal.in/guides/2016/12/29/mixing-react-with-jquery</id><content type="html" xml:base="https://blog.harigopal.in/guides/2016/12/29/mixing-react-with-jquery.html">&lt;p&gt;For the past two weeks, I’ve been merrily mixing jQuery into my React components, and I have a few gotchas to share. jQuery certainly needs no introduction, but if you’re new to React, check out &lt;a href=&quot;https://facebook.github.io/react&quot;&gt;Facebook’s &lt;em&gt;excellent&lt;/em&gt; documentation on it&lt;/a&gt;, and try building something with it - it’s a peek into the future!&lt;/p&gt;
+
+&lt;h2 id=&quot;why-even-do-that&quot;&gt;Why even do that?&lt;/h2&gt;
+
+&lt;p&gt;Mixing jQuery with React &lt;em&gt;felt wrong&lt;/em&gt; when I first considered it. After all, one of the prime purposes of using React is to escape from the spaghetti-code-hell that can arise when creating complex interfaces with lots of different interactions.&lt;/p&gt;
+
+&lt;p&gt;The thing is, however, that &lt;em&gt;that&lt;/em&gt; hell is not of jQuery’s making. So the better question is &lt;em&gt;why not?&lt;/em&gt; jQuery is the default JS library available to you if you work with Rails (like I do), and it makes working with JavaScript much easier.&lt;/p&gt;
+
+&lt;h2 id=&quot;its-all-about-the-state&quot;&gt;It’s all about the state&lt;/h2&gt;
+
+&lt;p&gt;The main issue you’ll encounter if you add jQuery to a React component is unexpected interactions with React’s state-based renderer. In most cases, this means issues with modifications to the DOM, made by jQuery, that React isn’t aware of.&lt;/p&gt;
+
+&lt;h3 id=&quot;a-problematic-scenario&quot;&gt;A problematic scenario&lt;/h3&gt;
+
+&lt;p&gt;Let’s take the case of using your friendly neighborhood datepicker inside a component.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-jsx&quot;&gt;class ExerciseRecord extends React.Component {
+  componentDidMount() {
+    $('.js-date-input').myFavDatePicker();
+  }
+
+  render() {
+    return (
+      &amp;lt;form onSubmit={ this.handleSubmit }&amp;gt;
+        { this.props.exercises.map(function (exercise, index) {
+          return (
+            &amp;lt;div&amp;gt;
+              &amp;lt;label&amp;gt;{ exercise } done on&amp;lt;/label&amp;gt;
+              &amp;lt;input className='js-date-input'
+                     name={ &quot;dates[&quot; + exercise + &quot;]&quot; }/&amp;gt;
+            &amp;lt;/div&amp;gt;
+          );
+        }
+        &amp;lt;input type=&quot;submit&quot;/&amp;gt;
+      &amp;lt;/form&amp;gt;
+    );
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The problem above is that jQuery code doesn’t account for changes made by React, which means that the datepickers are initialized only once. Any modification of &lt;code class=&quot;highlighter-rouge&quot;&gt;this.props.exercises&lt;/code&gt; (from a parent component) that causes a re-render of this component would introduce new fields without an active datepicker.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-fix-extract-and-control&quot;&gt;The fix: Extract and control&lt;/h3&gt;
+
+&lt;p&gt;I see two possible fixes for this situation:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;The simplest fix would be to use &lt;code class=&quot;highlighter-rouge&quot;&gt;componentDidUpdate&lt;/code&gt; to initialize datepickers on all updates.&lt;/li&gt;
+  &lt;li&gt;Extract the responsibility to a new &lt;code class=&quot;highlighter-rouge&quot;&gt;DateInput&lt;/code&gt; component.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Repeated initializations could cause issues with the datepicker, so my preferred approach would be to perform an extraction:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-jsx&quot;&gt;class DateInput extends React.component {
+  componentDidMount() {
+    $('.js-date-input-' + this.props.key).myFavDatePicker();
+  }
+
+  handleChange() {
+    this.setState(date: $(event.target).val());
+    // and maybe pass it back up the chain?
+  }
+
+  render() {
+    return (
+      &amp;lt;input className={ 'js-date-input-' + this.props.key }
+             onChange={ this.handleChange }/&amp;gt;
+    );
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Note how I’ve used the &lt;code class=&quot;highlighter-rouge&quot;&gt;key&lt;/code&gt; prop to uniquely identify the input. The &lt;code class=&quot;highlighter-rouge&quot;&gt;key&lt;/code&gt; can serve another purpose, which I’ll discuss in a bit.&lt;/p&gt;
+
+&lt;h2 id=&quot;clean-up-after-yourself&quot;&gt;Clean-up after yourself&lt;/h2&gt;
+
+&lt;p&gt;In the above example, we’ve created a component to manage creation and updation of the datepicker element. We should go one step further and ensure that the component can also manage its own destruction.&lt;/p&gt;
+
+&lt;p&gt;jQuery libraries often modify or introduce new elements into the DOM, which is often placed at the bottom of &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;body&amp;gt;&lt;/code&gt;, placing it outside the React container. If the React component is unmounted, this leaves open the very real possibility that it’ll leave behind junk in the DOM. Cleaning up after yourself should be simple if the library supports it (most do):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-jsx&quot;&gt;class DateInput extends React.component {
+  componentWillUnmount() {
+    $('.js-date-input-' + this.props.key).myFavDatePicker('destroy');
+  }
+  ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;using-key-to-regenerate-components&quot;&gt;Using &lt;em&gt;key&lt;/em&gt; to regenerate components&lt;/h2&gt;
+
+&lt;p&gt;In rare cases, direct manipulations of the DOM from jQuery can lead to a situation which renders React unable to update the component. In such situations, it’s up to you to alter the &lt;code class=&quot;highlighter-rouge&quot;&gt;key&lt;/code&gt; prop passed to the component.&lt;/p&gt;
+
+&lt;p&gt;Updating &lt;code class=&quot;highlighter-rouge&quot;&gt;key&lt;/code&gt; instructs React to discard the previous component and create a new one. This gives you a pristine component to work with. In such situations it might be wise to ponder whether a more conventional solution can be had by employing clever(er) coding.&lt;/p&gt;
+
+&lt;h2 id=&quot;communication-with-the-jquery-world-outside&quot;&gt;Communication with the jQuery world outside&lt;/h2&gt;
+
+&lt;p&gt;If you’re like me, then you’re probably introducing React components into an existing project (that uses jQuery), instead of building a entirely React-based application. So unless your component is trivial, you’ll need a good way to let the jQuery-driven world outside communicate with the React (root) component.&lt;/p&gt;
+
+&lt;p&gt;React’s &lt;a href=&quot;https://facebook.github.io/react/blog/2015/10/01/react-render-and-top-level-api.html&quot;&gt;Top Level API&lt;/a&gt; makes this super easy. Use &lt;code class=&quot;highlighter-rouge&quot;&gt;ReactDOM.render&lt;/code&gt; to create or update existing components, and &lt;code class=&quot;highlighter-rouge&quot;&gt;ReactDOM.unmountComponentAtNode&lt;/code&gt; to destroy existing ones.&lt;/p&gt;
+
+&lt;p&gt;Whichever you pick, &lt;strong&gt;do not&lt;/strong&gt; do what I did the first time; &lt;code class=&quot;highlighter-rouge&quot;&gt;$('.react-container'').html('')&lt;/code&gt; will leave behind loaded React components in memory. Ouch.&lt;/p&gt;
+
+&lt;h2 id=&quot;server-side-rendering-is-a-no-go&quot;&gt;Server-side rendering is a no-go&lt;/h2&gt;
+
+&lt;p&gt;A lot of jQuery code simply won’t execute without &lt;code class=&quot;highlighter-rouge&quot;&gt;window&lt;/code&gt; being available - which it isn’t on the server. So if you want to render server-side you’ll have to avoid using jQuery for initial render of all components, which can be pretty tricky.&lt;/p&gt;
+
+&lt;h2 id=&quot;wrap-up&quot;&gt;Wrap-up&lt;/h2&gt;
+
+&lt;p&gt;The bottom line is that jQuery is beloved by many, and if using jQuery makes adopting React more palatable then by all means, mix and enjoy. But as the saying goes, &lt;em&gt;enjoy responsibly&lt;/em&gt; - keeping the quirks and drawbacks in mind will let you combine the best of both worlds. Cheers!&lt;/p&gt;</content><category term="react" /><category term="jquery" /><category term="rails" /><category term="javascript" /><summary type="html">For the past two weeks, I’ve been merrily mixing jQuery into my React components, and I have a few gotchas to share. jQuery certainly needs no introduction, but if you’re new to React, check out Facebook’s excellent documentation on it, and try building something with it - it’s a peek into the future!</summary></entry><entry><title type="html">The next step</title><link href="https://blog.harigopal.in/blogging/2016/12/18/the-next-step.html" rel="alternate" type="text/html" title="The next step" /><published>2016-12-18T00:00:00+05:30</published><updated>2016-12-18T00:00:00+05:30</updated><id>https://blog.harigopal.in/blogging/2016/12/18/the-next-step</id><content type="html" xml:base="https://blog.harigopal.in/blogging/2016/12/18/the-next-step.html">&lt;p&gt;&lt;strong&gt;Objective:&lt;/strong&gt; I’m going to post my thoughts on the programming-related topics - whether they are interesting tidbits from my day-to-day work, ideas that I’ve encountered in my wanderings across the web, or things that I’ve learned from conversations with friends. This won’t be easy, but then good things rarely are.&lt;/p&gt;</content><summary type="html">Objective: I’m going to post my thoughts on the programming-related topics - whether they are interesting tidbits from my day-to-day work, ideas that I’ve encountered in my wanderings across the web, or things that I’ve learned from conversations with friends. This won’t be easy, but then good things rarely are.</summary></entry></feed>
