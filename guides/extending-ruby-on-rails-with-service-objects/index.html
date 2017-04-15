@@ -6,11 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>The next step</title>
-  <meta name="description" content="Objective: I’m going to post my thoughts on the programming-related topics - whether they are interesting tidbits from my day-to-day work, ideas that I’ve en...">
+  <title>Extending Ruby on Rails with Service Objects</title>
+  <meta name="description" content="Service objects are a pattern that I believe should be part of Rails’ default. This extends the basic MVC model by introducing services to implement business...">
 
   <link rel="stylesheet" href="/assets/main.css">
-  <link rel="canonical" href="https://blog.harigopal.in/blogging/the-next-step/">
+  <link rel="canonical" href="https://blog.harigopal.in/guides/extending-ruby-on-rails-with-service-objects/">
   <link rel="alternate" type="application/rss+xml" title="Hari Gopal" href="/feed.xml">
   
   
@@ -70,17 +70,59 @@
         <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title" itemprop="name headline">The next step</h1>
+    <h1 class="post-title" itemprop="name headline">Extending Ruby on Rails with Service Objects</h1>
     <p class="post-meta">
-      <time datetime="2016-12-18T00:00:00+05:30" itemprop="datePublished">
+      <time datetime="2017-04-15T00:00:00+05:30" itemprop="datePublished">
         
-        Dec 18, 2016
+        Apr 15, 2017
       </time>
       </p>
   </header>
 
   <div class="post-content" itemprop="articleBody">
-    <p><strong>Objective:</strong> I’m going to post my thoughts on the programming-related topics - whether they are interesting tidbits from my day-to-day work, ideas that I’ve encountered in my wanderings across the web, or things that I’ve learned from conversations with friends. This won’t be easy, but then good things rarely are.</p>
+    <p>Service objects are a pattern that I believe should be part of Rails’ default. This extends the basic MVC model by introducing services to implement business logic (instead of stuffing it into a model). While Rails’ default assumption that each model would hold its own business logic is <em>sound</em>, it doesn’t scale well when the application’s size increases.</p>
+
+<p>There are a lot of articles suggesting patterns on where and how to store services. My approach is mostly the same, but with a few <em>upgrades</em>. This is what an example <code class="highlighter-rouge">app/services</code> folder might look like:</p>
+
+<script src="https://gist.github.com/harigopal/c0b2ddb53f3b8e0d5875c00f33beda51.js"></script>
+
+<p>The main thing to note here is that there are a few <em>conventions</em>, but no strict <em>rules</em>.</p>
+
+<h2 id="one-or-few-responsibilities">One, or few responsibilities</h2>
+
+<p>Naming plays a big role here - try to keep the name as specific as possible to avoid the temptation to <em>extend</em> the responsibility of a service object. So, instead of <code class="highlighter-rouge">Users::SlackService</code>, it might be a better idea to call it <code class="highlighter-rouge">Users::SendSlackMessageService</code>.</p>
+
+<p>Unlike models, with their attached database tables, it’s cheap (zero cost, really) to create new services - spin new ones up whenever you encounter business logic that needs to be implemented.</p>
+
+<h2 id="service-related-to-a-model">Service related to a model</h2>
+
+<script src="https://gist.github.com/harigopal/7ebffe156a8239ccac5d7d256adefb2c.js"></script>
+
+<p>Services are grouped into a <em>pluralized-model-name</em> module when the action they perform is closely related to a model. This group is for the sake of organization - nothing more, so if a service does something that’s related to two models, you’ll have to make a call on which module it best fits into.</p>
+
+<h2 id="-and-when-its-not-related-to-a-model">… and when it’s <em>not</em> related to a model</h2>
+
+<script src="https://gist.github.com/harigopal/5789ff9820bb7d86bd815654cd16c8b7.js"></script>
+
+<p>Frequently, business logic may not tie in directly to <em>any</em> model. In this example, there’s a third-party service that the application needs to interact with, so the module its grouped under is simply the name of the service. The <code class="highlighter-rouge">execute</code> method is also replaced with a <code class="highlighter-rouge">posts</code> method to indicate that the service returns something, instead of simply performing an action.</p>
+
+<h2 id="concerns-to-share-abilities">Concerns to share abilities</h2>
+
+<p>Embrace Rails concerns when you encounter pieces of functionality that is useful in a number of situations - a common one is the ability to write to the log.</p>
+
+<script src="https://gist.github.com/harigopal/2d9d7ffeedbb360f70381559dbcb7766.js"></script>
+
+<p>Including this module into a service will allow it to easily write to the Rails log with additional information regarding the source of the message and a timestamp.</p>
+
+<h2 id="theyre-easy-to-test">They’re easy to test</h2>
+
+<p>Because these are plain Ruby classes, they’re generally easy to test. If you’ve stuck to the <em>Single-resposibility Principle</em>, the test cases should be pretty simple as well - writing a lot of small services pays off here.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>If you’re working on a non-trivial project, services can be a massive boon. There’s definitely a <em>back-to-the-roots</em> feel to it, and that’s deliberate - Ruby is an expressive, easy-to-read language, and service objects are plain Ruby classes that describe all the little pieces that form the building blocks of your application.</p>
+
+<p>I’ve heard it said that a someone looking through your <code class="highlighter-rouge">services</code> folder should get a fair idea of what your application <em>does</em>, and I think that’s an inevitable end-result if you write service objects properly.</p>
 
   </div>
 
