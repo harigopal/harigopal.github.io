@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Revisiting Application State in ReasonReact | Hari Gopal</title>
+<meta name="generator" content="Jekyll v3.8.3" />
+<meta property="og:title" content="Revisiting Application State in ReasonReact" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="My thoughts on programming, and more." />
+<meta property="og:description" content="My thoughts on programming, and more." />
+<link rel="canonical" href="https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/" />
+<meta property="og:url" content="https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/" />
+<meta property="og:site_name" content="Hari Gopal" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-09-08T15:30:00+05:30" />
+<script type="application/ld+json">
+{"description":"My thoughts on programming, and more.","url":"https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/","@type":"BlogPosting","headline":"Revisiting Application State in ReasonReact","dateModified":"2018-09-08T15:30:00+05:30","datePublished":"2018-09-08T15:30:00+05:30","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://blog.harigopal.in/feed.xml" title="Hari Gopal" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Hari Gopal</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Revisiting Application State in ReasonReact</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2018-09-08T15:30:00+05:30" itemprop="datePublished">Sep 8, 2018
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><img src="https://res.cloudinary.com/turaku/image/upload/201809/frame_1_oops.png" alt="Oops" /></p>
+
+<h2 id="tldr-aka-just-tell-me-what-you-were-wrong-about">TL;DR (aka, just tell me what you were wrong about)</h2>
+
+<ol>
+  <li>Passing <code class="highlighter-rouge">appState</code> to all components is not a good idea. <code class="highlighter-rouge">appState</code> contains <em>unresolved possible states</em> that individual components usually don’t care about, but, which you’ll still be forced to handle since ReasonML is a strongly typed language.</li>
+  <li>Instead of passing state, pass <code class="highlighter-rouge">ctx</code> (context). My current approach is to pass a <code class="highlighter-rouge">ctx</code> record to each component that contains the <em>resolved</em> information <em>derived</em> from state, that the particular component <em>needs</em>. This allows the component to function with <em>certain knowledge</em> about the context in which it will render.</li>
+  <li>Passing <code class="highlighter-rouge">appSend</code> to all components (like before) is fine — it’s just a function with which we <em>affect</em> application state.</li>
+</ol>
+
+<h2 id="and-in-much-more-detail">And in much more detail…</h2>
+
+<p>I’d written about a method to maintain <a href="https://medium.com/@elvesbane/application-state-in-reasonreact-1626859366a8">Application State in ReasonReact</a> back in April, and I’ve worked with ReasonML a lot more since then, completing the conversion of <a href="https://github.com/turakuapp/turaku-client/">Turaku’s codebase</a> from ES6 to Reason, and it turns out that my approach in the previous article didn’t <em>work</em> as well as I expected it to.</p>
+
+<p>Passing around application state as <code class="highlighter-rouge">appState</code> is a bad idea with ReasonML. Passing around <code class="highlighter-rouge">appSend</code> appears to be fine.</p>
+
+<p><img src="https://res.cloudinary.com/turaku/image/upload/201809/frame_2_return.png" alt="Do not pass appState" /></p>
+
+<p>Why? Well, one of the basic tenants of functional programming is to <em>make illegal states unrepresentable</em>. Put simply, it means that the structures that define and hold our data should not allow the possibility of incorrect state. This is nearly impossible to achieve with dynamically typed languages, and unless this is a principle you’ve already grokked, do yourself a favour and watch Richard Feldman’s awesome talk titled “<a href="https://www.youtube.com/watch?v=IcgmSRJHu_8">Making Impossible States Impossible</a>”.</p>
+
+<p>I’m gonna continue assuming that you’ve watched the video.</p>
+
+<p>One of the tools that ReasonML gives us to describe a <em>thing</em> that could be <em>one of a set of things</em> is something called <em>Variant</em> (union type). In Turaku’s application state definition, there are types that looks a bit like this (simplified):</p>
+
+<script src="https://gist.github.com/harigopal/15dc0ae18cbfe96852755a9c3b505a59.js"></script>
+
+<p>Looking at the basic type <code class="highlighter-rouge">state</code>, it’s pretty easy to tell that we’ve described our user’s state in the application as <em>always</em> being one of two — either the user is signed out (and on a public page), or the user is signed in (and has some corresponding user data).</p>
+
+<p><em>Variants</em> allow ReasonML’s compiler to ensure that whenever we handle a value of a <em>variant</em> type, all of its possibilities are considered. For example, in the root component, when trying to determine which view to render, we could use <code class="highlighter-rouge">switch</code>, like so:</p>
+
+<script src="https://gist.github.com/harigopal/d902f64731da6718127a022dced3a0c1.js"></script>
+
+<p>The compiler can be configured to either issue warnings or raise errors if we’ve forgotten to deal with all the defined <em>variants</em> that a type can <em>be</em>. You’ll notice that I’m not passing <code class="highlighter-rouge">appState</code> to any of these components, yet. So let’s try that with the <code class="highlighter-rouge">Dashboard</code> component.</p>
+
+<p>The <code class="highlighter-rouge">Dashboard</code> contains the main user interface that a signed in user is expected to interact with. Let’s send it <code class="highlighter-rouge">appState</code> and <code class="highlighter-rouge">appSend</code> …</p>
+
+<script src="https://gist.github.com/harigopal/e1b76503351eb7510389ac5c7dd56c66.js"></script>
+
+<p>… and then take a peek inside <code class="highlighter-rouge">Dashboard</code> to see how we could render a list of available teams:</p>
+
+<script src="https://gist.github.com/harigopal/9c687bd91dce3b2b6ebed0447a3f946d.js"></script>
+
+<p>The problem should be obvious now. <code class="highlighter-rouge">appState</code> is a <em>variant</em> (or can contain nested variants), and its contents can only be accessed through pattern-matching. Because of this, the component is being forced to handle all possible cases even though we know that the dashboard will never be rendered without a user being signed in.</p>
+
+<p>Thankfully, the fix is simple. It is to <strong>not</strong> pass application state around.</p>
+
+<p>Application state is a structure that represents all possible states that the application could be in. However, the process of rendering an <em>inner</em> component involves the <em>condensing</em> of those possibilities. What we <em>should</em> do, is to define the <em>context</em> in which the component is expected to render.</p>
+
+<p>In the above example, it is meaningless for the <code class="highlighter-rouge">Dashboard</code> component to render for a signed out user, so the fix is to ensure that the component’s expected context includes the information that is available with a signed in user…</p>
+
+<script src="https://gist.github.com/harigopal/73081eca3487b7a8a4c4055c3e1f27ea.js"></script>
+
+<p>Now, the compiler will make sure that the component is invoked with a valid context.</p>
+
+<script src="https://gist.github.com/harigopal/b539377f36f449a237e954116a85b1dd.js"></script>
+
+<p><img src="https://res.cloudinary.com/turaku/image/upload/201809/frame_3_ctx.png" alt="A bag called context" /></p>
+
+<p>That’s it… except… it looks like we’re back to the days of <em>prop drilling</em> - which I’d advocated against in my last article.</p>
+
+<p>We are, but only partially. Note that we’re still passing <code class="highlighter-rouge">appSend</code> around, allowing us to eliminate callback functions. <code class="highlighter-rouge">appSend</code> gives components access to <em>all</em> of the application state reducer’s <em>actions</em>.</p>
+
+<p>This is also where the <code class="highlighter-rouge">ctx</code> record comes in. I’ve found it really convenient to wrap everything in a single record so that I can pass it around functions - this also helps avoid the worst effects of prop drilling - where you’d have to thread new props around functions within components to get them where they need to be. By wrapping the props into <code class="highlighter-rouge">ctx</code>, and treating it as a bag of values to be accessed wherever needed, we’re restricting the <em>threading / drilling</em> to the entry and exit points of components.</p>
+
+<p>It also makes sense for the <code class="highlighter-rouge">ctx</code> record to grow, as it’s passed into deeper components, with parent components <em>resolving</em> more of the possibilities of application state, and passing a more <em>definite</em> context to their children.</p>
+
+<p>Obviously, using <code class="highlighter-rouge">ctx</code> record is optional. Passing individual props also works, and deciding between wrapping props or leaving them unwrapped seems to be a decision between reducing the overhead of prop-drilling, or improving the cleanliness of the component call-site.</p>
+
+<p><img src="https://res.cloudinary.com/turaku/image/upload/201809/frame_4_jetpack.png" alt="A jetpack, not a backpack" /></p>
+
+<h2 id="so-whats-the-takeaway">So what’s the takeaway?</h2>
+
+<p>Passing <code class="highlighter-rouge">appState</code> was a <em>pattern</em> that worked well with dynamic languages. In fact, if we structure the state similar to how we’d write it in a dynamic language - without using the features that strong typing gives us (such as variants), then it’s possible to continue to use <code class="highlighter-rouge">appState</code>.</p>
+
+<p><em>But</em>, if we use ReasonML <em>correctly</em>, with the intention of <em>making illegal states unrepresentable</em>, then old patterns prove insufficient. This partial retraction of mine grew out of a better understanding of how to write to functional code.</p>
+
+<p><img src="https://res.cloudinary.com/turaku/image/upload/201809/frame_5_fly.png" alt="Bye bye" /></p>
+
+  </div><a class="u-url" href="/guides/revisiting-application-state-in-reason-react/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Hari Gopal</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Hari Gopal</li><li><a class="u-email" href="mailto:mail@harigopal.in">mail@harigopal.in</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/harigopal"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">harigopal</span></a></li><li><a href="https://www.twitter.com/harigopal"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">harigopal</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>My thoughts on programming, and more.
+</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

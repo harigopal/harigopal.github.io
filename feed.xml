@@ -1,7 +1,81 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.0">Jekyll</generator><link href="https://blog.harigopal.in/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.harigopal.in/" rel="alternate" type="text/html" /><updated>2018-04-26T13:18:28+05:30</updated><id>https://blog.harigopal.in/</id><title type="html">Hari Gopal</title><subtitle>My thoughts on programming, and more.
-</subtitle><entry><title type="html">Application State in ReasonReact</title><link href="https://blog.harigopal.in/guides/application-state-in-reasonreact/" rel="alternate" type="text/html" title="Application State in ReasonReact" /><published>2018-02-17T02:45:00+05:30</published><updated>2018-02-17T02:45:00+05:30</updated><id>https://blog.harigopal.in/guides/application-state-in-reasonreact</id><content type="html" xml:base="https://blog.harigopal.in/guides/application-state-in-reasonreact/">&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/turaku/image/upload/201802/callback_1.png&quot; alt=&quot;The Callback Relay Race - Page 1&quot; /&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.3">Jekyll</generator><link href="https://blog.harigopal.in/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.harigopal.in/" rel="alternate" type="text/html" /><updated>2018-09-08T16:03:06+05:30</updated><id>https://blog.harigopal.in/</id><title type="html">Hari Gopal</title><subtitle>My thoughts on programming, and more.
+</subtitle><entry><title type="html">Revisiting Application State in ReasonReact</title><link href="https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/" rel="alternate" type="text/html" title="Revisiting Application State in ReasonReact" /><published>2018-09-08T15:30:00+05:30</published><updated>2018-09-08T15:30:00+05:30</updated><id>https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react</id><content type="html" xml:base="https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/">&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/turaku/image/upload/201809/frame_1_oops.png&quot; alt=&quot;Oops&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;This post was originally published on &lt;a href=&quot;https://turaku.com/blog&quot;&gt;Turaku’s blog&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&quot;tldr-aka-just-tell-me-what-you-were-wrong-about&quot;&gt;TL;DR (aka, just tell me what you were wrong about)&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Passing &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; to all components is not a good idea. &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; contains &lt;em&gt;unresolved possible states&lt;/em&gt; that individual components usually don’t care about, but, which you’ll still be forced to handle since ReasonML is a strongly typed language.&lt;/li&gt;
+  &lt;li&gt;Instead of passing state, pass &lt;code class=&quot;highlighter-rouge&quot;&gt;ctx&lt;/code&gt; (context). My current approach is to pass a &lt;code class=&quot;highlighter-rouge&quot;&gt;ctx&lt;/code&gt; record to each component that contains the &lt;em&gt;resolved&lt;/em&gt; information &lt;em&gt;derived&lt;/em&gt; from state, that the particular component &lt;em&gt;needs&lt;/em&gt;. This allows the component to function with &lt;em&gt;certain knowledge&lt;/em&gt; about the context in which it will render.&lt;/li&gt;
+  &lt;li&gt;Passing &lt;code class=&quot;highlighter-rouge&quot;&gt;appSend&lt;/code&gt; to all components (like before) is fine — it’s just a function with which we &lt;em&gt;affect&lt;/em&gt; application state.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;and-in-much-more-detail&quot;&gt;And in much more detail…&lt;/h2&gt;
+
+&lt;p&gt;I’d written about a method to maintain &lt;a href=&quot;https://medium.com/@elvesbane/application-state-in-reasonreact-1626859366a8&quot;&gt;Application State in ReasonReact&lt;/a&gt; back in April, and I’ve worked with ReasonML a lot more since then, completing the conversion of &lt;a href=&quot;https://github.com/turakuapp/turaku-client/&quot;&gt;Turaku’s codebase&lt;/a&gt; from ES6 to Reason, and it turns out that my approach in the previous article didn’t &lt;em&gt;work&lt;/em&gt; as well as I expected it to.&lt;/p&gt;
+
+&lt;p&gt;Passing around application state as &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; is a bad idea with ReasonML. Passing around &lt;code class=&quot;highlighter-rouge&quot;&gt;appSend&lt;/code&gt; appears to be fine.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/turaku/image/upload/201809/frame_2_return.png&quot; alt=&quot;Do not pass appState&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Why? Well, one of the basic tenants of functional programming is to &lt;em&gt;make illegal states unrepresentable&lt;/em&gt;. Put simply, it means that the structures that define and hold our data should not allow the possibility of incorrect state. This is nearly impossible to achieve with dynamically typed languages, and unless this is a principle you’ve already grokked, do yourself a favour and watch Richard Feldman’s awesome talk titled “&lt;a href=&quot;https://www.youtube.com/watch?v=IcgmSRJHu_8&quot;&gt;Making Impossible States Impossible&lt;/a&gt;”.&lt;/p&gt;
+
+&lt;p&gt;I’m gonna continue assuming that you’ve watched the video.&lt;/p&gt;
+
+&lt;p&gt;One of the tools that ReasonML gives us to describe a &lt;em&gt;thing&lt;/em&gt; that could be &lt;em&gt;one of a set of things&lt;/em&gt; is something called &lt;em&gt;Variant&lt;/em&gt; (union type). In Turaku’s application state definition, there are types that looks a bit like this (simplified):&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/harigopal/15dc0ae18cbfe96852755a9c3b505a59.js&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;Looking at the basic type &lt;code class=&quot;highlighter-rouge&quot;&gt;state&lt;/code&gt;, it’s pretty easy to tell that we’ve described our user’s state in the application as &lt;em&gt;always&lt;/em&gt; being one of two — either the user is signed out (and on a public page), or the user is signed in (and has some corresponding user data).&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Variants&lt;/em&gt; allow ReasonML’s compiler to ensure that whenever we handle a value of a &lt;em&gt;variant&lt;/em&gt; type, all of its possibilities are considered. For example, in the root component, when trying to determine which view to render, we could use &lt;code class=&quot;highlighter-rouge&quot;&gt;switch&lt;/code&gt;, like so:&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/harigopal/d902f64731da6718127a022dced3a0c1.js&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;The compiler can be configured to either issue warnings or raise errors if we’ve forgotten to deal with all the defined &lt;em&gt;variants&lt;/em&gt; that a type can &lt;em&gt;be&lt;/em&gt;. You’ll notice that I’m not passing &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; to any of these components, yet. So let’s try that with the &lt;code class=&quot;highlighter-rouge&quot;&gt;Dashboard&lt;/code&gt; component.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;Dashboard&lt;/code&gt; contains the main user interface that a signed in user is expected to interact with. Let’s send it &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;appSend&lt;/code&gt; …&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/harigopal/e1b76503351eb7510389ac5c7dd56c66.js&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;… and then take a peek inside &lt;code class=&quot;highlighter-rouge&quot;&gt;Dashboard&lt;/code&gt; to see how we could render a list of available teams:&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/harigopal/9c687bd91dce3b2b6ebed0447a3f946d.js&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;The problem should be obvious now. &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; is a &lt;em&gt;variant&lt;/em&gt; (or can contain nested variants), and its contents can only be accessed through pattern-matching. Because of this, the component is being forced to handle all possible cases even though we know that the dashboard will never be rendered without a user being signed in.&lt;/p&gt;
+
+&lt;p&gt;Thankfully, the fix is simple. It is to &lt;strong&gt;not&lt;/strong&gt; pass application state around.&lt;/p&gt;
+
+&lt;p&gt;Application state is a structure that represents all possible states that the application could be in. However, the process of rendering an &lt;em&gt;inner&lt;/em&gt; component involves the &lt;em&gt;condensing&lt;/em&gt; of those possibilities. What we &lt;em&gt;should&lt;/em&gt; do, is to define the &lt;em&gt;context&lt;/em&gt; in which the component is expected to render.&lt;/p&gt;
+
+&lt;p&gt;In the above example, it is meaningless for the &lt;code class=&quot;highlighter-rouge&quot;&gt;Dashboard&lt;/code&gt; component to render for a signed out user, so the fix is to ensure that the component’s expected context includes the information that is available with a signed in user…&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/harigopal/73081eca3487b7a8a4c4055c3e1f27ea.js&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;Now, the compiler will make sure that the component is invoked with a valid context.&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/harigopal/b539377f36f449a237e954116a85b1dd.js&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/turaku/image/upload/201809/frame_3_ctx.png&quot; alt=&quot;A bag called context&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;That’s it… except… it looks like we’re back to the days of &lt;em&gt;prop drilling&lt;/em&gt; - which I’d advocated against in my last article.&lt;/p&gt;
+
+&lt;p&gt;We are, but only partially. Note that we’re still passing &lt;code class=&quot;highlighter-rouge&quot;&gt;appSend&lt;/code&gt; around, allowing us to eliminate callback functions. &lt;code class=&quot;highlighter-rouge&quot;&gt;appSend&lt;/code&gt; gives components access to &lt;em&gt;all&lt;/em&gt; of the application state reducer’s &lt;em&gt;actions&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;This is also where the &lt;code class=&quot;highlighter-rouge&quot;&gt;ctx&lt;/code&gt; record comes in. I’ve found it really convenient to wrap everything in a single record so that I can pass it around functions - this also helps avoid the worst effects of prop drilling - where you’d have to thread new props around functions within components to get them where they need to be. By wrapping the props into &lt;code class=&quot;highlighter-rouge&quot;&gt;ctx&lt;/code&gt;, and treating it as a bag of values to be accessed wherever needed, we’re restricting the &lt;em&gt;threading / drilling&lt;/em&gt; to the entry and exit points of components.&lt;/p&gt;
+
+&lt;p&gt;It also makes sense for the &lt;code class=&quot;highlighter-rouge&quot;&gt;ctx&lt;/code&gt; record to grow, as it’s passed into deeper components, with parent components &lt;em&gt;resolving&lt;/em&gt; more of the possibilities of application state, and passing a more &lt;em&gt;definite&lt;/em&gt; context to their children.&lt;/p&gt;
+
+&lt;p&gt;Obviously, using &lt;code class=&quot;highlighter-rouge&quot;&gt;ctx&lt;/code&gt; record is optional. Passing individual props also works, and deciding between wrapping props or leaving them unwrapped seems to be a decision between reducing the overhead of prop-drilling, or improving the cleanliness of the component call-site.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/turaku/image/upload/201809/frame_4_jetpack.png&quot; alt=&quot;A jetpack, not a backpack&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;so-whats-the-takeaway&quot;&gt;So what’s the takeaway?&lt;/h2&gt;
+
+&lt;p&gt;Passing &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; was a &lt;em&gt;pattern&lt;/em&gt; that worked well with dynamic languages. In fact, if we structure the state similar to how we’d write it in a dynamic language - without using the features that strong typing gives us (such as variants), then it’s possible to continue to use &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;But&lt;/em&gt;, if we use ReasonML &lt;em&gt;correctly&lt;/em&gt;, with the intention of &lt;em&gt;making illegal states unrepresentable&lt;/em&gt;, then old patterns prove insufficient. This partial retraction of mine grew out of a better understanding of how to write to functional code.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/turaku/image/upload/201809/frame_5_fly.png&quot; alt=&quot;Bye bye&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><category term="react" /><category term="reason" /><category term="reasonml" /><category term="reasonreact" /><summary type="html"></summary></entry><entry><title type="html">Application State in ReasonReact</title><link href="https://blog.harigopal.in/guides/application-state-in-reasonreact/" rel="alternate" type="text/html" title="Application State in ReasonReact" /><published>2018-02-17T02:45:00+05:30</published><updated>2018-02-17T02:45:00+05:30</updated><id>https://blog.harigopal.in/guides/application-state-in-reasonreact</id><content type="html" xml:base="https://blog.harigopal.in/guides/application-state-in-reasonreact/">&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/turaku/image/upload/201802/callback_1.png&quot; alt=&quot;The Callback Relay Race - Page 1&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;tldr&quot;&gt;TL;DR?&lt;/h2&gt;
 
@@ -94,7 +168,7 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 
 &lt;h3 id=&quot;credits&quot;&gt;Credits&lt;/h3&gt;
 
-&lt;p&gt;Art by Rekha Soman: &lt;a href=&quot;http://www.rekhasoman.com&quot; target=&quot;_blank&quot;&gt;www.rekhasoman.com&lt;/a&gt;&lt;/p&gt;</content><author><name></name></author><category term="react" /><category term="reason" /><category term="reasonml" /><category term="reasonreact" /><summary type="html">{{ ‘201802/callback_1.png’ image_from_cdn:’The Callback Relay Race - Page 1’ }}</summary></entry><entry><title type="html">Validating Rails API requests with Reform</title><link href="https://blog.harigopal.in/guides/validating-rails-api-requests-with-reform/" rel="alternate" type="text/html" title="Validating Rails API requests with Reform" /><published>2017-09-13T00:00:00+05:30</published><updated>2017-09-13T00:00:00+05:30</updated><id>https://blog.harigopal.in/guides/validating-rails-api-requests-with-reform</id><content type="html" xml:base="https://blog.harigopal.in/guides/validating-rails-api-requests-with-reform/">&lt;p&gt;I’ve written about the creation of custom exception classes to organize code in Rails web applications and APIs. However, while going through my previous article, I realized that my final example glossed over how request parameter validation failures would be detected by the API in the first place.&lt;/p&gt;
+&lt;p&gt;Art by Rekha Soman: &lt;a href=&quot;http://www.rekhasoman.com&quot; target=&quot;_blank&quot;&gt;www.rekhasoman.com&lt;/a&gt;&lt;/p&gt;</content><author><name></name></author><category term="react" /><category term="reason" /><category term="reasonml" /><category term="reasonreact" /><summary type="html"></summary></entry><entry><title type="html">Validating Rails API requests with Reform</title><link href="https://blog.harigopal.in/guides/validating-rails-api-requests-with-reform/" rel="alternate" type="text/html" title="Validating Rails API requests with Reform" /><published>2017-09-13T00:00:00+05:30</published><updated>2017-09-13T00:00:00+05:30</updated><id>https://blog.harigopal.in/guides/validating-rails-api-requests-with-reform</id><content type="html" xml:base="https://blog.harigopal.in/guides/validating-rails-api-requests-with-reform/">&lt;p&gt;I’ve written about the creation of custom exception classes to organize code in Rails web applications and APIs. However, while going through my previous article, I realized that my final example glossed over how request parameter validation failures would be detected by the API in the first place.&lt;/p&gt;
 
 &lt;p&gt;Today I want to discuss a pattern that I haven’t seen in the wild - one which uses &lt;em&gt;Reform&lt;/em&gt; - form objects, decoupled from models (their description) - and exception classes to &lt;em&gt;beautifully&lt;/em&gt; manage API parameter validation.&lt;/p&gt;
 
