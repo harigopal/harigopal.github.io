@@ -1,17 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://blog.harigopal.in/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.harigopal.in/" rel="alternate" type="text/html" /><updated>2019-10-05T12:58:45+05:30</updated><id>https://blog.harigopal.in/feed.xml</id><title type="html">Hari Gopal</title><subtitle>My thoughts on programming, and more.
-</subtitle><entry><title type="html">Application State is not the answer</title><link href="https://blog.harigopal.in/guides/application-state-is-not-the-answer/" rel="alternate" type="text/html" title="Application State is not the answer" /><published>2019-10-05T11:00:00+05:30</published><updated>2019-10-05T11:00:00+05:30</updated><id>https://blog.harigopal.in/guides/application-state-is-not-the-answer</id><content type="html" xml:base="https://blog.harigopal.in/guides/application-state-is-not-the-answer/">&lt;p&gt;So…&lt;/p&gt;
-
-&lt;p&gt;This is a total retraction of my last two posts.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://blog.harigopal.in/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.harigopal.in/" rel="alternate" type="text/html" /><updated>2019-10-05T19:27:09+05:30</updated><id>https://blog.harigopal.in/feed.xml</id><title type="html">Hari Gopal</title><subtitle>My thoughts on programming, and more.
+</subtitle><entry><title type="html">Application State is not the answer</title><link href="https://blog.harigopal.in/guides/application-state-is-not-the-answer/" rel="alternate" type="text/html" title="Application State is not the answer" /><published>2019-10-05T11:00:00+05:30</published><updated>2019-10-05T11:00:00+05:30</updated><id>https://blog.harigopal.in/guides/application-state-is-not-the-answer</id><content type="html" xml:base="https://blog.harigopal.in/guides/application-state-is-not-the-answer/">&lt;p&gt;So… this is a total retraction of my &lt;a href=&quot;https://blog.harigopal.in/guides/application-state-in-reasonreact&quot;&gt;last&lt;/a&gt; &lt;a href=&quot;https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react&quot;&gt;two&lt;/a&gt; posts.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201910/deja-vu.png&quot; alt=&quot;Deja vu&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;mistakes-were-made&quot;&gt;Mistakes were made&lt;/h2&gt;
 
-&lt;p&gt;Using application state, or global state is &lt;em&gt;not&lt;/em&gt; right the answer for most developers of front-end components.&lt;/p&gt;
+&lt;p&gt;Using application state, or global state, is &lt;em&gt;not&lt;/em&gt; the right answer for developing front-end components.&lt;/p&gt;
 
 &lt;p&gt;The draw of application state is the creation of a &lt;em&gt;definitive&lt;/em&gt; single-source of truth from which our entire app’s state can be determined. Then, this &lt;em&gt;definitive&lt;/em&gt; state becomes the one and &lt;em&gt;only&lt;/em&gt; place where you need to &lt;em&gt;query&lt;/em&gt; state. And because it is ubiquitous, adding a new shared property becomes extremely simple; add it once, and it’s available everywhere.&lt;/p&gt;
 
-&lt;p&gt;This ease of modification is, unfortunately, double-edged. I’ve noticed two (messy) patterns arise once global state is available.&lt;/p&gt;
+&lt;p&gt;This ease of modification is, unfortunately, double-edged. I’ve noticed two messy patterns arise once global state is available.&lt;/p&gt;
 
 &lt;h3 id=&quot;there-is-no-local-everything-is-global&quot;&gt;There is no &lt;em&gt;local&lt;/em&gt;; everything is &lt;em&gt;global&lt;/em&gt;&lt;/h3&gt;
 
@@ -33,6 +31,8 @@
 
 &lt;p&gt;This was me ignoring the &lt;em&gt;KISS&lt;/em&gt; principle.&lt;/p&gt;
 
+&lt;p&gt;The &lt;em&gt;simple&lt;/em&gt; solution here would have been to isolate the &lt;em&gt;edited&lt;/em&gt; state of an entry to the component that &lt;em&gt;does&lt;/em&gt; the editing - the editor, and communicate changes to higher-level components only once those changes were persisted. A simple UI curtain could have been employed to ensure that users couldn’t interact with unrelated parts of the UI while the edit was in progress.&lt;/p&gt;
+
 &lt;p&gt;What should have been simple - making a few edits to an entry, and then saving it ended up involving &lt;em&gt;many&lt;/em&gt; different components, and is now  unnecessarily complicated because I couldn’t say “No” to a few cool things.&lt;/p&gt;
 
 &lt;h3 id=&quot;application-state-is-god-all-responsibilities-are-centralised&quot;&gt;Application state is god; all responsibilities are centralised&lt;/h3&gt;
@@ -43,6 +43,14 @@
 
 &lt;p&gt;The issue that pops up as a result is increased &lt;em&gt;cognitive load&lt;/em&gt;. It’s easy to make changes when the number of things that &lt;em&gt;can&lt;/em&gt; change is low. The larger the size of the state being managed by a reducer, the harder it is to simply fit all of its variables into &lt;em&gt;our&lt;/em&gt; working memory.&lt;/p&gt;
 
+&lt;p&gt;When asked for his opinion, here’s what &lt;a href=&quot;http://www.jasimabasheer.com/&quot;&gt;Jasim&lt;/a&gt; had to say about this topic:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;One solution to large reducers that we’ve been using more and more is to lean on domain-specific modules, and use the reducer just as a very high-level dispatcher.&lt;/p&gt;
+
+  &lt;p&gt;UI handler functions in lower-level components can run their own computation and then pass final results back to a reducer. This keeps the responsibility of each domain closer to the component that handles it, and the implementations are all co-located neatly in their own modules.&lt;/p&gt;
+&lt;/blockquote&gt;
+
 &lt;h2 id=&quot;back-to-basics&quot;&gt;Back to Basics&lt;/h2&gt;
 
 &lt;p&gt;When reaching for global / application state as a solution from our toolbox, its critical to examine whether it’s worth the costs involved, and whether we’re being careful to avoid the pitfalls that it exposes.&lt;/p&gt;
@@ -51,7 +59,7 @@
 
 &lt;p&gt;As for my pet project, it’s future is uncertain. I started working on it when I was still a beginner with ReasonML, and the mistakes I made while learning have piled up. Its state management is, quite frankly, a mess. However, thanks to those mistakes, by the time I introduced ReasonML &amp;amp; ReasonReact to my full-time work, I knew enough to be conservative.&lt;/p&gt;
 
-&lt;p&gt;Right now, I’m focusing on building &lt;a href=&quot;https://www.pupilfirst.com&quot;&gt;PupilFirst&lt;/a&gt; - an LMS that my company open-sourced recently, and which we’ve been working on since 2013. It mixes Ruby, ReasonML &amp;amp; GraphQL, and is probably one of the largest open-source ReasonReact webapps out there.&lt;/p&gt;</content><author><name></name></author><category term="react" /><category term="reasonreact" /><summary type="html">So…</summary></entry><entry><title type="html">Revisiting Application State in ReasonReact</title><link href="https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/" rel="alternate" type="text/html" title="Revisiting Application State in ReasonReact" /><published>2018-09-08T15:30:00+05:30</published><updated>2018-09-08T15:30:00+05:30</updated><id>https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react</id><content type="html" xml:base="https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/">&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_1_oops.png&quot; alt=&quot;Oops&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Right now, I’m focusing on building &lt;a href=&quot;https://www.pupilfirst.com&quot;&gt;PupilFirst&lt;/a&gt; - an LMS that my company open-sourced recently, and which we’ve been working on since 2013. It mixes Ruby, ReasonML &amp;amp; GraphQL, and is probably one of the largest open-source ReasonReact webapps out there.&lt;/p&gt;</content><author><name></name></author><category term="react" /><category term="reasonreact" /><summary type="html">So… this is a total retraction of my last two posts.</summary></entry><entry><title type="html">Revisiting Application State in ReasonReact</title><link href="https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/" rel="alternate" type="text/html" title="Revisiting Application State in ReasonReact" /><published>2018-09-08T15:30:00+05:30</published><updated>2018-09-08T15:30:00+05:30</updated><id>https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react</id><content type="html" xml:base="https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/">&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_1_oops.png&quot; alt=&quot;Oops&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;tldr-aka-just-tell-me-what-you-were-wrong-about&quot;&gt;TL;DR (aka, just tell me what you were wrong about)&lt;/h2&gt;
 

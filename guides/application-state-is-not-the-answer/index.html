@@ -7,15 +7,15 @@
 <meta name="generator" content="Jekyll v4.0.0" />
 <meta property="og:title" content="Application State is not the answer" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="So…" />
-<meta property="og:description" content="So…" />
+<meta name="description" content="So… this is a total retraction of my last two posts." />
+<meta property="og:description" content="So… this is a total retraction of my last two posts." />
 <link rel="canonical" href="https://blog.harigopal.in/guides/application-state-is-not-the-answer/" />
 <meta property="og:url" content="https://blog.harigopal.in/guides/application-state-is-not-the-answer/" />
 <meta property="og:site_name" content="Hari Gopal" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2019-10-05T11:00:00+05:30" />
 <script type="application/ld+json">
-{"mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/application-state-is-not-the-answer/"},"url":"https://blog.harigopal.in/guides/application-state-is-not-the-answer/","headline":"Application State is not the answer","dateModified":"2019-10-05T11:00:00+05:30","datePublished":"2019-10-05T11:00:00+05:30","description":"So…","@type":"BlogPosting","@context":"https://schema.org"}</script>
+{"dateModified":"2019-10-05T11:00:00+05:30","datePublished":"2019-10-05T11:00:00+05:30","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/application-state-is-not-the-answer/"},"url":"https://blog.harigopal.in/guides/application-state-is-not-the-answer/","description":"So… this is a total retraction of my last two posts.","headline":"Application State is not the answer","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://blog.harigopal.in/feed.xml" title="Hari Gopal" /></head>
 <body><header class="site-header" role="banner">
@@ -45,19 +45,17 @@
   </header>
 
   <div class="post-content e-content" itemprop="articleBody">
-    <p>So…</p>
-
-<p>This is a total retraction of my last two posts.</p>
+    <p>So… this is a total retraction of my <a href="https://blog.harigopal.in/guides/application-state-in-reasonreact">last</a> <a href="https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react">two</a> posts.</p>
 
 <p><img src="https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201910/deja-vu.png" alt="Deja vu" /></p>
 
 <h2 id="mistakes-were-made">Mistakes were made</h2>
 
-<p>Using application state, or global state is <em>not</em> right the answer for most developers of front-end components.</p>
+<p>Using application state, or global state, is <em>not</em> the right answer for developing front-end components.</p>
 
 <p>The draw of application state is the creation of a <em>definitive</em> single-source of truth from which our entire app’s state can be determined. Then, this <em>definitive</em> state becomes the one and <em>only</em> place where you need to <em>query</em> state. And because it is ubiquitous, adding a new shared property becomes extremely simple; add it once, and it’s available everywhere.</p>
 
-<p>This ease of modification is, unfortunately, double-edged. I’ve noticed two (messy) patterns arise once global state is available.</p>
+<p>This ease of modification is, unfortunately, double-edged. I’ve noticed two messy patterns arise once global state is available.</p>
 
 <h3 id="there-is-no-local-everything-is-global">There is no <em>local</em>; everything is <em>global</em></h3>
 
@@ -79,6 +77,8 @@
 
 <p>This was me ignoring the <em>KISS</em> principle.</p>
 
+<p>The <em>simple</em> solution here would have been to isolate the <em>edited</em> state of an entry to the component that <em>does</em> the editing - the editor, and communicate changes to higher-level components only once those changes were persisted. A simple UI curtain could have been employed to ensure that users couldn’t interact with unrelated parts of the UI while the edit was in progress.</p>
+
 <p>What should have been simple - making a few edits to an entry, and then saving it ended up involving <em>many</em> different components, and is now  unnecessarily complicated because I couldn’t say “No” to a few cool things.</p>
 
 <h3 id="application-state-is-god-all-responsibilities-are-centralised">Application state is god; all responsibilities are centralised</h3>
@@ -88,6 +88,14 @@
 <p>When we collect state from different parts of the application, it’s almost impossible for all of these values to be (closely) related. Usually, they’re collected over time as the application’s feature-set expands and evolves, and as such they’re going to be incorporated into a single reducer that, increasingly needs to handle values with different purposes.</p>
 
 <p>The issue that pops up as a result is increased <em>cognitive load</em>. It’s easy to make changes when the number of things that <em>can</em> change is low. The larger the size of the state being managed by a reducer, the harder it is to simply fit all of its variables into <em>our</em> working memory.</p>
+
+<p>When asked for his opinion, here’s what <a href="http://www.jasimabasheer.com/">Jasim</a> had to say about this topic:</p>
+
+<blockquote>
+  <p>One solution to large reducers that we’ve been using more and more is to lean on domain-specific modules, and use the reducer just as a very high-level dispatcher.</p>
+
+  <p>UI handler functions in lower-level components can run their own computation and then pass final results back to a reducer. This keeps the responsibility of each domain closer to the component that handles it, and the implementations are all co-located neatly in their own modules.</p>
+</blockquote>
 
 <h2 id="back-to-basics">Back to Basics</h2>
 
