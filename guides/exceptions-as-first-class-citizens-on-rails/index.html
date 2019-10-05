@@ -2,9 +2,9 @@
 <html lang="en"><head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
 <title>Exceptions as first-class citizens on Rails | Hari Gopal</title>
-<meta name="generator" content="Jekyll v3.8.3" />
+<meta name="generator" content="Jekyll v4.0.0" />
 <meta property="og:title" content="Exceptions as first-class citizens on Rails" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="I want to share a pattern that I’ve repeated multiple times in the past when developing API-s with Rails, which grants the ability to respond to invalid requests with a standardized message format by raising an exception." />
@@ -15,7 +15,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2017-02-03T00:00:00+05:30" />
 <script type="application/ld+json">
-{"description":"I want to share a pattern that I’ve repeated multiple times in the past when developing API-s with Rails, which grants the ability to respond to invalid requests with a standardized message format by raising an exception.","url":"https://blog.harigopal.in/guides/exceptions-as-first-class-citizens-on-rails/","@type":"BlogPosting","headline":"Exceptions as first-class citizens on Rails","dateModified":"2017-02-03T00:00:00+05:30","datePublished":"2017-02-03T00:00:00+05:30","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/exceptions-as-first-class-citizens-on-rails/"},"@context":"http://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/exceptions-as-first-class-citizens-on-rails/"},"url":"https://blog.harigopal.in/guides/exceptions-as-first-class-citizens-on-rails/","headline":"Exceptions as first-class citizens on Rails","dateModified":"2017-02-03T00:00:00+05:30","datePublished":"2017-02-03T00:00:00+05:30","description":"I want to share a pattern that I’ve repeated multiple times in the past when developing API-s with Rails, which grants the ability to respond to invalid requests with a standardized message format by raising an exception.","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://blog.harigopal.in/feed.xml" title="Hari Gopal" /></head>
 <body><header class="site-header" role="banner">
@@ -63,9 +63,9 @@
 </code></pre></div></div>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-  </span><span class="s2">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"authentication_failure"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Could not validate authorization"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Please authenticate and acquire JWT before attempting to access restricted routes. JWT should be passed in the Authorization header."</span><span class="w">
+  </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"authentication_failure"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Could not validate authorization"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Please authenticate and acquire JWT before attempting to access restricted routes. JWT should be passed in the Authorization header."</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
@@ -73,12 +73,12 @@
 </code></pre></div></div>
 
 <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
-  </span><span class="s2">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"validation_failure"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Validation of params failed"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The server could not validate the parameters present with the request. Please check the validation_errors key (hash) for more details."</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"validation_errors"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"cannot be blank"</span><span class="w"> </span><span class="p">],</span><span class="w">
-    </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"does not look like an email address"</span><span class="p">]</span><span class="w">
+  </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"validation_failure"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Validation of params failed"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The server could not validate the parameters present with the request. Please check the validation_errors key (hash) for more details."</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"validation_errors"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"cannot be blank"</span><span class="w"> </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"email"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"does not look like an email address"</span><span class="p">]</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>

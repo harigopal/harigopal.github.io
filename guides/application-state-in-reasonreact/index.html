@@ -2,9 +2,9 @@
 <html lang="en"><head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
 <title>Application State in ReasonReact | Hari Gopal</title>
-<meta name="generator" content="Jekyll v3.8.3" />
+<meta name="generator" content="Jekyll v4.0.0" />
 <meta property="og:title" content="Application State in ReasonReact" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="My thoughts on programming, and more." />
@@ -15,7 +15,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2018-02-17T02:45:00+05:30" />
 <script type="application/ld+json">
-{"description":"My thoughts on programming, and more.","url":"https://blog.harigopal.in/guides/application-state-in-reasonreact/","@type":"BlogPosting","headline":"Application State in ReasonReact","dateModified":"2018-02-17T02:45:00+05:30","datePublished":"2018-02-17T02:45:00+05:30","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/application-state-in-reasonreact/"},"@context":"http://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/application-state-in-reasonreact/"},"url":"https://blog.harigopal.in/guides/application-state-in-reasonreact/","headline":"Application State in ReasonReact","dateModified":"2018-02-17T02:45:00+05:30","datePublished":"2018-02-17T02:45:00+05:30","description":"My thoughts on programming, and more.","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://blog.harigopal.in/feed.xml" title="Hari Gopal" /></head>
 <body><header class="site-header" role="banner">
@@ -45,7 +45,7 @@
   </header>
 
   <div class="post-content e-content" itemprop="articleBody">
-    <p><img src="https://res.cloudinary.com/turaku/image/upload/201802/callback_1.png" alt="The Callback Relay Race - Page 1" /></p>
+    <p><img src="https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201802/callback_1.png" alt="The Callback Relay Race - Page 1" /></p>
 
 <h2 id="tldr">TL;DR?</h2>
 
@@ -80,7 +80,7 @@
         =&gt; Use deleteCallback()
 </code></pre></div></div>
 
-<p><img src="https://res.cloudinary.com/turaku/image/upload/201802/callback_2.png" alt="The Callback Relay Race - Page 2" /></p>
+<p><img src="https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201802/callback_2.png" alt="The Callback Relay Race - Page 2" /></p>
 
 <p><a href="#">Blair Anderson</a> wrote an excellent article titled <a href="https://medium.com/@blairanderson/you-probably-dont-need-redux-1b404204a07f">“You Probably Don’t Need Redux”</a> which explains how, in small-to-medium sized React applications, it’s often enough to pass two props — <code class="highlighter-rouge">appState</code> and <code class="highlighter-rouge">setAppState</code> to all components, allowing nested components direct access to the shared state, bypassing the need to add and <em>relay</em> individual callbacks.</p>
 
@@ -100,7 +100,7 @@
 
 <p>That’s pretty much it. Notice how there are no callback functions anywhere?</p>
 
-<p><img src="https://res.cloudinary.com/turaku/image/upload/201802/callback_3.png" alt="The Callback Relay Race - Page 3" /></p>
+<p><img src="https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201802/callback_3.png" alt="The Callback Relay Race - Page 3" /></p>
 
 <h2 id="advantages-and-a-few-caveats">Advantages, and a few caveats</h2>
 

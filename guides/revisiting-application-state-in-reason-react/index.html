@@ -2,9 +2,9 @@
 <html lang="en"><head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
 <title>Revisiting Application State in ReasonReact | Hari Gopal</title>
-<meta name="generator" content="Jekyll v3.8.3" />
+<meta name="generator" content="Jekyll v4.0.0" />
 <meta property="og:title" content="Revisiting Application State in ReasonReact" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="My thoughts on programming, and more." />
@@ -15,7 +15,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2018-09-08T15:30:00+05:30" />
 <script type="application/ld+json">
-{"description":"My thoughts on programming, and more.","url":"https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/","@type":"BlogPosting","headline":"Revisiting Application State in ReasonReact","dateModified":"2018-09-08T15:30:00+05:30","datePublished":"2018-09-08T15:30:00+05:30","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/"},"@context":"http://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/"},"url":"https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/","headline":"Revisiting Application State in ReasonReact","dateModified":"2018-09-08T15:30:00+05:30","datePublished":"2018-09-08T15:30:00+05:30","description":"My thoughts on programming, and more.","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://blog.harigopal.in/feed.xml" title="Hari Gopal" /></head>
 <body><header class="site-header" role="banner">
@@ -45,7 +45,7 @@
   </header>
 
   <div class="post-content e-content" itemprop="articleBody">
-    <p><img src="https://res.cloudinary.com/turaku/image/upload/201809/frame_1_oops.png" alt="Oops" /></p>
+    <p><img src="https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_1_oops.png" alt="Oops" /></p>
 
 <h2 id="tldr-aka-just-tell-me-what-you-were-wrong-about">TL;DR (aka, just tell me what you were wrong about)</h2>
 
@@ -61,7 +61,7 @@
 
 <p>Passing around application state as <code class="highlighter-rouge">appState</code> is a bad idea with ReasonML. Passing around <code class="highlighter-rouge">appSend</code> appears to be fine.</p>
 
-<p><img src="https://res.cloudinary.com/turaku/image/upload/201809/frame_2_return.png" alt="Do not pass appState" /></p>
+<p><img src="https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_2_return.png" alt="Do not pass appState" /></p>
 
 <p>Why? Well, one of the basic tenants of functional programming is to <em>make illegal states unrepresentable</em>. Put simply, it means that the structures that define and hold our data should not allow the possibility of incorrect state. This is nearly impossible to achieve with dynamically typed languages, and unless this is a principle you’ve already grokked, do yourself a favour and watch Richard Feldman’s awesome talk titled “<a href="https://www.youtube.com/watch?v=IcgmSRJHu_8">Making Impossible States Impossible</a>”.</p>
 
@@ -101,7 +101,7 @@
 
 <script src="https://gist.github.com/harigopal/b539377f36f449a237e954116a85b1dd.js"></script>
 
-<p><img src="https://res.cloudinary.com/turaku/image/upload/201809/frame_3_ctx.png" alt="A bag called context" /></p>
+<p><img src="https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_3_ctx.png" alt="A bag called context" /></p>
 
 <p>That’s it… except… it looks like we’re back to the days of <em>prop drilling</em> - which I’d advocated against in my last article.</p>
 
@@ -113,7 +113,7 @@
 
 <p>Obviously, using <code class="highlighter-rouge">ctx</code> record is optional. Passing individual props also works, and deciding between wrapping props or leaving them unwrapped seems to be a decision between reducing the overhead of prop-drilling, or improving the cleanliness of the component call-site.</p>
 
-<p><img src="https://res.cloudinary.com/turaku/image/upload/201809/frame_4_jetpack.png" alt="A jetpack, not a backpack" /></p>
+<p><img src="https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_4_jetpack.png" alt="A jetpack, not a backpack" /></p>
 
 <h2 id="so-whats-the-takeaway">So what’s the takeaway?</h2>
 
@@ -121,7 +121,7 @@
 
 <p><em>But</em>, if we use ReasonML <em>correctly</em>, with the intention of <em>making illegal states unrepresentable</em>, then old patterns prove insufficient. This partial retraction of mine grew out of a better understanding of how to write to functional code.</p>
 
-<p><img src="https://res.cloudinary.com/turaku/image/upload/201809/frame_5_fly.png" alt="Bye bye" /></p>
+<p><img src="https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_5_fly.png" alt="Bye bye" /></p>
 
   </div><a class="u-url" href="/guides/revisiting-application-state-in-reason-react/" hidden></a>
 </article>

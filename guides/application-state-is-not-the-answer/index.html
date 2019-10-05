@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Application State is not the answer | Hari Gopal</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Application State is not the answer" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="So…" />
+<meta property="og:description" content="So…" />
+<link rel="canonical" href="https://blog.harigopal.in/guides/application-state-is-not-the-answer/" />
+<meta property="og:url" content="https://blog.harigopal.in/guides/application-state-is-not-the-answer/" />
+<meta property="og:site_name" content="Hari Gopal" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-10-05T11:00:00+05:30" />
+<script type="application/ld+json">
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/application-state-is-not-the-answer/"},"url":"https://blog.harigopal.in/guides/application-state-is-not-the-answer/","headline":"Application State is not the answer","dateModified":"2019-10-05T11:00:00+05:30","datePublished":"2019-10-05T11:00:00+05:30","description":"So…","@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://blog.harigopal.in/feed.xml" title="Hari Gopal" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Hari Gopal</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Application State is not the answer</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2019-10-05T11:00:00+05:30" itemprop="datePublished">Oct 5, 2019
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>So…</p>
+
+<p>This is a total retraction of my last two posts.</p>
+
+<p><img src="https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201910/deja-vu.png" alt="Deja vu" /></p>
+
+<h2 id="mistakes-were-made">Mistakes were made</h2>
+
+<p>Using application state, or global state is <em>not</em> right the answer for most developers of front-end components.</p>
+
+<p>The draw of application state is the creation of a <em>definitive</em> single-source of truth from which our entire app’s state can be determined. Then, this <em>definitive</em> state becomes the one and <em>only</em> place where you need to <em>query</em> state. And because it is ubiquitous, adding a new shared property becomes extremely simple; add it once, and it’s available everywhere.</p>
+
+<p>This ease of modification is, unfortunately, double-edged. I’ve noticed two (messy) patterns arise once global state is available.</p>
+
+<h3 id="there-is-no-local-everything-is-global">There is no <em>local</em>; everything is <em>global</em></h3>
+
+<p>The lure of global state is such that once it is implemented, it has a tendency to <em>supplant</em> local state management. Simple UI changes that could have been implemented as local state changes creep into global state because their values <em>could</em> be used to affect other components in <em>cool</em> ways.</p>
+
+<p>Here’s a simple example of this: On <em>Turaku</em> (my <em>late</em> pet password manager project), editing the title of any <em>entry</em> using the <em>editor</em> component changes the title of the entry in the <em>entries list</em> component immediately. This was extremely easy to implement because the two components shared the data about entries via the application state.</p>
+
+<p><img src="https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201910/turaku-editing-entry-title.gif" alt="Editing title of an entry in Turaku" /></p>
+
+<p>The drawback is that even though the responsibility for <em>changing</em> an entry lies logically with the editor component, something as simple as <em>saving</em> changes becomes a sticky proposition. Questions arise:</p>
+
+<ul>
+  <li>What happens if the user clicks on another entry in the list when one has unsaved changes? Sure, the unsaved changes would persist - they’re in app state, but the old editor would be unmounted eventually…</li>
+  <li>So which part of the UI should the user interact with to initiate the save?</li>
+  <li>Maybe we should auto-save if the editor un-mounts as a result of user switching to another view..? But which part of the UI would show that there is a network operation on-going? What happens if the network operation fails?</li>
+</ul>
+
+<p>The last option is what I went with, and I never answered all of the questions fully. I just slapped a few chunks of code together to get everything working, and promised myself that I would get around to cleaning it up eventually.</p>
+
+<p>This was me ignoring the <em>KISS</em> principle.</p>
+
+<p>What should have been simple - making a few edits to an entry, and then saving it ended up involving <em>many</em> different components, and is now  unnecessarily complicated because I couldn’t say “No” to a few cool things.</p>
+
+<h3 id="application-state-is-god-all-responsibilities-are-centralised">Application state is god; all responsibilities are centralised</h3>
+
+<p>I think that <a href="https://en.wikipedia.org/wiki/Single_responsibility_principle">SRP</a> is more of a <em>guideline</em> than a <em>rule</em> when it comes to writing applications, but by its very nature, application state seems <em>require</em> that SRP be <em>broken</em>.</p>
+
+<p>When we collect state from different parts of the application, it’s almost impossible for all of these values to be (closely) related. Usually, they’re collected over time as the application’s feature-set expands and evolves, and as such they’re going to be incorporated into a single reducer that, increasingly needs to handle values with different purposes.</p>
+
+<p>The issue that pops up as a result is increased <em>cognitive load</em>. It’s easy to make changes when the number of things that <em>can</em> change is low. The larger the size of the state being managed by a reducer, the harder it is to simply fit all of its variables into <em>our</em> working memory.</p>
+
+<h2 id="back-to-basics">Back to Basics</h2>
+
+<p>When reaching for global / application state as a solution from our toolbox, its critical to examine whether it’s worth the costs involved, and whether we’re being careful to avoid the pitfalls that it exposes.</p>
+
+<p>State-management based on localized state with plentiful prop drilling might not be <em>stylish</em>, but it’s based on sound development practises, works <em>really</em> well in most situations, and should be the default choice for React and ReasonReact applications of any level of complexity.</p>
+
+<p>As for my pet project, it’s future is uncertain. I started working on it when I was still a beginner with ReasonML, and the mistakes I made while learning have piled up. Its state management is, quite frankly, a mess. However, thanks to those mistakes, by the time I introduced ReasonML &amp; ReasonReact to my full-time work, I knew enough to be conservative.</p>
+
+<p>Right now, I’m focusing on building <a href="https://www.pupilfirst.com">PupilFirst</a> - an LMS that my company open-sourced recently, and which we’ve been working on since 2013. It mixes Ruby, ReasonML &amp; GraphQL, and is probably one of the largest open-source ReasonReact webapps out there.</p>
+
+  </div><a class="u-url" href="/guides/application-state-is-not-the-answer/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Hari Gopal</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Hari Gopal</li><li><a class="u-email" href="mailto:mail@harigopal.in">mail@harigopal.in</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/harigopal"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">harigopal</span></a></li><li><a href="https://www.twitter.com/harigopal"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">harigopal</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>My thoughts on programming, and more.
+</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

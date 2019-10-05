@@ -1,5 +1,57 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.3">Jekyll</generator><link href="https://blog.harigopal.in/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.harigopal.in/" rel="alternate" type="text/html" /><updated>2018-09-08T16:03:06+05:30</updated><id>https://blog.harigopal.in/</id><title type="html">Hari Gopal</title><subtitle>My thoughts on programming, and more.
-</subtitle><entry><title type="html">Revisiting Application State in ReasonReact</title><link href="https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/" rel="alternate" type="text/html" title="Revisiting Application State in ReasonReact" /><published>2018-09-08T15:30:00+05:30</published><updated>2018-09-08T15:30:00+05:30</updated><id>https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react</id><content type="html" xml:base="https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/">&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/turaku/image/upload/201809/frame_1_oops.png&quot; alt=&quot;Oops&quot; /&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://blog.harigopal.in/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.harigopal.in/" rel="alternate" type="text/html" /><updated>2019-10-05T12:58:45+05:30</updated><id>https://blog.harigopal.in/feed.xml</id><title type="html">Hari Gopal</title><subtitle>My thoughts on programming, and more.
+</subtitle><entry><title type="html">Application State is not the answer</title><link href="https://blog.harigopal.in/guides/application-state-is-not-the-answer/" rel="alternate" type="text/html" title="Application State is not the answer" /><published>2019-10-05T11:00:00+05:30</published><updated>2019-10-05T11:00:00+05:30</updated><id>https://blog.harigopal.in/guides/application-state-is-not-the-answer</id><content type="html" xml:base="https://blog.harigopal.in/guides/application-state-is-not-the-answer/">&lt;p&gt;So…&lt;/p&gt;
+
+&lt;p&gt;This is a total retraction of my last two posts.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201910/deja-vu.png&quot; alt=&quot;Deja vu&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;mistakes-were-made&quot;&gt;Mistakes were made&lt;/h2&gt;
+
+&lt;p&gt;Using application state, or global state is &lt;em&gt;not&lt;/em&gt; right the answer for most developers of front-end components.&lt;/p&gt;
+
+&lt;p&gt;The draw of application state is the creation of a &lt;em&gt;definitive&lt;/em&gt; single-source of truth from which our entire app’s state can be determined. Then, this &lt;em&gt;definitive&lt;/em&gt; state becomes the one and &lt;em&gt;only&lt;/em&gt; place where you need to &lt;em&gt;query&lt;/em&gt; state. And because it is ubiquitous, adding a new shared property becomes extremely simple; add it once, and it’s available everywhere.&lt;/p&gt;
+
+&lt;p&gt;This ease of modification is, unfortunately, double-edged. I’ve noticed two (messy) patterns arise once global state is available.&lt;/p&gt;
+
+&lt;h3 id=&quot;there-is-no-local-everything-is-global&quot;&gt;There is no &lt;em&gt;local&lt;/em&gt;; everything is &lt;em&gt;global&lt;/em&gt;&lt;/h3&gt;
+
+&lt;p&gt;The lure of global state is such that once it is implemented, it has a tendency to &lt;em&gt;supplant&lt;/em&gt; local state management. Simple UI changes that could have been implemented as local state changes creep into global state because their values &lt;em&gt;could&lt;/em&gt; be used to affect other components in &lt;em&gt;cool&lt;/em&gt; ways.&lt;/p&gt;
+
+&lt;p&gt;Here’s a simple example of this: On &lt;em&gt;Turaku&lt;/em&gt; (my &lt;em&gt;late&lt;/em&gt; pet password manager project), editing the title of any &lt;em&gt;entry&lt;/em&gt; using the &lt;em&gt;editor&lt;/em&gt; component changes the title of the entry in the &lt;em&gt;entries list&lt;/em&gt; component immediately. This was extremely easy to implement because the two components shared the data about entries via the application state.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201910/turaku-editing-entry-title.gif&quot; alt=&quot;Editing title of an entry in Turaku&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The drawback is that even though the responsibility for &lt;em&gt;changing&lt;/em&gt; an entry lies logically with the editor component, something as simple as &lt;em&gt;saving&lt;/em&gt; changes becomes a sticky proposition. Questions arise:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;What happens if the user clicks on another entry in the list when one has unsaved changes? Sure, the unsaved changes would persist - they’re in app state, but the old editor would be unmounted eventually…&lt;/li&gt;
+  &lt;li&gt;So which part of the UI should the user interact with to initiate the save?&lt;/li&gt;
+  &lt;li&gt;Maybe we should auto-save if the editor un-mounts as a result of user switching to another view..? But which part of the UI would show that there is a network operation on-going? What happens if the network operation fails?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The last option is what I went with, and I never answered all of the questions fully. I just slapped a few chunks of code together to get everything working, and promised myself that I would get around to cleaning it up eventually.&lt;/p&gt;
+
+&lt;p&gt;This was me ignoring the &lt;em&gt;KISS&lt;/em&gt; principle.&lt;/p&gt;
+
+&lt;p&gt;What should have been simple - making a few edits to an entry, and then saving it ended up involving &lt;em&gt;many&lt;/em&gt; different components, and is now  unnecessarily complicated because I couldn’t say “No” to a few cool things.&lt;/p&gt;
+
+&lt;h3 id=&quot;application-state-is-god-all-responsibilities-are-centralised&quot;&gt;Application state is god; all responsibilities are centralised&lt;/h3&gt;
+
+&lt;p&gt;I think that &lt;a href=&quot;https://en.wikipedia.org/wiki/Single_responsibility_principle&quot;&gt;SRP&lt;/a&gt; is more of a &lt;em&gt;guideline&lt;/em&gt; than a &lt;em&gt;rule&lt;/em&gt; when it comes to writing applications, but by its very nature, application state seems &lt;em&gt;require&lt;/em&gt; that SRP be &lt;em&gt;broken&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;When we collect state from different parts of the application, it’s almost impossible for all of these values to be (closely) related. Usually, they’re collected over time as the application’s feature-set expands and evolves, and as such they’re going to be incorporated into a single reducer that, increasingly needs to handle values with different purposes.&lt;/p&gt;
+
+&lt;p&gt;The issue that pops up as a result is increased &lt;em&gt;cognitive load&lt;/em&gt;. It’s easy to make changes when the number of things that &lt;em&gt;can&lt;/em&gt; change is low. The larger the size of the state being managed by a reducer, the harder it is to simply fit all of its variables into &lt;em&gt;our&lt;/em&gt; working memory.&lt;/p&gt;
+
+&lt;h2 id=&quot;back-to-basics&quot;&gt;Back to Basics&lt;/h2&gt;
+
+&lt;p&gt;When reaching for global / application state as a solution from our toolbox, its critical to examine whether it’s worth the costs involved, and whether we’re being careful to avoid the pitfalls that it exposes.&lt;/p&gt;
+
+&lt;p&gt;State-management based on localized state with plentiful prop drilling might not be &lt;em&gt;stylish&lt;/em&gt;, but it’s based on sound development practises, works &lt;em&gt;really&lt;/em&gt; well in most situations, and should be the default choice for React and ReasonReact applications of any level of complexity.&lt;/p&gt;
+
+&lt;p&gt;As for my pet project, it’s future is uncertain. I started working on it when I was still a beginner with ReasonML, and the mistakes I made while learning have piled up. Its state management is, quite frankly, a mess. However, thanks to those mistakes, by the time I introduced ReasonML &amp;amp; ReasonReact to my full-time work, I knew enough to be conservative.&lt;/p&gt;
+
+&lt;p&gt;Right now, I’m focusing on building &lt;a href=&quot;https://www.pupilfirst.com&quot;&gt;PupilFirst&lt;/a&gt; - an LMS that my company open-sourced recently, and which we’ve been working on since 2013. It mixes Ruby, ReasonML &amp;amp; GraphQL, and is probably one of the largest open-source ReasonReact webapps out there.&lt;/p&gt;</content><author><name></name></author><category term="react" /><category term="reasonreact" /><summary type="html">So…</summary></entry><entry><title type="html">Revisiting Application State in ReasonReact</title><link href="https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/" rel="alternate" type="text/html" title="Revisiting Application State in ReasonReact" /><published>2018-09-08T15:30:00+05:30</published><updated>2018-09-08T15:30:00+05:30</updated><id>https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react</id><content type="html" xml:base="https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/">&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_1_oops.png&quot; alt=&quot;Oops&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;tldr-aka-just-tell-me-what-you-were-wrong-about&quot;&gt;TL;DR (aka, just tell me what you were wrong about)&lt;/h2&gt;
 
@@ -15,7 +67,7 @@
 
 &lt;p&gt;Passing around application state as &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; is a bad idea with ReasonML. Passing around &lt;code class=&quot;highlighter-rouge&quot;&gt;appSend&lt;/code&gt; appears to be fine.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/turaku/image/upload/201809/frame_2_return.png&quot; alt=&quot;Do not pass appState&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_2_return.png&quot; alt=&quot;Do not pass appState&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Why? Well, one of the basic tenants of functional programming is to &lt;em&gt;make illegal states unrepresentable&lt;/em&gt;. Put simply, it means that the structures that define and hold our data should not allow the possibility of incorrect state. This is nearly impossible to achieve with dynamically typed languages, and unless this is a principle you’ve already grokked, do yourself a favour and watch Richard Feldman’s awesome talk titled “&lt;a href=&quot;https://www.youtube.com/watch?v=IcgmSRJHu_8&quot;&gt;Making Impossible States Impossible&lt;/a&gt;”.&lt;/p&gt;
 
@@ -55,7 +107,7 @@
 
 &lt;script src=&quot;https://gist.github.com/harigopal/b539377f36f449a237e954116a85b1dd.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/turaku/image/upload/201809/frame_3_ctx.png&quot; alt=&quot;A bag called context&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_3_ctx.png&quot; alt=&quot;A bag called context&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;That’s it… except… it looks like we’re back to the days of &lt;em&gt;prop drilling&lt;/em&gt; - which I’d advocated against in my last article.&lt;/p&gt;
 
@@ -67,7 +119,7 @@
 
 &lt;p&gt;Obviously, using &lt;code class=&quot;highlighter-rouge&quot;&gt;ctx&lt;/code&gt; record is optional. Passing individual props also works, and deciding between wrapping props or leaving them unwrapped seems to be a decision between reducing the overhead of prop-drilling, or improving the cleanliness of the component call-site.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/turaku/image/upload/201809/frame_4_jetpack.png&quot; alt=&quot;A jetpack, not a backpack&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_4_jetpack.png&quot; alt=&quot;A jetpack, not a backpack&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;so-whats-the-takeaway&quot;&gt;So what’s the takeaway?&lt;/h2&gt;
 
@@ -75,7 +127,7 @@
 
 &lt;p&gt;&lt;em&gt;But&lt;/em&gt;, if we use ReasonML &lt;em&gt;correctly&lt;/em&gt;, with the intention of &lt;em&gt;making illegal states unrepresentable&lt;/em&gt;, then old patterns prove insufficient. This partial retraction of mine grew out of a better understanding of how to write to functional code.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/turaku/image/upload/201809/frame_5_fly.png&quot; alt=&quot;Bye bye&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><category term="react" /><category term="reason" /><category term="reasonml" /><category term="reasonreact" /><summary type="html"></summary></entry><entry><title type="html">Application State in ReasonReact</title><link href="https://blog.harigopal.in/guides/application-state-in-reasonreact/" rel="alternate" type="text/html" title="Application State in ReasonReact" /><published>2018-02-17T02:45:00+05:30</published><updated>2018-02-17T02:45:00+05:30</updated><id>https://blog.harigopal.in/guides/application-state-in-reasonreact</id><content type="html" xml:base="https://blog.harigopal.in/guides/application-state-in-reasonreact/">&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/turaku/image/upload/201802/callback_1.png&quot; alt=&quot;The Callback Relay Race - Page 1&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_5_fly.png&quot; alt=&quot;Bye bye&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><category term="react" /><category term="reason" /><category term="reasonml" /><category term="reasonreact" /><summary type="html"></summary></entry><entry><title type="html">Application State in ReasonReact</title><link href="https://blog.harigopal.in/guides/application-state-in-reasonreact/" rel="alternate" type="text/html" title="Application State in ReasonReact" /><published>2018-02-17T02:45:00+05:30</published><updated>2018-02-17T02:45:00+05:30</updated><id>https://blog.harigopal.in/guides/application-state-in-reasonreact</id><content type="html" xml:base="https://blog.harigopal.in/guides/application-state-in-reasonreact/">&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201802/callback_1.png&quot; alt=&quot;The Callback Relay Race - Page 1&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;tldr&quot;&gt;TL;DR?&lt;/h2&gt;
 
@@ -110,7 +162,7 @@
         =&amp;gt; Use deleteCallback()
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/turaku/image/upload/201802/callback_2.png&quot; alt=&quot;The Callback Relay Race - Page 2&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201802/callback_2.png&quot; alt=&quot;The Callback Relay Race - Page 2&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;#&quot;&gt;Blair Anderson&lt;/a&gt; wrote an excellent article titled &lt;a href=&quot;https://medium.com/@blairanderson/you-probably-dont-need-redux-1b404204a07f&quot;&gt;“You Probably Don’t Need Redux”&lt;/a&gt; which explains how, in small-to-medium sized React applications, it’s often enough to pass two props — &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;setAppState&lt;/code&gt; to all components, allowing nested components direct access to the shared state, bypassing the need to add and &lt;em&gt;relay&lt;/em&gt; individual callbacks.&lt;/p&gt;
 
@@ -130,7 +182,7 @@
 
 &lt;p&gt;That’s pretty much it. Notice how there are no callback functions anywhere?&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/turaku/image/upload/201802/callback_3.png&quot; alt=&quot;The Callback Relay Race - Page 3&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201802/callback_3.png&quot; alt=&quot;The Callback Relay Race - Page 3&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;advantages-and-a-few-caveats&quot;&gt;Advantages, and a few caveats&lt;/h2&gt;
 
@@ -301,9 +353,9 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;code&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;authentication_failure&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;message&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Could not validate authorization&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;description&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Please authenticate and acquire JWT before attempting to access restricted routes. JWT should be passed in the Authorization header.&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;code&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;authentication_failure&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;message&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Could not validate authorization&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;description&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Please authenticate and acquire JWT before attempting to access restricted routes. JWT should be passed in the Authorization header.&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
@@ -311,12 +363,12 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;code&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;validation_failure&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;message&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Validation of params failed&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;description&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;The server could not validate the parameters present with the request. Please check the validation_errors key (hash) for more details.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;validation_errors&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;cannot be blank&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;email&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;does not look like an email address&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;code&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;validation_failure&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;message&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Validation of params failed&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;description&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;The server could not validate the parameters present with the request. Please check the validation_errors key (hash) for more details.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;validation_errors&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;cannot be blank&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;email&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;does not look like an email address&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
   &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -437,7 +489,7 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 
 &lt;div class=&quot;language-jsx highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ExerciseRecord&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;React&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Component&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
   &lt;span class=&quot;nx&quot;&gt;componentDidMount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'.js-date-input'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;myFavDatePicker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;.js-date-input&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;myFavDatePicker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 
   &lt;span class=&quot;nx&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
@@ -448,7 +500,7 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
             &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;div&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
               &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;label&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;exercise&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;}&lt;/span&gt; done on&lt;span class=&quot;p&quot;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;label&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
               &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;input&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;className=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'js-date-input'&lt;/span&gt;
-                     &lt;span class=&quot;na&quot;&gt;name=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;dates[&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;exercise&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;]&quot;&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;/&amp;gt;&lt;/span&gt;
+                     &lt;span class=&quot;na&quot;&gt;name=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;dates[&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;exercise&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;/&amp;gt;&lt;/span&gt;
             &lt;span class=&quot;p&quot;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;div&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
           &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
         &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
@@ -474,7 +526,7 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 
 &lt;div class=&quot;language-jsx highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;DateInput&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;React&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;component&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
   &lt;span class=&quot;nx&quot;&gt;componentDidMount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'.js-date-input-'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;props&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;myFavDatePicker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;.js-date-input-&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;props&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;myFavDatePicker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 
   &lt;span class=&quot;nx&quot;&gt;handleChange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
@@ -484,7 +536,7 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 
   &lt;span class=&quot;nx&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-      &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;input&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;className=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'js-date-input-'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;props&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;input&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;className=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;js-date-input-&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;props&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;
              &lt;span class=&quot;na&quot;&gt;onChange=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;handleChange&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;/&amp;gt;&lt;/span&gt;
     &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
@@ -501,7 +553,7 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 
 &lt;div class=&quot;language-jsx highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;DateInput&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;React&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;component&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
   &lt;span class=&quot;nx&quot;&gt;componentWillUnmount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'.js-date-input-'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;props&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;myFavDatePicker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'destroy'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;.js-date-input-&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;props&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;myFavDatePicker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;destroy&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
