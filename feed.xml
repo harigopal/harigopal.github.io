@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://blog.harigopal.in/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.harigopal.in/" rel="alternate" type="text/html" /><updated>2019-11-05T20:26:12+05:30</updated><id>https://blog.harigopal.in/feed.xml</id><title type="html">Hari Gopal</title><subtitle>My thoughts on programming, and more.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://blog.harigopal.in/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.harigopal.in/" rel="alternate" type="text/html" /><updated>2019-11-07T01:45:22+05:30</updated><id>https://blog.harigopal.in/feed.xml</id><title type="html">Hari Gopal</title><subtitle>My thoughts on programming, and more.
 </subtitle><entry><title type="html">Conventions for setting up a GraphQL Server on Rails</title><link href="https://blog.harigopal.in/guides/conventions-for-setting-up-a-graphql-server-on-rails/" rel="alternate" type="text/html" title="Conventions for setting up a GraphQL Server on Rails" /><published>2019-11-05T20:20:00+05:30</published><updated>2019-11-05T20:20:00+05:30</updated><id>https://blog.harigopal.in/guides/conventions-for-setting-up-a-graphql-server-on-rails</id><content type="html" xml:base="https://blog.harigopal.in/guides/conventions-for-setting-up-a-graphql-server-on-rails/">&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
 
 &lt;p&gt;&lt;em&gt;“Convention over configuration”&lt;/em&gt; is one of the reasons Rails became as popular as it did. Conventions allow developers to be productive without &lt;a href=&quot;https://en.wiktionary.org/wiki/bikeshedding&quot;&gt;&lt;em&gt;bike-shedding&lt;/em&gt;&lt;/a&gt;. However, introducing new concepts to Rails involves a period of experimentation during which there are no answers to troublesome questions.&lt;/p&gt;
@@ -12,7 +12,7 @@
   &lt;li&gt;How do I avoid N+1 queries?&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&quot;start-with-graphql-ruby&quot;&gt;Start with &lt;code class=&quot;highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt;.&lt;/h3&gt;
+&lt;h3 id=&quot;start-with-graphql-ruby&quot;&gt;Start with &lt;code class=&quot;highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt;&lt;/h3&gt;
 
 &lt;p&gt;Use &lt;a href=&quot;https://graphql-ruby.org/getting_started&quot;&gt;the gem’s documentation&lt;/a&gt; to install and get started with &lt;code class=&quot;highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt;. The steps are straight-forward and well-documented, but I suggest not setting up queries and mutations yet - we’ll get to that.&lt;/p&gt;
 
@@ -20,7 +20,7 @@
 
 &lt;p&gt;I’d like to suggest an alternative.&lt;/p&gt;
 
-&lt;h3 id=&quot;resolvers-authorize-and-fetch-data&quot;&gt;&lt;em&gt;Resolvers&lt;/em&gt; authorize and fetch data.&lt;/h3&gt;
+&lt;h3 id=&quot;resolvers-authorize-and-fetch-data&quot;&gt;&lt;em&gt;Resolvers&lt;/em&gt; authorize and fetch data&lt;/h3&gt;
 
 &lt;p&gt;Let’s start by adding an &lt;code class=&quot;highlighter-rouge&quot;&gt;ApplicationQuery&lt;/code&gt; class that’ll act as the base class for &lt;em&gt;resolvers&lt;/em&gt; and &lt;em&gt;mutators&lt;/em&gt;:&lt;/p&gt;
 
@@ -37,19 +37,26 @@
 &lt;p&gt;What you’re looking at is the essence of this approach.&lt;/p&gt;
 
 &lt;ol&gt;
-  &lt;li&gt;All requests are individually authorized&lt;/li&gt;
+  &lt;li&gt;All requests are individually authorized.&lt;/li&gt;
   &lt;li&gt;There is an assumption that once a query is authorized, all data returned by the resolver (or mutator) can be accessed by the authenticated user.&lt;/li&gt;
+  &lt;li&gt;Avoid N+1-s by making sure that the resolver method &lt;code class=&quot;highlighter-rouge&quot;&gt;includes&lt;/code&gt; all necessary data for the response.&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;Before we move onto mutators, let’s also look at how we deal with queries that have arguments, using a variation of what we’ve done above:&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/d189b80d9d62acdde4bb6e4f8bd4d364.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;Only a few things are different here. &lt;code class=&quot;highlighter-rouge&quot;&gt;args&lt;/code&gt; is passed to the resolver in addition to context, and there’s an &lt;code class=&quot;highlighter-rouge&quot;&gt;attr_accessor :id&lt;/code&gt; in the resolver class to make accessing the argument easy. It also makes it pretty clear what data the query is working with. Also, instead of a relation, the &lt;code class=&quot;highlighter-rouge&quot;&gt;user&lt;/code&gt; method in the resolver returns a &lt;code class=&quot;highlighter-rouge&quot;&gt;User&lt;/code&gt; object, since the &lt;em&gt;type&lt;/em&gt; for the query is a single object.&lt;/p&gt;
+&lt;p&gt;Only a few things are different here:&lt;/p&gt;
 
-&lt;h3 id=&quot;mutators-authorize-modify-and-supply-a-response&quot;&gt;&lt;em&gt;Mutators&lt;/em&gt; authorize, modify, and supply a response.&lt;/h3&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;args&lt;/code&gt; is passed to the resolver in addition to context.&lt;/li&gt;
+  &lt;li&gt;There’s a &lt;code class=&quot;highlighter-rouge&quot;&gt;property :id&lt;/code&gt; in the resolver class defining what data the query will work with.&lt;/li&gt;
+  &lt;li&gt;Instead of a relation, the &lt;code class=&quot;highlighter-rouge&quot;&gt;user&lt;/code&gt; method in the resolver returns a &lt;code class=&quot;highlighter-rouge&quot;&gt;User&lt;/code&gt; object, since the &lt;em&gt;type&lt;/em&gt; for the query is a single object.&lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;p&gt;GraphQL mutations aren’t really all that different from queries. They are queries that are, &lt;em&gt;by convention&lt;/em&gt;, allowed to modify data. And just like queries, they too can return structured data.&lt;/p&gt;
+&lt;h3 id=&quot;mutators-authorize-modify-and-supply-a-response&quot;&gt;&lt;em&gt;Mutators&lt;/em&gt; authorize, modify, and supply a response&lt;/h3&gt;
+
+&lt;p&gt;GraphQL mutations aren’t really all that different from queries. Mutations are queries that are, &lt;em&gt;by convention&lt;/em&gt;, allowed to modify data. And just like queries, they too can return structured data.&lt;/p&gt;
 
 &lt;p&gt;As with queries, let’s start with a simple example that shows just how similar &lt;em&gt;mutators&lt;/em&gt; are to &lt;em&gt;resolvers&lt;/em&gt;.&lt;/p&gt;
 
@@ -63,6 +70,7 @@
 
 &lt;ol&gt;
   &lt;li&gt;Because &lt;code class=&quot;highlighter-rouge&quot;&gt;ApplicationQuery&lt;/code&gt; includes &lt;code class=&quot;highlighter-rouge&quot;&gt;ActiveModel::Model&lt;/code&gt;, we have access to all of the validation methods that we’re familiar with.&lt;/li&gt;
+  &lt;li&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;property&lt;/code&gt; helper simply combines &lt;code class=&quot;highlighter-rouge&quot;&gt;validates&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;attr_accessor&lt;/code&gt; into a single-step, and helps avoid bugs because the former depends on the latter.&lt;/li&gt;
   &lt;li&gt;We can either process the request in the mutator directly in the &lt;code class=&quot;highlighter-rouge&quot;&gt;create_comment&lt;/code&gt; method, or pass it onto a service as shown in the example.&lt;/li&gt;
 &lt;/ol&gt;
 
@@ -83,7 +91,7 @@
   &lt;li&gt;Your API is integrated with the editor - it’ll suggest names, arguments, and return values - writing correct queries is much simpler.&lt;/li&gt;
   &lt;li&gt;Your compiler will prevent the application from generating code with invalid queries.&lt;/li&gt;
   &lt;li&gt;The Rails server will crash with a useful error message if your code ever disobeys the type specification.&lt;/li&gt;
-  &lt;li&gt;Pagination of resources is simple and straight-forward, thanks to built-in, well-thought-out conventions that cover a large variety of pagination-use-cases.&lt;/li&gt;
+  &lt;li&gt;Pagination of resources is simple and straight-forward, thanks to &lt;a href=&quot;https://graphql-ruby.org/relay/connections.html&quot;&gt;built-in, well-thought-out conventions&lt;/a&gt; that cover a large variety of pagination-use-cases.&lt;/li&gt;
   &lt;li&gt;Avoids a lot of bike-shedding. &lt;code class=&quot;highlighter-rouge&quot;&gt;PUT&lt;/code&gt; vs &lt;code class=&quot;highlighter-rouge&quot;&gt;PATCH&lt;/code&gt;? &lt;code class=&quot;highlighter-rouge&quot;&gt;400&lt;/code&gt; vs &lt;code class=&quot;highlighter-rouge&quot;&gt;422&lt;/code&gt;? How to handle deprecation? These questions, and more, are no longer concerns.&lt;/li&gt;
   &lt;li&gt;The server’s response can be extended to include more standardized behavior.&lt;/li&gt;
 &lt;/ol&gt;
@@ -104,9 +112,9 @@
 
 &lt;script src=&quot;https://gist.github.com/harigopal/675ef7e93ac142cef4a9d7bc1038b091.js&quot;&gt;&lt;/script&gt;
 
-&lt;h3 id=&quot;however-concerns-still-exist&quot;&gt;However, concerns still exist.&lt;/h3&gt;
+&lt;h3 id=&quot;however-concerns-still-exist&quot;&gt;However, concerns still exist&lt;/h3&gt;
 
-&lt;h4 id=&quot;this-isnt-what-graphql-promised&quot;&gt;This isn’t what GraphQL promised.&lt;/h4&gt;
+&lt;h4 id=&quot;this-isnt-what-graphql-promised&quot;&gt;This isn’t what GraphQL promised&lt;/h4&gt;
 
 &lt;p&gt;One of the stated advantages of GraphQL is that it solves the problem of over-fetching by allowing the client to specify exactly what data it needs, leading to the server fetching &lt;em&gt;only&lt;/em&gt; the asked-for data.&lt;/p&gt;
 

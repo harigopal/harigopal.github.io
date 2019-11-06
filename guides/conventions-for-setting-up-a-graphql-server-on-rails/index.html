@@ -15,7 +15,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2019-11-05T20:20:00+05:30" />
 <script type="application/ld+json">
-{"url":"https://blog.harigopal.in/guides/conventions-for-setting-up-a-graphql-server-on-rails/","headline":"Conventions for setting up a GraphQL Server on Rails","dateModified":"2019-11-05T20:20:00+05:30","datePublished":"2019-11-05T20:20:00+05:30","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/conventions-for-setting-up-a-graphql-server-on-rails/"},"description":"Introduction","@type":"BlogPosting","@context":"https://schema.org"}</script>
+{"url":"https://blog.harigopal.in/guides/conventions-for-setting-up-a-graphql-server-on-rails/","headline":"Conventions for setting up a GraphQL Server on Rails","dateModified":"2019-11-05T20:20:00+05:30","datePublished":"2019-11-05T20:20:00+05:30","description":"Introduction","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/conventions-for-setting-up-a-graphql-server-on-rails/"},"@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://blog.harigopal.in/feed.xml" title="Hari Gopal" />
     <!-- Google Analytics -->
@@ -71,7 +71,7 @@
   <li>How do I avoid N+1 queries?</li>
 </ol>
 
-<h3 id="start-with-graphql-ruby">Start with <code class="highlighter-rouge">graphql-ruby</code>.</h3>
+<h3 id="start-with-graphql-ruby">Start with <code class="highlighter-rouge">graphql-ruby</code></h3>
 
 <p>Use <a href="https://graphql-ruby.org/getting_started">the gem’s documentation</a> to install and get started with <code class="highlighter-rouge">graphql-ruby</code>. The steps are straight-forward and well-documented, but I suggest not setting up queries and mutations yet - we’ll get to that.</p>
 
@@ -79,7 +79,7 @@
 
 <p>I’d like to suggest an alternative.</p>
 
-<h3 id="resolvers-authorize-and-fetch-data"><em>Resolvers</em> authorize and fetch data.</h3>
+<h3 id="resolvers-authorize-and-fetch-data"><em>Resolvers</em> authorize and fetch data</h3>
 
 <p>Let’s start by adding an <code class="highlighter-rouge">ApplicationQuery</code> class that’ll act as the base class for <em>resolvers</em> and <em>mutators</em>:</p>
 
@@ -96,19 +96,26 @@
 <p>What you’re looking at is the essence of this approach.</p>
 
 <ol>
-  <li>All requests are individually authorized</li>
+  <li>All requests are individually authorized.</li>
   <li>There is an assumption that once a query is authorized, all data returned by the resolver (or mutator) can be accessed by the authenticated user.</li>
+  <li>Avoid N+1-s by making sure that the resolver method <code class="highlighter-rouge">includes</code> all necessary data for the response.</li>
 </ol>
 
 <p>Before we move onto mutators, let’s also look at how we deal with queries that have arguments, using a variation of what we’ve done above:</p>
 
 <script src="https://gist.github.com/harigopal/d189b80d9d62acdde4bb6e4f8bd4d364.js"></script>
 
-<p>Only a few things are different here. <code class="highlighter-rouge">args</code> is passed to the resolver in addition to context, and there’s an <code class="highlighter-rouge">attr_accessor :id</code> in the resolver class to make accessing the argument easy. It also makes it pretty clear what data the query is working with. Also, instead of a relation, the <code class="highlighter-rouge">user</code> method in the resolver returns a <code class="highlighter-rouge">User</code> object, since the <em>type</em> for the query is a single object.</p>
+<p>Only a few things are different here:</p>
 
-<h3 id="mutators-authorize-modify-and-supply-a-response"><em>Mutators</em> authorize, modify, and supply a response.</h3>
+<ol>
+  <li><code class="highlighter-rouge">args</code> is passed to the resolver in addition to context.</li>
+  <li>There’s a <code class="highlighter-rouge">property :id</code> in the resolver class defining what data the query will work with.</li>
+  <li>Instead of a relation, the <code class="highlighter-rouge">user</code> method in the resolver returns a <code class="highlighter-rouge">User</code> object, since the <em>type</em> for the query is a single object.</li>
+</ol>
 
-<p>GraphQL mutations aren’t really all that different from queries. They are queries that are, <em>by convention</em>, allowed to modify data. And just like queries, they too can return structured data.</p>
+<h3 id="mutators-authorize-modify-and-supply-a-response"><em>Mutators</em> authorize, modify, and supply a response</h3>
+
+<p>GraphQL mutations aren’t really all that different from queries. Mutations are queries that are, <em>by convention</em>, allowed to modify data. And just like queries, they too can return structured data.</p>
 
 <p>As with queries, let’s start with a simple example that shows just how similar <em>mutators</em> are to <em>resolvers</em>.</p>
 
@@ -122,6 +129,7 @@
 
 <ol>
   <li>Because <code class="highlighter-rouge">ApplicationQuery</code> includes <code class="highlighter-rouge">ActiveModel::Model</code>, we have access to all of the validation methods that we’re familiar with.</li>
+  <li>The <code class="highlighter-rouge">property</code> helper simply combines <code class="highlighter-rouge">validates</code> and <code class="highlighter-rouge">attr_accessor</code> into a single-step, and helps avoid bugs because the former depends on the latter.</li>
   <li>We can either process the request in the mutator directly in the <code class="highlighter-rouge">create_comment</code> method, or pass it onto a service as shown in the example.</li>
 </ol>
 
@@ -142,7 +150,7 @@
   <li>Your API is integrated with the editor - it’ll suggest names, arguments, and return values - writing correct queries is much simpler.</li>
   <li>Your compiler will prevent the application from generating code with invalid queries.</li>
   <li>The Rails server will crash with a useful error message if your code ever disobeys the type specification.</li>
-  <li>Pagination of resources is simple and straight-forward, thanks to built-in, well-thought-out conventions that cover a large variety of pagination-use-cases.</li>
+  <li>Pagination of resources is simple and straight-forward, thanks to <a href="https://graphql-ruby.org/relay/connections.html">built-in, well-thought-out conventions</a> that cover a large variety of pagination-use-cases.</li>
   <li>Avoids a lot of bike-shedding. <code class="highlighter-rouge">PUT</code> vs <code class="highlighter-rouge">PATCH</code>? <code class="highlighter-rouge">400</code> vs <code class="highlighter-rouge">422</code>? How to handle deprecation? These questions, and more, are no longer concerns.</li>
   <li>The server’s response can be extended to include more standardized behavior.</li>
 </ol>
@@ -163,9 +171,9 @@
 
 <script src="https://gist.github.com/harigopal/675ef7e93ac142cef4a9d7bc1038b091.js"></script>
 
-<h3 id="however-concerns-still-exist">However, concerns still exist.</h3>
+<h3 id="however-concerns-still-exist">However, concerns still exist</h3>
 
-<h4 id="this-isnt-what-graphql-promised">This isn’t what GraphQL promised.</h4>
+<h4 id="this-isnt-what-graphql-promised">This isn’t what GraphQL promised</h4>
 
 <p>One of the stated advantages of GraphQL is that it solves the problem of over-fetching by allowing the client to specify exactly what data it needs, leading to the server fetching <em>only</em> the asked-for data.</p>
 
