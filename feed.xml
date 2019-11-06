@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://blog.harigopal.in/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.harigopal.in/" rel="alternate" type="text/html" /><updated>2019-11-07T01:45:22+05:30</updated><id>https://blog.harigopal.in/feed.xml</id><title type="html">Hari Gopal</title><subtitle>My thoughts on programming, and more.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://blog.harigopal.in/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.harigopal.in/" rel="alternate" type="text/html" /><updated>2019-11-07T01:59:16+05:30</updated><id>https://blog.harigopal.in/feed.xml</id><title type="html">Hari Gopal</title><subtitle>My thoughts on programming, and more.
 </subtitle><entry><title type="html">Conventions for setting up a GraphQL Server on Rails</title><link href="https://blog.harigopal.in/guides/conventions-for-setting-up-a-graphql-server-on-rails/" rel="alternate" type="text/html" title="Conventions for setting up a GraphQL Server on Rails" /><published>2019-11-05T20:20:00+05:30</published><updated>2019-11-05T20:20:00+05:30</updated><id>https://blog.harigopal.in/guides/conventions-for-setting-up-a-graphql-server-on-rails</id><content type="html" xml:base="https://blog.harigopal.in/guides/conventions-for-setting-up-a-graphql-server-on-rails/">&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
 
 &lt;p&gt;&lt;em&gt;“Convention over configuration”&lt;/em&gt; is one of the reasons Rails became as popular as it did. Conventions allow developers to be productive without &lt;a href=&quot;https://en.wiktionary.org/wiki/bikeshedding&quot;&gt;&lt;em&gt;bike-shedding&lt;/em&gt;&lt;/a&gt;. However, introducing new concepts to Rails involves a period of experimentation during which there are no answers to troublesome questions.&lt;/p&gt;
@@ -104,11 +104,11 @@
 
 &lt;script src=&quot;https://gist.github.com/harigopal/0b208181f942adb7cc5beccbfdd5531a.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;The mutator has simple methods that inject the notifications into the context…&lt;/p&gt;
+&lt;p&gt;The query superclass has simple methods that inject notifications into the context…&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/0b480036b4a5213077c538f49f19f87b.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;…which gets placed in the response by in GraphQL controller:&lt;/p&gt;
+&lt;p&gt;…which then gets placed in the response by the GraphQL controller:&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/675ef7e93ac142cef4a9d7bc1038b091.js&quot;&gt;&lt;/script&gt;
 
