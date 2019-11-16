@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://blog.harigopal.in/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.harigopal.in/" rel="alternate" type="text/html" /><updated>2019-11-07T12:13:13+05:30</updated><id>https://blog.harigopal.in/feed.xml</id><title type="html">Hari Gopal</title><subtitle>My thoughts on programming, and more.
-</subtitle><entry><title type="html">Conventions for setting up a GraphQL Server on Rails</title><link href="https://blog.harigopal.in/guides/conventions-for-setting-up-a-graphql-server-on-rails/" rel="alternate" type="text/html" title="Conventions for setting up a GraphQL Server on Rails" /><published>2019-11-05T20:20:00+05:30</published><updated>2019-11-05T20:20:00+05:30</updated><id>https://blog.harigopal.in/guides/conventions-for-setting-up-a-graphql-server-on-rails</id><content type="html" xml:base="https://blog.harigopal.in/guides/conventions-for-setting-up-a-graphql-server-on-rails/">&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://blog.harigopal.in/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.harigopal.in/" rel="alternate" type="text/html" /><updated>2019-11-16T23:06:23+05:30</updated><id>https://blog.harigopal.in/feed.xml</id><title type="html">Hari Gopal</title><subtitle>My thoughts on programming, and more.
+</subtitle><entry><title type="html">A Complete Guide to Setting up a GraphQL Server on Rails</title><link href="https://blog.harigopal.in/guides/a-complete-guide-to-setting-up-a-graphql-server-on-rails/" rel="alternate" type="text/html" title="A Complete Guide to Setting up a GraphQL Server on Rails" /><published>2019-11-05T20:20:00+05:30</published><updated>2019-11-05T20:20:00+05:30</updated><id>https://blog.harigopal.in/guides/a-complete-guide-to-setting-up-a-graphql-server-on-rails</id><content type="html" xml:base="https://blog.harigopal.in/guides/a-complete-guide-to-setting-up-a-graphql-server-on-rails/">&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
 
 &lt;p&gt;&lt;em&gt;“Convention over configuration”&lt;/em&gt; is one of the reasons Rails became as popular as it did. Conventions allow developers to be productive without &lt;a href=&quot;https://en.wiktionary.org/wiki/bikeshedding&quot;&gt;&lt;em&gt;bike-shedding&lt;/em&gt;&lt;/a&gt;. However, introducing new concepts to Rails involves a period of experimentation during which there are no answers to troublesome questions.&lt;/p&gt;
 
@@ -12,21 +12,87 @@
   &lt;li&gt;How do I avoid N+1 queries?&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&quot;start-with-graphql-ruby&quot;&gt;Start with &lt;code class=&quot;highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt;&lt;/h3&gt;
+&lt;h2 id=&quot;start-with-graphql-ruby&quot;&gt;Start with &lt;em&gt;graphql-ruby&lt;/em&gt;&lt;/h2&gt;
 
-&lt;p&gt;Use &lt;a href=&quot;https://graphql-ruby.org/getting_started&quot;&gt;the gem’s documentation&lt;/a&gt; to install and get started with &lt;code class=&quot;highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt;. The steps are straight-forward and well-documented, but I suggest not setting up queries and mutations yet - we’ll get to that.&lt;/p&gt;
+&lt;p&gt;We’ll be using the &lt;a href=&quot;https://graphql-ruby.org/getting_started&quot;&gt;well-documented &lt;code class=&quot;highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt; gem&lt;/a&gt; to get started with setting up a GraphQL server on Rails. If you’re someone who’s already familiar with &lt;code class=&quot;highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt;, feel free to &lt;a href=&quot;#here-be-dragons&quot;&gt;skip this section&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;Just like with Facebook’s documentation about authorization in GraphQL, the &lt;a href=&quot;https://graphql-ruby.org/authorization/overview.html#authorization-in-your-business-logic&quot;&gt;gem’s documentation also suggests pushing the responsibility into &lt;em&gt;business&lt;/em&gt; logic&lt;/a&gt;, specifically into model methods that accept &lt;code class=&quot;highlighter-rouge&quot;&gt;context&lt;/code&gt; and decide what kind of relation or data is accessible for &lt;em&gt;that&lt;/em&gt; user.&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Add &lt;code class=&quot;highlighter-rouge&quot;&gt;gem 'graphql-ruby', '~&amp;gt; 1.9'&lt;/code&gt; to your &lt;code class=&quot;highlighter-rouge&quot;&gt;Gemfile&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Run &lt;code class=&quot;highlighter-rouge&quot;&gt;bundle install&lt;/code&gt; on the command line.&lt;/li&gt;
+  &lt;li&gt;Run the gem’s installation generator: &lt;code class=&quot;highlighter-rouge&quot;&gt;rails generate graphql:install&lt;/code&gt;.
+    &lt;ul&gt;
+      &lt;li&gt;If Rails complains that it can’t find &lt;code class=&quot;highlighter-rouge&quot;&gt;graphql:install&lt;/code&gt;, try again after stopping &lt;code class=&quot;highlighter-rouge&quot;&gt;spring&lt;/code&gt;, with &lt;code class=&quot;highlighter-rouge&quot;&gt;bin/spring stop&lt;/code&gt;.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;The previous step will have updated the &lt;code class=&quot;highlighter-rouge&quot;&gt;Gemfile&lt;/code&gt;, so you’ll need run &lt;code class=&quot;highlighter-rouge&quot;&gt;bundle install&lt;/code&gt; again.&lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;p&gt;I’d like to suggest an alternative.&lt;/p&gt;
+&lt;p&gt;At this point, &lt;code class=&quot;highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt; is all set up. Let’s take a quick look at what the gem added to our Rails application, so that the following steps are easier to understand.&lt;/p&gt;
 
-&lt;h3 id=&quot;resolvers-authorize-and-fetch-data&quot;&gt;&lt;em&gt;Resolvers&lt;/em&gt; authorize and fetch data&lt;/h3&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;app/
+├─ config/routes.rb          (updated to include /graphql, and /graphiql)
+├─ controllers/
+|  └─ graphql_controller.rb  (all requests are handled by the execute action)
+└─ graphql/
+   ├─ my_rails_app_schema.rb (the web of interconnected types starts here)
+   ├─ types/
+   |  ├─ query_type.rb       (base type for all queries)
+   |  ├─ mutation_type.rb    (base type for all mutations)
+   |  └─ base_*.rb           (many other base types - object, enum, etc.)
+   └─ mutations/
+      └─ .keep               (empty - we haven't made any mutations yet)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If we take a look inside the &lt;code class=&quot;highlighter-rouge&quot;&gt;routes.rb&lt;/code&gt; file, we can see that a new &lt;code class=&quot;highlighter-rouge&quot;&gt;/graphql&lt;/code&gt; path is handled by the &lt;code class=&quot;highlighter-rouge&quot;&gt;GraphqlController#execute&lt;/code&gt; method:&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/harigopal/877e2d5c9f79c1c1887e8ee9538d1bdd.js&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;Notice how the incoming query is passed onto the schema (along with &lt;em&gt;context&lt;/em&gt;) for execution. The &lt;em&gt;schema&lt;/em&gt; defines only two things right now:&lt;/p&gt;
+
+&lt;script src=&quot;https://gist.github.com/harigopal/d6a8c4e27e1df99c7ef84db39b9b5e5e.js&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;The schema says that mutations can be found in &lt;code class=&quot;highlighter-rouge&quot;&gt;Types::MutationType&lt;/code&gt; and queries in &lt;code class=&quot;highlighter-rouge&quot;&gt;Types::QueryType&lt;/code&gt;. If we take a look in either, we’ll see a dummy field that we can play around with.&lt;/p&gt;
+
+&lt;p&gt;One thing that I glossed over in &lt;code class=&quot;highlighter-rouge&quot;&gt;routes.rb&lt;/code&gt; is that the gem also mounted the awesome &lt;em&gt;GraphiQL&lt;/em&gt; app on the &lt;code class=&quot;highlighter-rouge&quot;&gt;/graphiql&lt;/code&gt; path. Visit the &lt;code class=&quot;highlighter-rouge&quot;&gt;/graphiql&lt;/code&gt; path in your browser, and try running the following query there:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;query {
+  testField
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;You should get this response:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;{
+  &quot;data&quot;: {
+    &quot;testField&quot;: &quot;Hello World!&quot;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;There you go! Now that we’re done with our whirlwind tour of the &lt;code class=&quot;highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt; gem, let’s start digging a bit deeper.&lt;/p&gt;
+
+&lt;h2 id=&quot;here-be-dragons&quot;&gt;Here Be Dragons&lt;/h2&gt;
+
+&lt;p&gt;While the &lt;code class=&quot;highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt; gem has added a &lt;em&gt;ton&lt;/em&gt; of functionality to our app, it doesn’t really go into detail as to what the best practices are for actually &lt;em&gt;using&lt;/em&gt; the gem. Specifically, as mentioned at the beginning of this guide, two issues that are glossed over are:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;How to handle authorization, and…&lt;/li&gt;
+  &lt;li&gt;How to efficiently query data.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Just like the &lt;a href=&quot;https://graphql.org/learn/authorization/&quot;&gt;official documentation about authorization in GraphQL&lt;/a&gt;, the &lt;a href=&quot;https://graphql-ruby.org/authorization/overview.html#authorization-in-your-business-logic&quot;&gt;gem’s documentation&lt;/a&gt; also suggests pushing the responsibility for authorization into &lt;em&gt;business&lt;/em&gt; logic, specifically into model methods that accept &lt;code class=&quot;highlighter-rouge&quot;&gt;context&lt;/code&gt; and decide what kind of relation or data is accessible for &lt;em&gt;that&lt;/em&gt; user.&lt;/p&gt;
+
+&lt;p&gt;As for the potential for N+1 queries, it’s pretty much ignored altogether - I’m guessing that you’re expected to handle this on a case-by-case basis.&lt;/p&gt;
+
+&lt;p&gt;I’d like to suggest an alternative: new &lt;em&gt;conventions&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;resolvers-authorize-and-fetch-data&quot;&gt;&lt;em&gt;Resolvers&lt;/em&gt; authorize and fetch data&lt;/h2&gt;
 
 &lt;p&gt;Let’s start by adding an &lt;code class=&quot;highlighter-rouge&quot;&gt;ApplicationQuery&lt;/code&gt; class that’ll act as the base class for &lt;em&gt;resolvers&lt;/em&gt; and &lt;em&gt;mutators&lt;/em&gt;:&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/2270db1662f697fbbf8fd3303aca2029.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;With that in place, we can start writing &lt;em&gt;resolver&lt;/em&gt; objects that will help us retrieve properly authorized data for GraphQL queries. Let’s take the example of a query that asks for a list of users:&lt;/p&gt;
+&lt;p&gt;With that in place, we can start writing &lt;em&gt;resolver&lt;/em&gt; objects that will help us retrieve properly authorized data for GraphQL queries. Let’s start by creating a query that asks for a list of users:&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/124000d16b0188d283c6ed92763b1f4e.js&quot;&gt;&lt;/script&gt;
 
@@ -54,7 +120,7 @@
   &lt;li&gt;Instead of a relation, the &lt;code class=&quot;highlighter-rouge&quot;&gt;user&lt;/code&gt; method in the resolver returns a &lt;code class=&quot;highlighter-rouge&quot;&gt;User&lt;/code&gt; object, since the &lt;em&gt;type&lt;/em&gt; for the query is a single object.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&quot;mutators-authorize-modify-and-supply-a-response&quot;&gt;&lt;em&gt;Mutators&lt;/em&gt; authorize, modify, and supply a response&lt;/h3&gt;
+&lt;h2 id=&quot;mutators-authorize-modify-and-supply-a-response&quot;&gt;&lt;em&gt;Mutators&lt;/em&gt; authorize, modify, and supply a response&lt;/h2&gt;
 
 &lt;p&gt;GraphQL mutations aren’t really all that different from queries. Mutations are queries that are, &lt;em&gt;by convention&lt;/em&gt;, allowed to modify data. And just like queries, they too can return structured data.&lt;/p&gt;
 
@@ -76,7 +142,7 @@
 
 &lt;p&gt;As with queries, there is an assumption that the &lt;code class=&quot;highlighter-rouge&quot;&gt;create_comment&lt;/code&gt; method will return an object that responds to the &lt;em&gt;fields&lt;/em&gt; mentioned in the mutation class. In this case, that’s &lt;code class=&quot;highlighter-rouge&quot;&gt;id&lt;/code&gt;, and as long as the service returns a &lt;code class=&quot;highlighter-rouge&quot;&gt;Comment&lt;/code&gt; object, everything should work as expected.&lt;/p&gt;
 
-&lt;h4 id=&quot;create-types-for-complex-returns&quot;&gt;Create types for complex returns&lt;/h4&gt;
+&lt;h3 id=&quot;create-types-for-complex-returns&quot;&gt;Create types for complex returns&lt;/h3&gt;
 
 &lt;p&gt;While GraphQL unsubtly suggests the use of relations in your response types, there is no need to follow that pattern. Often, it’s much more straight-forward to create a custom type that fits exactly the data that you want to return:&lt;/p&gt;
 
@@ -84,19 +150,26 @@
 
 &lt;p&gt;Here, the custom &lt;code class=&quot;highlighter-rouge&quot;&gt;UpdatePostType&lt;/code&gt; is used to compose exactly what the UI requires in this imaginary app, when a post is updated.&lt;/p&gt;
 
-&lt;h3 id=&quot;what-are-the-advantages-of-this-approach&quot;&gt;What are the advantages of this approach?&lt;/h3&gt;
+&lt;h2 id=&quot;what-are-the-advantages-of-this-approach&quot;&gt;What are the advantages of this approach?&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;On the server-side:&lt;/strong&gt;&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;You have a self-documenting API. Testing it is a breeze thanks to GraphiQL.&lt;/li&gt;
-  &lt;li&gt;Your API is integrated with the editor - it’ll suggest names, arguments, and return values - writing correct queries is much simpler.&lt;/li&gt;
-  &lt;li&gt;Your compiler will prevent the application from generating code with invalid queries.&lt;/li&gt;
   &lt;li&gt;The Rails server will crash with a useful error message if your code ever disobeys the type specification.&lt;/li&gt;
   &lt;li&gt;Pagination of resources is simple and straight-forward, thanks to &lt;a href=&quot;https://graphql-ruby.org/relay/connections.html&quot;&gt;built-in, well-thought-out conventions&lt;/a&gt; that cover a large variety of pagination-use-cases.&lt;/li&gt;
   &lt;li&gt;Avoids a lot of bike-shedding. &lt;code class=&quot;highlighter-rouge&quot;&gt;PUT&lt;/code&gt; vs &lt;code class=&quot;highlighter-rouge&quot;&gt;PATCH&lt;/code&gt;? &lt;code class=&quot;highlighter-rouge&quot;&gt;400&lt;/code&gt; vs &lt;code class=&quot;highlighter-rouge&quot;&gt;422&lt;/code&gt;? How to handle deprecation? These questions, and more, are no longer concerns.&lt;/li&gt;
   &lt;li&gt;The server’s response can be extended to include more standardized behavior.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h4 id=&quot;about-extensibility&quot;&gt;About extensibility&lt;/h4&gt;
+&lt;p&gt;&lt;strong&gt;On the client-side (assuming that you’re using a typed language):&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Your API is integrated with the editor - it’ll suggest names, arguments, and return values - writing correct queries is much simpler.&lt;/li&gt;
+  &lt;li&gt;Your compiler will prevent the application from generating code with invalid queries.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;about-extensibility&quot;&gt;About extensibility&lt;/h3&gt;
 
 &lt;p&gt;Your server always supplies a JSON response. This means that you can add more fields to it if you’d like.&lt;/p&gt;
 
@@ -112,9 +185,9 @@
 
 &lt;script src=&quot;https://gist.github.com/harigopal/675ef7e93ac142cef4a9d7bc1038b091.js&quot;&gt;&lt;/script&gt;
 
-&lt;h3 id=&quot;however-concerns-still-exist&quot;&gt;However, concerns still exist&lt;/h3&gt;
+&lt;h2 id=&quot;however-concerns-still-exist&quot;&gt;However, concerns still exist&lt;/h2&gt;
 
-&lt;h4 id=&quot;this-isnt-what-graphql-promised&quot;&gt;This isn’t what GraphQL promised&lt;/h4&gt;
+&lt;h3 id=&quot;this-isnt-what-graphql-promised&quot;&gt;This isn’t what GraphQL promised&lt;/h3&gt;
 
 &lt;p&gt;One of the stated advantages of GraphQL is that it solves the problem of over-fetching by allowing the client to specify exactly what data it needs, leading to the server fetching &lt;em&gt;only&lt;/em&gt; the asked-for data.&lt;/p&gt;
 
@@ -127,19 +200,19 @@
 
 &lt;p&gt;Arbitrarily loading relational data and incurring huge performance hits is one of the easiest mistakes to make with GraphQL, and it’s not a problem whose solution is clear. At this point, I think it’s appropriate to mention that Shopify has released a &lt;a href=&quot;#&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;graphql-batch&lt;/code&gt; gem&lt;/a&gt; that &lt;em&gt;claims&lt;/em&gt; to tackle this issue. Unfortunately, I think it’s poorly documented, and I couldn’t really make sense of how it’s supposed to work, but it may be worth looking at if you’re already &lt;em&gt;at scale&lt;/em&gt;, and dealing with issues like over-fetching.&lt;/p&gt;
 
-&lt;h4 id=&quot;why-not-authorize-fields&quot;&gt;Why not authorize fields?&lt;/h4&gt;
+&lt;h3 id=&quot;why-not-authorize-fields&quot;&gt;Why not authorize fields?&lt;/h3&gt;
 
 &lt;p&gt;The simple answer is that it’s much easier to think about authorizing requests rather than fields. Requests always have a context which can be used to determine whether &lt;em&gt;this&lt;/em&gt; user is allowed to access some data or make a change.&lt;/p&gt;
 
 &lt;p&gt;However, if the fields that a client can request are unbounded, i.e., the type allows the client to dig deeper into relationships and ask for &lt;em&gt;distant&lt;/em&gt; data, then field-level authorization is your only option. This is why we suggest creating response types specific to queries if the requested data is complicated. Yes, this is restrictive, but requires only one authorization, and ensures that we’re limiting the response to a selection of data that we know the client is &lt;em&gt;definitely&lt;/em&gt; allowed to access.&lt;/p&gt;
 
-&lt;h4 id=&quot;how-is-this-any-different-from-rest&quot;&gt;How is this any different from REST?&lt;/h4&gt;
+&lt;h3 id=&quot;how-is-this-any-different-from-rest&quot;&gt;How is this any different from REST?&lt;/h3&gt;
 
 &lt;p&gt;First, I’d like to point you to the list of advantages written above.&lt;/p&gt;
 
 &lt;p&gt;You’ll notice that the process I’ve suggested is very similar to how REST works. And you know what? REST has some &lt;em&gt;really&lt;/em&gt; good ideas about how to manage communication - it’s just that &lt;em&gt;some&lt;/em&gt; of its requirements don’t make sense anymore when building APIs. REST has an uncomplicated approach to authorization and data-delivery that I think we should adopt even when we’re using GraphQL.&lt;/p&gt;
 
-&lt;h3 id=&quot;a-real-world-example&quot;&gt;A real-world example&lt;/h3&gt;
+&lt;h2 id=&quot;a-real-world-example&quot;&gt;A real-world example&lt;/h2&gt;
 
 &lt;p&gt;If you’d like to take a look at a Rails application that uses this approach, take a look at codebase for &lt;a href=&quot;https://github.com/SVdotCO/pupilfirst&quot;&gt;the PupilFirst LMS&lt;/a&gt;. The patterns described here were created as &lt;a href=&quot;https://www.sv.co&quot;&gt;our team&lt;/a&gt; gradually switched to using ReasonML and ReasonReact on the front-end, and adopted GraphQL in order to leverage the presence of types and a compiler.&lt;/p&gt;</content><author><name></name></author><category term="react" /><category term="reasonreact" /><summary type="html">Introduction</summary></entry><entry><title type="html">Application State is not the answer</title><link href="https://blog.harigopal.in/guides/application-state-is-not-the-answer/" rel="alternate" type="text/html" title="Application State is not the answer" /><published>2019-10-05T11:00:00+05:30</published><updated>2019-10-05T11:00:00+05:30</updated><id>https://blog.harigopal.in/guides/application-state-is-not-the-answer</id><content type="html" xml:base="https://blog.harigopal.in/guides/application-state-is-not-the-answer/">&lt;p&gt;So… this is a total retraction of my &lt;a href=&quot;https://blog.harigopal.in/guides/application-state-in-reasonreact&quot;&gt;last&lt;/a&gt; &lt;a href=&quot;https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react&quot;&gt;two&lt;/a&gt; posts.&lt;/p&gt;
 

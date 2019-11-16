@@ -1,23 +1,34 @@
-<!DOCTYPE html>
-<html lang="en"><head>
+<html class="font-sans">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>A Complete Guide to Setting up a GraphQL Server on Rails | Hari Gopal</title>
+  
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
-<title>Conventions for setting up a GraphQL Server on Rails | Hari Gopal</title>
+  <link type="application/atom+xml" rel="alternate" href="https://blog.harigopal.in/feed.xml" title="Hari Gopal" />
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>A Complete Guide to Setting up a GraphQL Server on Rails | Hari Gopal</title>
 <meta name="generator" content="Jekyll v4.0.0" />
-<meta property="og:title" content="Conventions for setting up a GraphQL Server on Rails" />
+<meta property="og:title" content="A Complete Guide to Setting up a GraphQL Server on Rails" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Introduction" />
 <meta property="og:description" content="Introduction" />
-<link rel="canonical" href="https://blog.harigopal.in/guides/conventions-for-setting-up-a-graphql-server-on-rails/" />
-<meta property="og:url" content="https://blog.harigopal.in/guides/conventions-for-setting-up-a-graphql-server-on-rails/" />
+<link rel="canonical" href="https://blog.harigopal.in/guides/a-complete-guide-to-setting-up-a-graphql-server-on-rails/" />
+<meta property="og:url" content="https://blog.harigopal.in/guides/a-complete-guide-to-setting-up-a-graphql-server-on-rails/" />
 <meta property="og:site_name" content="Hari Gopal" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2019-11-05T20:20:00+05:30" />
 <script type="application/ld+json">
-{"url":"https://blog.harigopal.in/guides/conventions-for-setting-up-a-graphql-server-on-rails/","headline":"Conventions for setting up a GraphQL Server on Rails","dateModified":"2019-11-05T20:20:00+05:30","datePublished":"2019-11-05T20:20:00+05:30","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/conventions-for-setting-up-a-graphql-server-on-rails/"},"description":"Introduction","@type":"BlogPosting","@context":"https://schema.org"}</script>
+{"headline":"A Complete Guide to Setting up a GraphQL Server on Rails","dateModified":"2019-11-05T20:20:00+05:30","datePublished":"2019-11-05T20:20:00+05:30","url":"https://blog.harigopal.in/guides/a-complete-guide-to-setting-up-a-graphql-server-on-rails/","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/a-complete-guide-to-setting-up-a-graphql-server-on-rails/"},"description":"Introduction","@type":"BlogPosting","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
-<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://blog.harigopal.in/feed.xml" title="Hari Gopal" />
+
+  <link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700|Nunito+Sans:400,400i,700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <link rel="stylesheet" href="/assets/css/monokai_gist.css">
+  <link rel="icon" type="image/png" href="/favicon.png">
+
     <!-- Google Analytics -->
     <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -31,34 +42,34 @@
     </script>
     <!-- End Google Analytics -->
     </head>
-<body><header class="site-header" role="banner">
 
-  <div class="wrapper"><a class="site-title" rel="author" href="/">Hari Gopal</a><nav class="site-nav">
-        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
-        <label for="nav-trigger">
-          <span class="menu-icon">
-            <svg viewBox="0 0 18 15" width="18px" height="15px">
-              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
-            </svg>
-          </span>
-        </label>
+<body><header class="header__background bg-black text-white py-20 px-4 md:px-12 lg:px-16 xl:px-20">
+  <div class="flex flex-col lg:flex-row items-center lg:justify-between lg:items-center">
+    <a href="/">
+      <!-- <h1 class="text-5xl md:text-6xl font-serif">Hari Gopal</h1> -->
+      <img src="/assets/images/title.svg" class="max-w-xs" />
+    </a>
 
-        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
-      </nav></div>
+    <div class="text-3xl mt-8 lg:mt-0">
+      <a href="/about">
+        <img class="h-8 inline-block" src="/assets/images/address-card-solid.svg" />
+      </a>
+      <a href="https://github.com/harigopal" class="ml-2">
+        <img class="h-8 inline-block" src="/assets/images/github-brands.svg" />
+      </a>
+      <a href="https://www.linkedin.com/in/hari-gopal" class="ml-2">
+        <img class="h-8 inline-block" src="/assets/images/linkedin-brands.svg" />
+      </a>
+      <a href="https://twitter.com/harigopal" class="ml-2">
+        <img class="h-8 inline-block" src="/assets/images/twitter-square-brands.svg" />
+      </a>
+    </div>
+  </div>
 </header>
-<main class="page-content" aria-label="Content">
-      <div class="wrapper">
-        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
-
-  <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">Conventions for setting up a GraphQL Server on Rails</h1>
-    <p class="post-meta">
-      <time class="dt-published" datetime="2019-11-05T20:20:00+05:30" itemprop="datePublished">Nov 5, 2019
-      </time></p>
-  </header>
-
-  <div class="post-content e-content" itemprop="articleBody">
-    <h2 id="introduction">Introduction</h2>
+<main class="py-8 md:pt-12 px-4 md:px-12 lg:px-16 xl:px-20">
+    <div class="theme__post">
+  <h1>A Complete Guide to Setting up a GraphQL Server on Rails</h1>
+  <h2 id="introduction">Introduction</h2>
 
 <p><em>“Convention over configuration”</em> is one of the reasons Rails became as popular as it did. Conventions allow developers to be productive without <a href="https://en.wiktionary.org/wiki/bikeshedding"><em>bike-shedding</em></a>. However, introducing new concepts to Rails involves a period of experimentation during which there are no answers to troublesome questions.</p>
 
@@ -71,21 +82,87 @@
   <li>How do I avoid N+1 queries?</li>
 </ol>
 
-<h3 id="start-with-graphql-ruby">Start with <code class="highlighter-rouge">graphql-ruby</code></h3>
+<h2 id="start-with-graphql-ruby">Start with <em>graphql-ruby</em></h2>
 
-<p>Use <a href="https://graphql-ruby.org/getting_started">the gem’s documentation</a> to install and get started with <code class="highlighter-rouge">graphql-ruby</code>. The steps are straight-forward and well-documented, but I suggest not setting up queries and mutations yet - we’ll get to that.</p>
+<p>We’ll be using the <a href="https://graphql-ruby.org/getting_started">well-documented <code class="highlighter-rouge">graphql-ruby</code> gem</a> to get started with setting up a GraphQL server on Rails. If you’re someone who’s already familiar with <code class="highlighter-rouge">graphql-ruby</code>, feel free to <a href="#here-be-dragons">skip this section</a>.</p>
 
-<p>Just like with Facebook’s documentation about authorization in GraphQL, the <a href="https://graphql-ruby.org/authorization/overview.html#authorization-in-your-business-logic">gem’s documentation also suggests pushing the responsibility into <em>business</em> logic</a>, specifically into model methods that accept <code class="highlighter-rouge">context</code> and decide what kind of relation or data is accessible for <em>that</em> user.</p>
+<ol>
+  <li>Add <code class="highlighter-rouge">gem 'graphql-ruby', '~&gt; 1.9'</code> to your <code class="highlighter-rouge">Gemfile</code>.</li>
+  <li>Run <code class="highlighter-rouge">bundle install</code> on the command line.</li>
+  <li>Run the gem’s installation generator: <code class="highlighter-rouge">rails generate graphql:install</code>.
+    <ul>
+      <li>If Rails complains that it can’t find <code class="highlighter-rouge">graphql:install</code>, try again after stopping <code class="highlighter-rouge">spring</code>, with <code class="highlighter-rouge">bin/spring stop</code>.</li>
+    </ul>
+  </li>
+  <li>The previous step will have updated the <code class="highlighter-rouge">Gemfile</code>, so you’ll need run <code class="highlighter-rouge">bundle install</code> again.</li>
+</ol>
 
-<p>I’d like to suggest an alternative.</p>
+<p>At this point, <code class="highlighter-rouge">graphql-ruby</code> is all set up. Let’s take a quick look at what the gem added to our Rails application, so that the following steps are easier to understand.</p>
 
-<h3 id="resolvers-authorize-and-fetch-data"><em>Resolvers</em> authorize and fetch data</h3>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>app/
+├─ config/routes.rb          (updated to include /graphql, and /graphiql)
+├─ controllers/
+|  └─ graphql_controller.rb  (all requests are handled by the execute action)
+└─ graphql/
+   ├─ my_rails_app_schema.rb (the web of interconnected types starts here)
+   ├─ types/
+   |  ├─ query_type.rb       (base type for all queries)
+   |  ├─ mutation_type.rb    (base type for all mutations)
+   |  └─ base_*.rb           (many other base types - object, enum, etc.)
+   └─ mutations/
+      └─ .keep               (empty - we haven't made any mutations yet)
+</code></pre></div></div>
+
+<p>If we take a look inside the <code class="highlighter-rouge">routes.rb</code> file, we can see that a new <code class="highlighter-rouge">/graphql</code> path is handled by the <code class="highlighter-rouge">GraphqlController#execute</code> method:</p>
+
+<script src="https://gist.github.com/harigopal/877e2d5c9f79c1c1887e8ee9538d1bdd.js"></script>
+
+<p>Notice how the incoming query is passed onto the schema (along with <em>context</em>) for execution. The <em>schema</em> defines only two things right now:</p>
+
+<script src="https://gist.github.com/harigopal/d6a8c4e27e1df99c7ef84db39b9b5e5e.js"></script>
+
+<p>The schema says that mutations can be found in <code class="highlighter-rouge">Types::MutationType</code> and queries in <code class="highlighter-rouge">Types::QueryType</code>. If we take a look in either, we’ll see a dummy field that we can play around with.</p>
+
+<p>One thing that I glossed over in <code class="highlighter-rouge">routes.rb</code> is that the gem also mounted the awesome <em>GraphiQL</em> app on the <code class="highlighter-rouge">/graphiql</code> path. Visit the <code class="highlighter-rouge">/graphiql</code> path in your browser, and try running the following query there:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>query {
+  testField
+}
+</code></pre></div></div>
+
+<p>You should get this response:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  "data": {
+    "testField": "Hello World!"
+  }
+}
+</code></pre></div></div>
+
+<p>There you go! Now that we’re done with our whirlwind tour of the <code class="highlighter-rouge">graphql-ruby</code> gem, let’s start digging a bit deeper.</p>
+
+<h2 id="here-be-dragons">Here Be Dragons</h2>
+
+<p>While the <code class="highlighter-rouge">graphql-ruby</code> gem has added a <em>ton</em> of functionality to our app, it doesn’t really go into detail as to what the best practices are for actually <em>using</em> the gem. Specifically, as mentioned at the beginning of this guide, two issues that are glossed over are:</p>
+
+<ol>
+  <li>How to handle authorization, and…</li>
+  <li>How to efficiently query data.</li>
+</ol>
+
+<p>Just like the <a href="https://graphql.org/learn/authorization/">official documentation about authorization in GraphQL</a>, the <a href="https://graphql-ruby.org/authorization/overview.html#authorization-in-your-business-logic">gem’s documentation</a> also suggests pushing the responsibility for authorization into <em>business</em> logic, specifically into model methods that accept <code class="highlighter-rouge">context</code> and decide what kind of relation or data is accessible for <em>that</em> user.</p>
+
+<p>As for the potential for N+1 queries, it’s pretty much ignored altogether - I’m guessing that you’re expected to handle this on a case-by-case basis.</p>
+
+<p>I’d like to suggest an alternative: new <em>conventions</em>.</p>
+
+<h2 id="resolvers-authorize-and-fetch-data"><em>Resolvers</em> authorize and fetch data</h2>
 
 <p>Let’s start by adding an <code class="highlighter-rouge">ApplicationQuery</code> class that’ll act as the base class for <em>resolvers</em> and <em>mutators</em>:</p>
 
 <script src="https://gist.github.com/harigopal/2270db1662f697fbbf8fd3303aca2029.js"></script>
 
-<p>With that in place, we can start writing <em>resolver</em> objects that will help us retrieve properly authorized data for GraphQL queries. Let’s take the example of a query that asks for a list of users:</p>
+<p>With that in place, we can start writing <em>resolver</em> objects that will help us retrieve properly authorized data for GraphQL queries. Let’s start by creating a query that asks for a list of users:</p>
 
 <script src="https://gist.github.com/harigopal/124000d16b0188d283c6ed92763b1f4e.js"></script>
 
@@ -113,7 +190,7 @@
   <li>Instead of a relation, the <code class="highlighter-rouge">user</code> method in the resolver returns a <code class="highlighter-rouge">User</code> object, since the <em>type</em> for the query is a single object.</li>
 </ol>
 
-<h3 id="mutators-authorize-modify-and-supply-a-response"><em>Mutators</em> authorize, modify, and supply a response</h3>
+<h2 id="mutators-authorize-modify-and-supply-a-response"><em>Mutators</em> authorize, modify, and supply a response</h2>
 
 <p>GraphQL mutations aren’t really all that different from queries. Mutations are queries that are, <em>by convention</em>, allowed to modify data. And just like queries, they too can return structured data.</p>
 
@@ -135,7 +212,7 @@
 
 <p>As with queries, there is an assumption that the <code class="highlighter-rouge">create_comment</code> method will return an object that responds to the <em>fields</em> mentioned in the mutation class. In this case, that’s <code class="highlighter-rouge">id</code>, and as long as the service returns a <code class="highlighter-rouge">Comment</code> object, everything should work as expected.</p>
 
-<h4 id="create-types-for-complex-returns">Create types for complex returns</h4>
+<h3 id="create-types-for-complex-returns">Create types for complex returns</h3>
 
 <p>While GraphQL unsubtly suggests the use of relations in your response types, there is no need to follow that pattern. Often, it’s much more straight-forward to create a custom type that fits exactly the data that you want to return:</p>
 
@@ -143,19 +220,26 @@
 
 <p>Here, the custom <code class="highlighter-rouge">UpdatePostType</code> is used to compose exactly what the UI requires in this imaginary app, when a post is updated.</p>
 
-<h3 id="what-are-the-advantages-of-this-approach">What are the advantages of this approach?</h3>
+<h2 id="what-are-the-advantages-of-this-approach">What are the advantages of this approach?</h2>
+
+<p><strong>On the server-side:</strong></p>
 
 <ol>
   <li>You have a self-documenting API. Testing it is a breeze thanks to GraphiQL.</li>
-  <li>Your API is integrated with the editor - it’ll suggest names, arguments, and return values - writing correct queries is much simpler.</li>
-  <li>Your compiler will prevent the application from generating code with invalid queries.</li>
   <li>The Rails server will crash with a useful error message if your code ever disobeys the type specification.</li>
   <li>Pagination of resources is simple and straight-forward, thanks to <a href="https://graphql-ruby.org/relay/connections.html">built-in, well-thought-out conventions</a> that cover a large variety of pagination-use-cases.</li>
   <li>Avoids a lot of bike-shedding. <code class="highlighter-rouge">PUT</code> vs <code class="highlighter-rouge">PATCH</code>? <code class="highlighter-rouge">400</code> vs <code class="highlighter-rouge">422</code>? How to handle deprecation? These questions, and more, are no longer concerns.</li>
   <li>The server’s response can be extended to include more standardized behavior.</li>
 </ol>
 
-<h4 id="about-extensibility">About extensibility</h4>
+<p><strong>On the client-side (assuming that you’re using a typed language):</strong></p>
+
+<ol>
+  <li>Your API is integrated with the editor - it’ll suggest names, arguments, and return values - writing correct queries is much simpler.</li>
+  <li>Your compiler will prevent the application from generating code with invalid queries.</li>
+</ol>
+
+<h3 id="about-extensibility">About extensibility</h3>
 
 <p>Your server always supplies a JSON response. This means that you can add more fields to it if you’d like.</p>
 
@@ -171,9 +255,9 @@
 
 <script src="https://gist.github.com/harigopal/675ef7e93ac142cef4a9d7bc1038b091.js"></script>
 
-<h3 id="however-concerns-still-exist">However, concerns still exist</h3>
+<h2 id="however-concerns-still-exist">However, concerns still exist</h2>
 
-<h4 id="this-isnt-what-graphql-promised">This isn’t what GraphQL promised</h4>
+<h3 id="this-isnt-what-graphql-promised">This isn’t what GraphQL promised</h3>
 
 <p>One of the stated advantages of GraphQL is that it solves the problem of over-fetching by allowing the client to specify exactly what data it needs, leading to the server fetching <em>only</em> the asked-for data.</p>
 
@@ -186,51 +270,25 @@
 
 <p>Arbitrarily loading relational data and incurring huge performance hits is one of the easiest mistakes to make with GraphQL, and it’s not a problem whose solution is clear. At this point, I think it’s appropriate to mention that Shopify has released a <a href="#"><code class="highlighter-rouge">graphql-batch</code> gem</a> that <em>claims</em> to tackle this issue. Unfortunately, I think it’s poorly documented, and I couldn’t really make sense of how it’s supposed to work, but it may be worth looking at if you’re already <em>at scale</em>, and dealing with issues like over-fetching.</p>
 
-<h4 id="why-not-authorize-fields">Why not authorize fields?</h4>
+<h3 id="why-not-authorize-fields">Why not authorize fields?</h3>
 
 <p>The simple answer is that it’s much easier to think about authorizing requests rather than fields. Requests always have a context which can be used to determine whether <em>this</em> user is allowed to access some data or make a change.</p>
 
 <p>However, if the fields that a client can request are unbounded, i.e., the type allows the client to dig deeper into relationships and ask for <em>distant</em> data, then field-level authorization is your only option. This is why we suggest creating response types specific to queries if the requested data is complicated. Yes, this is restrictive, but requires only one authorization, and ensures that we’re limiting the response to a selection of data that we know the client is <em>definitely</em> allowed to access.</p>
 
-<h4 id="how-is-this-any-different-from-rest">How is this any different from REST?</h4>
+<h3 id="how-is-this-any-different-from-rest">How is this any different from REST?</h3>
 
 <p>First, I’d like to point you to the list of advantages written above.</p>
 
 <p>You’ll notice that the process I’ve suggested is very similar to how REST works. And you know what? REST has some <em>really</em> good ideas about how to manage communication - it’s just that <em>some</em> of its requirements don’t make sense anymore when building APIs. REST has an uncomplicated approach to authorization and data-delivery that I think we should adopt even when we’re using GraphQL.</p>
 
-<h3 id="a-real-world-example">A real-world example</h3>
+<h2 id="a-real-world-example">A real-world example</h2>
 
 <p>If you’d like to take a look at a Rails application that uses this approach, take a look at codebase for <a href="https://github.com/SVdotCO/pupilfirst">the PupilFirst LMS</a>. The patterns described here were created as <a href="https://www.sv.co">our team</a> gradually switched to using ReasonML and ReasonReact on the front-end, and adopted GraphQL in order to leverage the presence of types and a compiler.</p>
 
-  </div><a class="u-url" href="/guides/conventions-for-setting-up-a-graphql-server-on-rails/" hidden></a>
-</article>
-
-      </div>
-    </main><footer class="site-footer h-card">
-  <data class="u-url" href="/"></data>
-
-  <div class="wrapper">
-
-    <h2 class="footer-heading">Hari Gopal</h2>
-
-    <div class="footer-col-wrapper">
-      <div class="footer-col footer-col-1">
-        <ul class="contact-list">
-          <li class="p-name">Hari Gopal</li><li><a class="u-email" href="mailto:mail@harigopal.in">mail@harigopal.in</a></li></ul>
-      </div>
-
-      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/harigopal"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">harigopal</span></a></li><li><a href="https://www.twitter.com/harigopal"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">harigopal</span></a></li></ul>
 </div>
 
-      <div class="footer-col footer-col-3">
-        <p>My thoughts on programming, and more.
-</p>
-      </div>
-    </div>
-
-  </div>
-
-</footer>
+  </main>
 </body>
 
 </html>
