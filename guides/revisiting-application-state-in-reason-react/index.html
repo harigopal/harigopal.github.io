@@ -7,9 +7,9 @@
   
   <meta charset="utf-8">
   <link type="application/atom+xml" rel="alternate" href="https://blog.harigopal.in/feed.xml" title="Hari Gopal" />
-  <!-- Begin Jekyll SEO tag v2.6.1 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
 <title>Revisiting Application State in ReasonReact | Hari Gopal</title>
-<meta name="generator" content="Jekyll v4.0.0" />
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="Revisiting Application State in ReasonReact" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="My thoughts on programming, and more." />
@@ -19,8 +19,10 @@
 <meta property="og:site_name" content="Hari Gopal" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2018-09-08T15:30:00+05:30" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Revisiting Application State in ReasonReact" />
 <script type="application/ld+json">
-{"headline":"Revisiting Application State in ReasonReact","dateModified":"2018-09-08T15:30:00+05:30","datePublished":"2018-09-08T15:30:00+05:30","url":"https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/"},"description":"My thoughts on programming, and more.","@type":"BlogPosting","@context":"https://schema.org"}</script>
+{"@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/"},"description":"My thoughts on programming, and more.","headline":"Revisiting Application State in ReasonReact","dateModified":"2018-09-08T15:30:00+05:30","url":"https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/","datePublished":"2018-09-08T15:30:00+05:30","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
   <link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700|Nunito+Sans:400,400i,700&display=swap"
@@ -74,16 +76,16 @@
 <h2 id="tldr-aka-just-tell-me-what-you-were-wrong-about">TL;DR (aka, just tell me what you were wrong about)</h2>
 
 <ol>
-  <li>Passing <code class="highlighter-rouge">appState</code> to all components is not a good idea. <code class="highlighter-rouge">appState</code> contains <em>unresolved possible states</em> that individual components usually don’t care about, but, which you’ll still be forced to handle since ReasonML is a strongly typed language.</li>
-  <li>Instead of passing state, pass <code class="highlighter-rouge">ctx</code> (context). My current approach is to pass a <code class="highlighter-rouge">ctx</code> record to each component that contains the <em>resolved</em> information <em>derived</em> from state, that the particular component <em>needs</em>. This allows the component to function with <em>certain knowledge</em> about the context in which it will render.</li>
-  <li>Passing <code class="highlighter-rouge">appSend</code> to all components (like before) is fine — it’s just a function with which we <em>affect</em> application state.</li>
+  <li>Passing <code class="language-plaintext highlighter-rouge">appState</code> to all components is not a good idea. <code class="language-plaintext highlighter-rouge">appState</code> contains <em>unresolved possible states</em> that individual components usually don’t care about, but, which you’ll still be forced to handle since ReasonML is a strongly typed language.</li>
+  <li>Instead of passing state, pass <code class="language-plaintext highlighter-rouge">ctx</code> (context). My current approach is to pass a <code class="language-plaintext highlighter-rouge">ctx</code> record to each component that contains the <em>resolved</em> information <em>derived</em> from state, that the particular component <em>needs</em>. This allows the component to function with <em>certain knowledge</em> about the context in which it will render.</li>
+  <li>Passing <code class="language-plaintext highlighter-rouge">appSend</code> to all components (like before) is fine — it’s just a function with which we <em>affect</em> application state.</li>
 </ol>
 
 <h2 id="and-in-much-more-detail">And in much more detail…</h2>
 
 <p>I’d written about a method to maintain <a href="https://medium.com/@elvesbane/application-state-in-reasonreact-1626859366a8">Application State in ReasonReact</a> back in April, and I’ve worked with ReasonML a lot more since then, completing the conversion of <a href="https://github.com/turakuapp/turaku-client/">Turaku’s codebase</a> from ES6 to Reason, and it turns out that my approach in the previous article didn’t <em>work</em> as well as I expected it to.</p>
 
-<p>Passing around application state as <code class="highlighter-rouge">appState</code> is a bad idea with ReasonML. Passing around <code class="highlighter-rouge">appSend</code> appears to be fine.</p>
+<p>Passing around application state as <code class="language-plaintext highlighter-rouge">appState</code> is a bad idea with ReasonML. Passing around <code class="language-plaintext highlighter-rouge">appSend</code> appears to be fine.</p>
 
 <p><img src="https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_2_return.png" alt="Do not pass appState" /></p>
 
@@ -95,29 +97,29 @@
 
 <script src="https://gist.github.com/harigopal/15dc0ae18cbfe96852755a9c3b505a59.js"></script>
 
-<p>Looking at the basic type <code class="highlighter-rouge">state</code>, it’s pretty easy to tell that we’ve described our user’s state in the application as <em>always</em> being one of two — either the user is signed out (and on a public page), or the user is signed in (and has some corresponding user data).</p>
+<p>Looking at the basic type <code class="language-plaintext highlighter-rouge">state</code>, it’s pretty easy to tell that we’ve described our user’s state in the application as <em>always</em> being one of two — either the user is signed out (and on a public page), or the user is signed in (and has some corresponding user data).</p>
 
-<p><em>Variants</em> allow ReasonML’s compiler to ensure that whenever we handle a value of a <em>variant</em> type, all of its possibilities are considered. For example, in the root component, when trying to determine which view to render, we could use <code class="highlighter-rouge">switch</code>, like so:</p>
+<p><em>Variants</em> allow ReasonML’s compiler to ensure that whenever we handle a value of a <em>variant</em> type, all of its possibilities are considered. For example, in the root component, when trying to determine which view to render, we could use <code class="language-plaintext highlighter-rouge">switch</code>, like so:</p>
 
 <script src="https://gist.github.com/harigopal/d902f64731da6718127a022dced3a0c1.js"></script>
 
-<p>The compiler can be configured to either issue warnings or raise errors if we’ve forgotten to deal with all the defined <em>variants</em> that a type can <em>be</em>. You’ll notice that I’m not passing <code class="highlighter-rouge">appState</code> to any of these components, yet. So let’s try that with the <code class="highlighter-rouge">Dashboard</code> component.</p>
+<p>The compiler can be configured to either issue warnings or raise errors if we’ve forgotten to deal with all the defined <em>variants</em> that a type can <em>be</em>. You’ll notice that I’m not passing <code class="language-plaintext highlighter-rouge">appState</code> to any of these components, yet. So let’s try that with the <code class="language-plaintext highlighter-rouge">Dashboard</code> component.</p>
 
-<p>The <code class="highlighter-rouge">Dashboard</code> contains the main user interface that a signed in user is expected to interact with. Let’s send it <code class="highlighter-rouge">appState</code> and <code class="highlighter-rouge">appSend</code> …</p>
+<p>The <code class="language-plaintext highlighter-rouge">Dashboard</code> contains the main user interface that a signed in user is expected to interact with. Let’s send it <code class="language-plaintext highlighter-rouge">appState</code> and <code class="language-plaintext highlighter-rouge">appSend</code> …</p>
 
 <script src="https://gist.github.com/harigopal/e1b76503351eb7510389ac5c7dd56c66.js"></script>
 
-<p>… and then take a peek inside <code class="highlighter-rouge">Dashboard</code> to see how we could render a list of available teams:</p>
+<p>… and then take a peek inside <code class="language-plaintext highlighter-rouge">Dashboard</code> to see how we could render a list of available teams:</p>
 
 <script src="https://gist.github.com/harigopal/9c687bd91dce3b2b6ebed0447a3f946d.js"></script>
 
-<p>The problem should be obvious now. <code class="highlighter-rouge">appState</code> is a <em>variant</em> (or can contain nested variants), and its contents can only be accessed through pattern-matching. Because of this, the component is being forced to handle all possible cases even though we know that the dashboard will never be rendered without a user being signed in.</p>
+<p>The problem should be obvious now. <code class="language-plaintext highlighter-rouge">appState</code> is a <em>variant</em> (or can contain nested variants), and its contents can only be accessed through pattern-matching. Because of this, the component is being forced to handle all possible cases even though we know that the dashboard will never be rendered without a user being signed in.</p>
 
 <p>Thankfully, the fix is simple. It is to <strong>not</strong> pass application state around.</p>
 
 <p>Application state is a structure that represents all possible states that the application could be in. However, the process of rendering an <em>inner</em> component involves the <em>condensing</em> of those possibilities. What we <em>should</em> do, is to define the <em>context</em> in which the component is expected to render.</p>
 
-<p>In the above example, it is meaningless for the <code class="highlighter-rouge">Dashboard</code> component to render for a signed out user, so the fix is to ensure that the component’s expected context includes the information that is available with a signed in user…</p>
+<p>In the above example, it is meaningless for the <code class="language-plaintext highlighter-rouge">Dashboard</code> component to render for a signed out user, so the fix is to ensure that the component’s expected context includes the information that is available with a signed in user…</p>
 
 <script src="https://gist.github.com/harigopal/73081eca3487b7a8a4c4055c3e1f27ea.js"></script>
 
@@ -129,19 +131,19 @@
 
 <p>That’s it… except… it looks like we’re back to the days of <em>prop drilling</em> - which I’d advocated against in my last article.</p>
 
-<p>We are, but only partially. Note that we’re still passing <code class="highlighter-rouge">appSend</code> around, allowing us to eliminate callback functions. <code class="highlighter-rouge">appSend</code> gives components access to <em>all</em> of the application state reducer’s <em>actions</em>.</p>
+<p>We are, but only partially. Note that we’re still passing <code class="language-plaintext highlighter-rouge">appSend</code> around, allowing us to eliminate callback functions. <code class="language-plaintext highlighter-rouge">appSend</code> gives components access to <em>all</em> of the application state reducer’s <em>actions</em>.</p>
 
-<p>This is also where the <code class="highlighter-rouge">ctx</code> record comes in. I’ve found it really convenient to wrap everything in a single record so that I can pass it around functions - this also helps avoid the worst effects of prop drilling - where you’d have to thread new props around functions within components to get them where they need to be. By wrapping the props into <code class="highlighter-rouge">ctx</code>, and treating it as a bag of values to be accessed wherever needed, we’re restricting the <em>threading / drilling</em> to the entry and exit points of components.</p>
+<p>This is also where the <code class="language-plaintext highlighter-rouge">ctx</code> record comes in. I’ve found it really convenient to wrap everything in a single record so that I can pass it around functions - this also helps avoid the worst effects of prop drilling - where you’d have to thread new props around functions within components to get them where they need to be. By wrapping the props into <code class="language-plaintext highlighter-rouge">ctx</code>, and treating it as a bag of values to be accessed wherever needed, we’re restricting the <em>threading / drilling</em> to the entry and exit points of components.</p>
 
-<p>It also makes sense for the <code class="highlighter-rouge">ctx</code> record to grow, as it’s passed into deeper components, with parent components <em>resolving</em> more of the possibilities of application state, and passing a more <em>definite</em> context to their children.</p>
+<p>It also makes sense for the <code class="language-plaintext highlighter-rouge">ctx</code> record to grow, as it’s passed into deeper components, with parent components <em>resolving</em> more of the possibilities of application state, and passing a more <em>definite</em> context to their children.</p>
 
-<p>Obviously, using <code class="highlighter-rouge">ctx</code> record is optional. Passing individual props also works, and deciding between wrapping props or leaving them unwrapped seems to be a decision between reducing the overhead of prop-drilling, or improving the cleanliness of the component call-site.</p>
+<p>Obviously, using <code class="language-plaintext highlighter-rouge">ctx</code> record is optional. Passing individual props also works, and deciding between wrapping props or leaving them unwrapped seems to be a decision between reducing the overhead of prop-drilling, or improving the cleanliness of the component call-site.</p>
 
 <p><img src="https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_4_jetpack.png" alt="A jetpack, not a backpack" /></p>
 
 <h2 id="so-whats-the-takeaway">So what’s the takeaway?</h2>
 
-<p>Passing <code class="highlighter-rouge">appState</code> was a <em>pattern</em> that worked well with dynamic languages. In fact, if we structure the state similar to how we’d write it in a dynamic language - without using the features that strong typing gives us (such as variants), then it’s possible to continue to use <code class="highlighter-rouge">appState</code>.</p>
+<p>Passing <code class="language-plaintext highlighter-rouge">appState</code> was a <em>pattern</em> that worked well with dynamic languages. In fact, if we structure the state similar to how we’d write it in a dynamic language - without using the features that strong typing gives us (such as variants), then it’s possible to continue to use <code class="language-plaintext highlighter-rouge">appState</code>.</p>
 
 <p><em>But</em>, if we use ReasonML <em>correctly</em>, with the intention of <em>making illegal states unrepresentable</em>, then old patterns prove insufficient. This partial retraction of mine grew out of a better understanding of how to write to functional code.</p>
 

@@ -7,9 +7,9 @@
   
   <meta charset="utf-8">
   <link type="application/atom+xml" rel="alternate" href="https://blog.harigopal.in/feed.xml" title="Hari Gopal" />
-  <!-- Begin Jekyll SEO tag v2.6.1 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
 <title>Validating Rails API requests with Reform | Hari Gopal</title>
-<meta name="generator" content="Jekyll v4.0.0" />
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="Validating Rails API requests with Reform" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="I’ve written about the creation of custom exception classes to organize code in Rails web applications and APIs. However, while going through my previous article, I realized that my final example glossed over how request parameter validation failures would be detected by the API in the first place." />
@@ -19,8 +19,10 @@
 <meta property="og:site_name" content="Hari Gopal" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2017-09-13T00:00:00+05:30" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Validating Rails API requests with Reform" />
 <script type="application/ld+json">
-{"headline":"Validating Rails API requests with Reform","dateModified":"2017-09-13T00:00:00+05:30","datePublished":"2017-09-13T00:00:00+05:30","url":"https://blog.harigopal.in/guides/validating-rails-api-requests-with-reform/","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/validating-rails-api-requests-with-reform/"},"description":"I’ve written about the creation of custom exception classes to organize code in Rails web applications and APIs. However, while going through my previous article, I realized that my final example glossed over how request parameter validation failures would be detected by the API in the first place.","@type":"BlogPosting","@context":"https://schema.org"}</script>
+{"@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/validating-rails-api-requests-with-reform/"},"description":"I’ve written about the creation of custom exception classes to organize code in Rails web applications and APIs. However, while going through my previous article, I realized that my final example glossed over how request parameter validation failures would be detected by the API in the first place.","headline":"Validating Rails API requests with Reform","dateModified":"2017-09-13T00:00:00+05:30","url":"https://blog.harigopal.in/guides/validating-rails-api-requests-with-reform/","datePublished":"2017-09-13T00:00:00+05:30","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
   <link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700|Nunito+Sans:400,400i,700&display=swap"
@@ -75,9 +77,9 @@
 
 <h2 id="an-intro-to-form-objects-for-those-unfamiliar-with-it">An intro to form objects, for those unfamiliar with it.</h2>
 
-<p>If you haven’t used form objects before, know that they allow you to decouple validation of input from the user (via forms), and the validation of data managed by a <code class="highlighter-rouge">Model</code>. My primary reason for favoring this separation is that it allows the model validations to be less constrained than form validation.</p>
+<p>If you haven’t used form objects before, know that they allow you to decouple validation of input from the user (via forms), and the validation of data managed by a <code class="language-plaintext highlighter-rouge">Model</code>. My primary reason for favoring this separation is that it allows the model validations to be less constrained than form validation.</p>
 
-<p>Validations failures from a model should be <strong>unexpected</strong>, whereas form validations are always <strong>expected</strong> (users make mistakes) and thus should be handled as a natural part of your application. Decoupling in this manner also makes it easy to manage multiple forms that interact with one or more models, with different validation requirements. Google <code class="highlighter-rouge">form validation vs model validation</code> to learn more.</p>
+<p>Validations failures from a model should be <strong>unexpected</strong>, whereas form validations are always <strong>expected</strong> (users make mistakes) and thus should be handled as a natural part of your application. Decoupling in this manner also makes it easy to manage multiple forms that interact with one or more models, with different validation requirements. Google <code class="language-plaintext highlighter-rouge">form validation vs model validation</code> to learn more.</p>
 
 <h2 id="but-api-s-dont-have-forms-right">But API-s don’t <em>have</em> forms. Right?</h2>
 
@@ -88,45 +90,45 @@
 <p>Let’s assume that we need to implement a simple <em>invite</em> route for our API - to invite other users to join our platform. It accepts just two parameters:</p>
 
 <ol>
-  <li><code class="highlighter-rouge">name</code></li>
-  <li><code class="highlighter-rouge">email</code></li>
+  <li><code class="language-plaintext highlighter-rouge">name</code></li>
+  <li><code class="language-plaintext highlighter-rouge">email</code></li>
 </ol>
 
-<p>…and responds with a <code class="highlighter-rouge">200 OK</code> if the invitation can be processed.</p>
+<p>…and responds with a <code class="language-plaintext highlighter-rouge">200 OK</code> if the invitation can be processed.</p>
 
 <p>However, as with all such requests, there are conditions which must be fulfilled before the request can be executed. Let’s list down three simple requirements:</p>
 
 <ol>
-  <li><code class="highlighter-rouge">email</code> is required.</li>
-  <li><code class="highlighter-rouge">email</code> must look like an email address.</li>
-  <li><code class="highlighter-rouge">name</code> is optional, but if present, it must be longer than 3 characters.</li>
+  <li><code class="language-plaintext highlighter-rouge">email</code> is required.</li>
+  <li><code class="language-plaintext highlighter-rouge">email</code> must look like an email address.</li>
+  <li><code class="language-plaintext highlighter-rouge">name</code> is optional, but if present, it must be longer than 3 characters.</li>
 </ol>
 
 <p>The last one is a bit contrived, but this is just a demonstration. ¯_(ツ)_/¯</p>
 
 <h2 id="create-a-reform-form">Create a Reform Form.</h2>
 
-<p>Let’s get the basics out of the way. Setting up <em>Reform</em> should be pretty simple. Add <code class="highlighter-rouge">gem 'reform-rails', '~&gt; 0.1.7'</code> to your <code class="highlighter-rouge">Gemfile</code>, and run <code class="highlighter-rouge">bundle install</code>. That should be it. Now, let’s build our form object.</p>
+<p>Let’s get the basics out of the way. Setting up <em>Reform</em> should be pretty simple. Add <code class="language-plaintext highlighter-rouge">gem 'reform-rails', '~&gt; 0.1.7'</code> to your <code class="language-plaintext highlighter-rouge">Gemfile</code>, and run <code class="language-plaintext highlighter-rouge">bundle install</code>. That should be it. Now, let’s build our form object.</p>
 
 <script src="https://gist.github.com/harigopal/1de28e963edeed26e9580fb00749e2a3.js"></script>
 
-<p><code class="highlighter-rouge">reform-rails</code> allows you to write validations in much the same way that you’d write validations for regular Rails models. Granted that this is a very simple form, but even complex Reform forms are readable, and its API is rich and flexible.</p>
+<p><code class="language-plaintext highlighter-rouge">reform-rails</code> allows you to write validations in much the same way that you’d write validations for regular Rails models. Granted that this is a very simple form, but even complex Reform forms are readable, and its API is rich and flexible.</p>
 
-<p>If you’re confused by <code class="highlighter-rouge">email: true</code>, I’m assuming the presence of a custom Rails validator. For an example, check out <a href="http://guides.rubyonrails.org/active_record_validations.html#custom-validators">Rails’ documentation on adding custom validators</a>.</p>
+<p>If you’re confused by <code class="language-plaintext highlighter-rouge">email: true</code>, I’m assuming the presence of a custom Rails validator. For an example, check out <a href="http://guides.rubyonrails.org/active_record_validations.html#custom-validators">Rails’ documentation on adding custom validators</a>.</p>
 
-<p>Note that I’m overriding the default <code class="highlighter-rouge">save</code> method, since I don’t want Reform touching the model. I advise keeping code handling the <em>actual</em> invitation out of the form. Our form is responsible for data validation, not operations. <a href="/guides/extending-ruby-on-rails-with-service-objects">Leave business logic to services.</a></p>
+<p>Note that I’m overriding the default <code class="language-plaintext highlighter-rouge">save</code> method, since I don’t want Reform touching the model. I advise keeping code handling the <em>actual</em> invitation out of the form. Our form is responsible for data validation, not operations. <a href="/guides/extending-ruby-on-rails-with-service-objects">Leave business logic to services.</a></p>
 
 <h2 id="set-up-the-endpoint">Set up the endpoint.</h2>
 
 <script src="https://gist.github.com/harigopal/ec811f2bc3cf7e9f18006a3a3349c4dd.js"></script>
 
-<p><em>Reform</em> requires explicit validation which, I think, reads better than the <em>Rails way</em>. Unlike Rails’ <code class="highlighter-rouge">if @user.save</code>, <em>Reform</em> asks the form object to validate the form with the supplied params, <em>and then</em> do something if the validation passes (or something else when it fails).</p>
+<p><em>Reform</em> requires explicit validation which, I think, reads better than the <em>Rails way</em>. Unlike Rails’ <code class="language-plaintext highlighter-rouge">if @user.save</code>, <em>Reform</em> asks the form object to validate the form with the supplied params, <em>and then</em> do something if the validation passes (or something else when it fails).</p>
 
-<p>In this case, a failure to validate lets us raise <code class="highlighter-rouge">ValidationException</code>, passing it the form object. This is a custom exception which <a href="/guides/exceptions-as-first-class-citizens-on-rails">I’d elaborated on in a previous article</a>. Let’s take another look.</p>
+<p>In this case, a failure to validate lets us raise <code class="language-plaintext highlighter-rouge">ValidationException</code>, passing it the form object. This is a custom exception which <a href="/guides/exceptions-as-first-class-citizens-on-rails">I’d elaborated on in a previous article</a>. Let’s take another look.</p>
 
 <h2 id="validationfailureexception">ValidationFailureException</h2>
 
-<p>I’m going to extend an <code class="highlighter-rouge">ApplicationException</code> class that I went into detail in my article on exception classes:</p>
+<p>I’m going to extend an <code class="language-plaintext highlighter-rouge">ApplicationException</code> class that I went into detail in my article on exception classes:</p>
 
 <script src="https://gist.github.com/harigopal/ab851d1f2a0a8bb8a4a70409ad03c2b2.js"></script>
 
@@ -136,7 +138,7 @@
 
 <p>Isn’t that beautiful?</p>
 
-<p>Those validation errors can now be used by the client to display the failure to the user. Obviously, this needs to be set up only once. As long as you validate params with Reform, and pass the form with the errors to <code class="highlighter-rouge">ValidationFailureException</code> when raising it, responses in a standard format are taken care of.</p>
+<p>Those validation errors can now be used by the client to display the failure to the user. Obviously, this needs to be set up only once. As long as you validate params with Reform, and pass the form with the errors to <code class="language-plaintext highlighter-rouge">ValidationFailureException</code> when raising it, responses in a standard format are taken care of.</p>
 
 <h2 id="conclusion">Conclusion</h2>
 

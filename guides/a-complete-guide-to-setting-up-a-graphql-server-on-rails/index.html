@@ -7,9 +7,9 @@
   
   <meta charset="utf-8">
   <link type="application/atom+xml" rel="alternate" href="https://blog.harigopal.in/feed.xml" title="Hari Gopal" />
-  <!-- Begin Jekyll SEO tag v2.6.1 -->
+  <!-- Begin Jekyll SEO tag v2.7.1 -->
 <title>A Complete Guide to Setting up a GraphQL Server on Rails | Hari Gopal</title>
-<meta name="generator" content="Jekyll v4.0.0" />
+<meta name="generator" content="Jekyll v4.2.0" />
 <meta property="og:title" content="A Complete Guide to Setting up a GraphQL Server on Rails" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Introduction" />
@@ -19,8 +19,10 @@
 <meta property="og:site_name" content="Hari Gopal" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2019-11-05T20:20:00+05:30" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="A Complete Guide to Setting up a GraphQL Server on Rails" />
 <script type="application/ld+json">
-{"headline":"A Complete Guide to Setting up a GraphQL Server on Rails","dateModified":"2019-11-05T20:20:00+05:30","datePublished":"2019-11-05T20:20:00+05:30","url":"https://blog.harigopal.in/guides/a-complete-guide-to-setting-up-a-graphql-server-on-rails/","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/a-complete-guide-to-setting-up-a-graphql-server-on-rails/"},"description":"Introduction","@type":"BlogPosting","@context":"https://schema.org"}</script>
+{"@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/a-complete-guide-to-setting-up-a-graphql-server-on-rails/"},"description":"Introduction","headline":"A Complete Guide to Setting up a GraphQL Server on Rails","dateModified":"2019-11-05T20:20:00+05:30","url":"https://blog.harigopal.in/guides/a-complete-guide-to-setting-up-a-graphql-server-on-rails/","datePublished":"2019-11-05T20:20:00+05:30","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
   <link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700|Nunito+Sans:400,400i,700&display=swap"
@@ -75,7 +77,7 @@
 
 <p>Setting up a GraphQL server on Rails is one of those tasks.</p>
 
-<p>This post presents a method for setting up a GraphQL server, while also tackling two issues that are generally glossed over by existing documentation surrounding the use of the <code class="highlighter-rouge">graphql-ruby</code> gem:</p>
+<p>This post presents a method for setting up a GraphQL server, while also tackling two issues that are generally glossed over by existing documentation surrounding the use of the <code class="language-plaintext highlighter-rouge">graphql-ruby</code> gem:</p>
 
 <ol>
   <li>How do I handle authorization?</li>
@@ -84,22 +86,22 @@
 
 <h2 id="start-with-graphql-ruby">Start with <em>graphql-ruby</em></h2>
 
-<p>We’ll be using the <a href="https://graphql-ruby.org/getting_started">well-documented <code class="highlighter-rouge">graphql-ruby</code> gem</a> to get started with setting up a GraphQL server on Rails. If you’re someone who’s already familiar with <code class="highlighter-rouge">graphql-ruby</code>, feel free to <a href="#here-be-dragons">skip this section</a>.</p>
+<p>We’ll be using the <a href="https://graphql-ruby.org/getting_started">well-documented <code class="language-plaintext highlighter-rouge">graphql-ruby</code> gem</a> to get started with setting up a GraphQL server on Rails. If you’re someone who’s already familiar with <code class="language-plaintext highlighter-rouge">graphql-ruby</code>, feel free to <a href="#here-be-dragons">skip this section</a>.</p>
 
 <ol>
-  <li>Add <code class="highlighter-rouge">gem 'graphql-ruby', '~&gt; 1.9'</code> to your <code class="highlighter-rouge">Gemfile</code>.</li>
-  <li>Run <code class="highlighter-rouge">bundle install</code> on the command line.</li>
-  <li>Run the gem’s installation generator: <code class="highlighter-rouge">rails generate graphql:install</code>.
+  <li>Add <code class="language-plaintext highlighter-rouge">gem 'graphql-ruby', '~&gt; 1.9'</code> to your <code class="language-plaintext highlighter-rouge">Gemfile</code>.</li>
+  <li>Run <code class="language-plaintext highlighter-rouge">bundle install</code> on the command line.</li>
+  <li>Run the gem’s installation generator: <code class="language-plaintext highlighter-rouge">rails generate graphql:install</code>.
     <ul>
-      <li>If Rails complains that it can’t find <code class="highlighter-rouge">graphql:install</code>, try again after stopping <code class="highlighter-rouge">spring</code>, with <code class="highlighter-rouge">bin/spring stop</code>.</li>
+      <li>If Rails complains that it can’t find <code class="language-plaintext highlighter-rouge">graphql:install</code>, try again after stopping <code class="language-plaintext highlighter-rouge">spring</code>, with <code class="language-plaintext highlighter-rouge">bin/spring stop</code>.</li>
     </ul>
   </li>
-  <li>The previous step will have updated the <code class="highlighter-rouge">Gemfile</code>, so you’ll need run <code class="highlighter-rouge">bundle install</code> again.</li>
+  <li>The previous step will have updated the <code class="language-plaintext highlighter-rouge">Gemfile</code>, so you’ll need run <code class="language-plaintext highlighter-rouge">bundle install</code> again.</li>
 </ol>
 
-<p>At this point, <code class="highlighter-rouge">graphql-ruby</code> is all set up. Let’s take a quick look at what the gem added to our Rails application, so that the following steps are easier to understand.</p>
+<p>At this point, <code class="language-plaintext highlighter-rouge">graphql-ruby</code> is all set up. Let’s take a quick look at what the gem added to our Rails application, so that the following steps are easier to understand.</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>app/
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>app/
 ├─ config/routes.rb          (updated to include /graphql, and /graphiql)
 ├─ controllers/
 |  └─ graphql_controller.rb  (all requests are handled by the execute action)
@@ -113,7 +115,7 @@
       └─ .keep               (empty - we haven't made any mutations yet)
 </code></pre></div></div>
 
-<p>If we take a look inside the <code class="highlighter-rouge">routes.rb</code> file, we can see that a new <code class="highlighter-rouge">/graphql</code> path is handled by the <code class="highlighter-rouge">GraphqlController#execute</code> method:</p>
+<p>If we take a look inside the <code class="language-plaintext highlighter-rouge">routes.rb</code> file, we can see that a new <code class="language-plaintext highlighter-rouge">/graphql</code> path is handled by the <code class="language-plaintext highlighter-rouge">GraphqlController#execute</code> method:</p>
 
 <script src="https://gist.github.com/harigopal/877e2d5c9f79c1c1887e8ee9538d1bdd.js"></script>
 
@@ -121,36 +123,36 @@
 
 <script src="https://gist.github.com/harigopal/d6a8c4e27e1df99c7ef84db39b9b5e5e.js"></script>
 
-<p>The schema says that mutations can be found in <code class="highlighter-rouge">Types::MutationType</code> and queries in <code class="highlighter-rouge">Types::QueryType</code>. If we take a look in either, we’ll see a dummy field that we can play around with.</p>
+<p>The schema says that mutations can be found in <code class="language-plaintext highlighter-rouge">Types::MutationType</code> and queries in <code class="language-plaintext highlighter-rouge">Types::QueryType</code>. If we take a look in either, we’ll see a dummy field that we can play around with.</p>
 
-<p>One thing that I glossed over in <code class="highlighter-rouge">routes.rb</code> is that the gem also mounted the awesome <em>GraphiQL</em> app on the <code class="highlighter-rouge">/graphiql</code> path. Visit the <code class="highlighter-rouge">/graphiql</code> path in your browser, and try running the following query there:</p>
+<p>One thing that I glossed over in <code class="language-plaintext highlighter-rouge">routes.rb</code> is that the gem also mounted the awesome <em>GraphiQL</em> app on the <code class="language-plaintext highlighter-rouge">/graphiql</code> path. Visit the <code class="language-plaintext highlighter-rouge">/graphiql</code> path in your browser, and try running the following query there:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>query {
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>query {
   testField
 }
 </code></pre></div></div>
 
 <p>You should get this response:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
   "data": {
     "testField": "Hello World!"
   }
 }
 </code></pre></div></div>
 
-<p>There you go! Now that we’re done with our whirlwind tour of the <code class="highlighter-rouge">graphql-ruby</code> gem, let’s start digging a bit deeper.</p>
+<p>There you go! Now that we’re done with our whirlwind tour of the <code class="language-plaintext highlighter-rouge">graphql-ruby</code> gem, let’s start digging a bit deeper.</p>
 
 <h2 id="here-be-dragons">Here Be Dragons</h2>
 
-<p>While the <code class="highlighter-rouge">graphql-ruby</code> gem has added a <em>ton</em> of functionality to our app, it doesn’t really go into detail as to what the best practices are for actually <em>using</em> the gem. Specifically, as mentioned at the beginning of this guide, two issues that are glossed over are:</p>
+<p>While the <code class="language-plaintext highlighter-rouge">graphql-ruby</code> gem has added a <em>ton</em> of functionality to our app, it doesn’t really go into detail as to what the best practices are for actually <em>using</em> the gem. Specifically, as mentioned at the beginning of this guide, two issues that are glossed over are:</p>
 
 <ol>
   <li>How to handle authorization, and…</li>
   <li>How to efficiently query data.</li>
 </ol>
 
-<p>Just like the <a href="https://graphql.org/learn/authorization/">official documentation about authorization in GraphQL</a>, the <a href="https://graphql-ruby.org/authorization/overview.html#authorization-in-your-business-logic">gem’s documentation</a> also suggests pushing the responsibility for authorization into <em>business</em> logic, specifically into model methods that accept <code class="highlighter-rouge">context</code> and decide what kind of relation or data is accessible for <em>that</em> user.</p>
+<p>Just like the <a href="https://graphql.org/learn/authorization/">official documentation about authorization in GraphQL</a>, the <a href="https://graphql-ruby.org/authorization/overview.html#authorization-in-your-business-logic">gem’s documentation</a> also suggests pushing the responsibility for authorization into <em>business</em> logic, specifically into model methods that accept <code class="language-plaintext highlighter-rouge">context</code> and decide what kind of relation or data is accessible for <em>that</em> user.</p>
 
 <p>As for the potential for N+1 queries, it’s pretty much ignored altogether - I’m guessing that you’re expected to handle this on a case-by-case basis.</p>
 
@@ -158,7 +160,7 @@
 
 <h2 id="resolvers-authorize-and-fetch-data"><em>Resolvers</em> authorize and fetch data</h2>
 
-<p>Let’s start by adding an <code class="highlighter-rouge">ApplicationQuery</code> class that’ll act as the base class for <em>resolvers</em> and <em>mutators</em>:</p>
+<p>Let’s start by adding an <code class="language-plaintext highlighter-rouge">ApplicationQuery</code> class that’ll act as the base class for <em>resolvers</em> and <em>mutators</em>:</p>
 
 <script src="https://gist.github.com/harigopal/2270db1662f697fbbf8fd3303aca2029.js"></script>
 
@@ -166,7 +168,7 @@
 
 <script src="https://gist.github.com/harigopal/124000d16b0188d283c6ed92763b1f4e.js"></script>
 
-<p>Notice how the <code class="highlighter-rouge">users</code> method simply hands over the responsibility for loading the data to a <code class="highlighter-rouge">UsersResolver</code> object:</p>
+<p>Notice how the <code class="language-plaintext highlighter-rouge">users</code> method simply hands over the responsibility for loading the data to a <code class="language-plaintext highlighter-rouge">UsersResolver</code> object:</p>
 
 <script src="https://gist.github.com/harigopal/d498086083b1db7180e407b43dbf7193.js"></script>
 
@@ -175,7 +177,7 @@
 <ol>
   <li>All requests are individually authorized.</li>
   <li>There is an assumption that once a query is authorized, all data returned by the resolver (or mutator) can be accessed by the authenticated user.</li>
-  <li>Avoid N+1-s by making sure that the resolver method <code class="highlighter-rouge">includes</code> all necessary data for the response.</li>
+  <li>Avoid N+1-s by making sure that the resolver method <code class="language-plaintext highlighter-rouge">includes</code> all necessary data for the response.</li>
 </ol>
 
 <p>Before we move onto mutators, let’s also look at how we deal with queries that have arguments, using a variation of what we’ve done above:</p>
@@ -185,9 +187,9 @@
 <p>Only a few things are different here:</p>
 
 <ol>
-  <li><code class="highlighter-rouge">args</code> is passed to the resolver in addition to context.</li>
-  <li>There’s a <code class="highlighter-rouge">property :id</code> in the resolver class defining what data the query will work with.</li>
-  <li>Instead of a relation, the <code class="highlighter-rouge">user</code> method in the resolver returns a <code class="highlighter-rouge">User</code> object, since the <em>type</em> for the query is a single object.</li>
+  <li><code class="language-plaintext highlighter-rouge">args</code> is passed to the resolver in addition to context.</li>
+  <li>There’s a <code class="language-plaintext highlighter-rouge">property :id</code> in the resolver class defining what data the query will work with.</li>
+  <li>Instead of a relation, the <code class="language-plaintext highlighter-rouge">user</code> method in the resolver returns a <code class="language-plaintext highlighter-rouge">User</code> object, since the <em>type</em> for the query is a single object.</li>
 </ol>
 
 <h2 id="mutators-authorize-modify-and-supply-a-response"><em>Mutators</em> authorize, modify, and supply a response</h2>
@@ -198,19 +200,19 @@
 
 <script src="https://gist.github.com/harigopal/da0fe5301af5027e84ec0f0f9a5c83dc.js"></script>
 
-<p>Notice how there’s a call to <code class="highlighter-rouge">.valid?</code> before the <code class="highlighter-rouge">.create_comment</code> is called. This triggers validations that can be configured in the mutator class:</p>
+<p>Notice how there’s a call to <code class="language-plaintext highlighter-rouge">.valid?</code> before the <code class="language-plaintext highlighter-rouge">.create_comment</code> is called. This triggers validations that can be configured in the mutator class:</p>
 
 <script src="https://gist.github.com/harigopal/d64f6273011582b657af7a8a0bc30797.js"></script>
 
 <p>Again, there’s very little that’s new here.</p>
 
 <ol>
-  <li>Because <code class="highlighter-rouge">ApplicationQuery</code> includes <code class="highlighter-rouge">ActiveModel::Model</code>, we have access to all of the validation methods that we’re familiar with.</li>
-  <li>The <code class="highlighter-rouge">property</code> helper simply combines <code class="highlighter-rouge">validates</code> and <code class="highlighter-rouge">attr_accessor</code> into a single-step, and helps avoid bugs because the former depends on the latter.</li>
-  <li>We can either process the request in the mutator directly in the <code class="highlighter-rouge">create_comment</code> method, or pass it onto a service as shown in the example.</li>
+  <li>Because <code class="language-plaintext highlighter-rouge">ApplicationQuery</code> includes <code class="language-plaintext highlighter-rouge">ActiveModel::Model</code>, we have access to all of the validation methods that we’re familiar with.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">property</code> helper simply combines <code class="language-plaintext highlighter-rouge">validates</code> and <code class="language-plaintext highlighter-rouge">attr_accessor</code> into a single-step, and helps avoid bugs because the former depends on the latter.</li>
+  <li>We can either process the request in the mutator directly in the <code class="language-plaintext highlighter-rouge">create_comment</code> method, or pass it onto a service as shown in the example.</li>
 </ol>
 
-<p>As with queries, there is an assumption that the <code class="highlighter-rouge">create_comment</code> method will return an object that responds to the <em>fields</em> mentioned in the mutation class. In this case, that’s <code class="highlighter-rouge">id</code>, and as long as the service returns a <code class="highlighter-rouge">Comment</code> object, everything should work as expected.</p>
+<p>As with queries, there is an assumption that the <code class="language-plaintext highlighter-rouge">create_comment</code> method will return an object that responds to the <em>fields</em> mentioned in the mutation class. In this case, that’s <code class="language-plaintext highlighter-rouge">id</code>, and as long as the service returns a <code class="language-plaintext highlighter-rouge">Comment</code> object, everything should work as expected.</p>
 
 <h3 id="create-types-for-complex-returns">Create types for complex returns</h3>
 
@@ -218,7 +220,7 @@
 
 <script src="https://gist.github.com/harigopal/caba32c4f40f70c6ff8204def6281602.js"></script>
 
-<p>Here, the custom <code class="highlighter-rouge">UpdatePostType</code> is used to compose exactly what the UI requires in this imaginary app, when a post is updated.</p>
+<p>Here, the custom <code class="language-plaintext highlighter-rouge">UpdatePostType</code> is used to compose exactly what the UI requires in this imaginary app, when a post is updated.</p>
 
 <h2 id="what-are-the-advantages-of-this-approach">What are the advantages of this approach?</h2>
 
@@ -228,7 +230,7 @@
   <li>You have a self-documenting API. Testing it is a breeze thanks to GraphiQL.</li>
   <li>The Rails server will crash with a useful error message if your code ever disobeys the type specification.</li>
   <li>Pagination of resources is simple and straight-forward, thanks to <a href="https://graphql-ruby.org/relay/connections.html">built-in, well-thought-out conventions</a> that cover a large variety of pagination-use-cases.</li>
-  <li>Avoids a lot of bike-shedding. <code class="highlighter-rouge">PUT</code> vs <code class="highlighter-rouge">PATCH</code>? <code class="highlighter-rouge">400</code> vs <code class="highlighter-rouge">422</code>? How to handle deprecation? These questions, and more, are no longer concerns.</li>
+  <li>Avoids a lot of bike-shedding. <code class="language-plaintext highlighter-rouge">PUT</code> vs <code class="language-plaintext highlighter-rouge">PATCH</code>? <code class="language-plaintext highlighter-rouge">400</code> vs <code class="language-plaintext highlighter-rouge">422</code>? How to handle deprecation? These questions, and more, are no longer concerns.</li>
   <li>The server’s response can be extended to include more standardized behavior.</li>
 </ol>
 
@@ -243,7 +245,7 @@
 
 <p>Your server always supplies a JSON response. This means that you can add more fields to it if you’d like.</p>
 
-<p>In <a href="https://www.pupilfirst.com">PupilFirst</a>, we’ve expanded the response object to include a <code class="highlighter-rouge">notifications</code> field. If present, the response handler in the client automatically converts them into <em>flash</em> notifications that are shown to the user. This helps us preserve a <em>Rails-like</em> experience in our mutators, and keeps notifications <em>DRY</em>:</p>
+<p>In <a href="https://www.pupilfirst.com">PupilFirst</a>, we’ve expanded the response object to include a <code class="language-plaintext highlighter-rouge">notifications</code> field. If present, the response handler in the client automatically converts them into <em>flash</em> notifications that are shown to the user. This helps us preserve a <em>Rails-like</em> experience in our mutators, and keeps notifications <em>DRY</em>:</p>
 
 <script src="https://gist.github.com/harigopal/0b208181f942adb7cc5beccbfdd5531a.js"></script>
 
@@ -268,7 +270,7 @@
   <li>GraphQL doesn’t actually <em>do</em> anything to solve over-fetching - it just specifies how to deliver the data once you’ve retrieved it. However, retrieving data correctly is <a href="https://graphql.org/learn/thinking-in-graphs/#business-logic-layer">still up to your <em>business logic</em></a>, which is always vaguely defined in all documentation that I’ve come across.</li>
 </ol>
 
-<p>Arbitrarily loading relational data and incurring huge performance hits is one of the easiest mistakes to make with GraphQL, and it’s not a problem whose solution is clear. At this point, I think it’s appropriate to mention that Shopify has released a <a href="#"><code class="highlighter-rouge">graphql-batch</code> gem</a> that <em>claims</em> to tackle this issue. Unfortunately, I think it’s poorly documented, and I couldn’t really make sense of how it’s supposed to work, but it may be worth looking at if you’re already <em>at scale</em>, and dealing with issues like over-fetching.</p>
+<p>Arbitrarily loading relational data and incurring huge performance hits is one of the easiest mistakes to make with GraphQL, and it’s not a problem whose solution is clear. At this point, I think it’s appropriate to mention that Shopify has released a <a href="#"><code class="language-plaintext highlighter-rouge">graphql-batch</code> gem</a> that <em>claims</em> to tackle this issue. Unfortunately, I think it’s poorly documented, and I couldn’t really make sense of how it’s supposed to work, but it may be worth looking at if you’re already <em>at scale</em>, and dealing with issues like over-fetching.</p>
 
 <h3 id="why-not-authorize-fields">Why not authorize fields?</h3>
 

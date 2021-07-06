@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="https://blog.harigopal.in/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.harigopal.in/" rel="alternate" type="text/html" /><updated>2019-11-16T23:06:23+05:30</updated><id>https://blog.harigopal.in/feed.xml</id><title type="html">Hari Gopal</title><subtitle>My thoughts on programming, and more.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://blog.harigopal.in/feed.xml" rel="self" type="application/atom+xml" /><link href="https://blog.harigopal.in/" rel="alternate" type="text/html" /><updated>2021-07-06T12:01:23+05:30</updated><id>https://blog.harigopal.in/feed.xml</id><title type="html">Hari Gopal</title><subtitle>My thoughts on programming, and more.
 </subtitle><entry><title type="html">A Complete Guide to Setting up a GraphQL Server on Rails</title><link href="https://blog.harigopal.in/guides/a-complete-guide-to-setting-up-a-graphql-server-on-rails/" rel="alternate" type="text/html" title="A Complete Guide to Setting up a GraphQL Server on Rails" /><published>2019-11-05T20:20:00+05:30</published><updated>2019-11-05T20:20:00+05:30</updated><id>https://blog.harigopal.in/guides/a-complete-guide-to-setting-up-a-graphql-server-on-rails</id><content type="html" xml:base="https://blog.harigopal.in/guides/a-complete-guide-to-setting-up-a-graphql-server-on-rails/">&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
 
 &lt;p&gt;&lt;em&gt;“Convention over configuration”&lt;/em&gt; is one of the reasons Rails became as popular as it did. Conventions allow developers to be productive without &lt;a href=&quot;https://en.wiktionary.org/wiki/bikeshedding&quot;&gt;&lt;em&gt;bike-shedding&lt;/em&gt;&lt;/a&gt;. However, introducing new concepts to Rails involves a period of experimentation during which there are no answers to troublesome questions.&lt;/p&gt;
 
 &lt;p&gt;Setting up a GraphQL server on Rails is one of those tasks.&lt;/p&gt;
 
-&lt;p&gt;This post presents a method for setting up a GraphQL server, while also tackling two issues that are generally glossed over by existing documentation surrounding the use of the &lt;code class=&quot;highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt; gem:&lt;/p&gt;
+&lt;p&gt;This post presents a method for setting up a GraphQL server, while also tackling two issues that are generally glossed over by existing documentation surrounding the use of the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt; gem:&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;How do I handle authorization?&lt;/li&gt;
@@ -14,22 +14,22 @@
 
 &lt;h2 id=&quot;start-with-graphql-ruby&quot;&gt;Start with &lt;em&gt;graphql-ruby&lt;/em&gt;&lt;/h2&gt;
 
-&lt;p&gt;We’ll be using the &lt;a href=&quot;https://graphql-ruby.org/getting_started&quot;&gt;well-documented &lt;code class=&quot;highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt; gem&lt;/a&gt; to get started with setting up a GraphQL server on Rails. If you’re someone who’s already familiar with &lt;code class=&quot;highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt;, feel free to &lt;a href=&quot;#here-be-dragons&quot;&gt;skip this section&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;We’ll be using the &lt;a href=&quot;https://graphql-ruby.org/getting_started&quot;&gt;well-documented &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt; gem&lt;/a&gt; to get started with setting up a GraphQL server on Rails. If you’re someone who’s already familiar with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt;, feel free to &lt;a href=&quot;#here-be-dragons&quot;&gt;skip this section&lt;/a&gt;.&lt;/p&gt;
 
 &lt;ol&gt;
-  &lt;li&gt;Add &lt;code class=&quot;highlighter-rouge&quot;&gt;gem 'graphql-ruby', '~&amp;gt; 1.9'&lt;/code&gt; to your &lt;code class=&quot;highlighter-rouge&quot;&gt;Gemfile&lt;/code&gt;.&lt;/li&gt;
-  &lt;li&gt;Run &lt;code class=&quot;highlighter-rouge&quot;&gt;bundle install&lt;/code&gt; on the command line.&lt;/li&gt;
-  &lt;li&gt;Run the gem’s installation generator: &lt;code class=&quot;highlighter-rouge&quot;&gt;rails generate graphql:install&lt;/code&gt;.
+  &lt;li&gt;Add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gem &apos;graphql-ruby&apos;, &apos;~&amp;gt; 1.9&apos;&lt;/code&gt; to your &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Gemfile&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bundle install&lt;/code&gt; on the command line.&lt;/li&gt;
+  &lt;li&gt;Run the gem’s installation generator: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rails generate graphql:install&lt;/code&gt;.
     &lt;ul&gt;
-      &lt;li&gt;If Rails complains that it can’t find &lt;code class=&quot;highlighter-rouge&quot;&gt;graphql:install&lt;/code&gt;, try again after stopping &lt;code class=&quot;highlighter-rouge&quot;&gt;spring&lt;/code&gt;, with &lt;code class=&quot;highlighter-rouge&quot;&gt;bin/spring stop&lt;/code&gt;.&lt;/li&gt;
+      &lt;li&gt;If Rails complains that it can’t find &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;graphql:install&lt;/code&gt;, try again after stopping &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;spring&lt;/code&gt;, with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bin/spring stop&lt;/code&gt;.&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;The previous step will have updated the &lt;code class=&quot;highlighter-rouge&quot;&gt;Gemfile&lt;/code&gt;, so you’ll need run &lt;code class=&quot;highlighter-rouge&quot;&gt;bundle install&lt;/code&gt; again.&lt;/li&gt;
+  &lt;li&gt;The previous step will have updated the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Gemfile&lt;/code&gt;, so you’ll need run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bundle install&lt;/code&gt; again.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;At this point, &lt;code class=&quot;highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt; is all set up. Let’s take a quick look at what the gem added to our Rails application, so that the following steps are easier to understand.&lt;/p&gt;
+&lt;p&gt;At this point, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt; is all set up. Let’s take a quick look at what the gem added to our Rails application, so that the following steps are easier to understand.&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;app/
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;app/
 ├─ config/routes.rb          (updated to include /graphql, and /graphiql)
 ├─ controllers/
 |  └─ graphql_controller.rb  (all requests are handled by the execute action)
@@ -40,10 +40,10 @@
    |  ├─ mutation_type.rb    (base type for all mutations)
    |  └─ base_*.rb           (many other base types - object, enum, etc.)
    └─ mutations/
-      └─ .keep               (empty - we haven't made any mutations yet)
+      └─ .keep               (empty - we haven&apos;t made any mutations yet)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;If we take a look inside the &lt;code class=&quot;highlighter-rouge&quot;&gt;routes.rb&lt;/code&gt; file, we can see that a new &lt;code class=&quot;highlighter-rouge&quot;&gt;/graphql&lt;/code&gt; path is handled by the &lt;code class=&quot;highlighter-rouge&quot;&gt;GraphqlController#execute&lt;/code&gt; method:&lt;/p&gt;
+&lt;p&gt;If we take a look inside the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;routes.rb&lt;/code&gt; file, we can see that a new &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/graphql&lt;/code&gt; path is handled by the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GraphqlController#execute&lt;/code&gt; method:&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/877e2d5c9f79c1c1887e8ee9538d1bdd.js&quot;&gt;&lt;/script&gt;
 
@@ -51,36 +51,36 @@
 
 &lt;script src=&quot;https://gist.github.com/harigopal/d6a8c4e27e1df99c7ef84db39b9b5e5e.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;The schema says that mutations can be found in &lt;code class=&quot;highlighter-rouge&quot;&gt;Types::MutationType&lt;/code&gt; and queries in &lt;code class=&quot;highlighter-rouge&quot;&gt;Types::QueryType&lt;/code&gt;. If we take a look in either, we’ll see a dummy field that we can play around with.&lt;/p&gt;
+&lt;p&gt;The schema says that mutations can be found in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Types::MutationType&lt;/code&gt; and queries in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Types::QueryType&lt;/code&gt;. If we take a look in either, we’ll see a dummy field that we can play around with.&lt;/p&gt;
 
-&lt;p&gt;One thing that I glossed over in &lt;code class=&quot;highlighter-rouge&quot;&gt;routes.rb&lt;/code&gt; is that the gem also mounted the awesome &lt;em&gt;GraphiQL&lt;/em&gt; app on the &lt;code class=&quot;highlighter-rouge&quot;&gt;/graphiql&lt;/code&gt; path. Visit the &lt;code class=&quot;highlighter-rouge&quot;&gt;/graphiql&lt;/code&gt; path in your browser, and try running the following query there:&lt;/p&gt;
+&lt;p&gt;One thing that I glossed over in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;routes.rb&lt;/code&gt; is that the gem also mounted the awesome &lt;em&gt;GraphiQL&lt;/em&gt; app on the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/graphiql&lt;/code&gt; path. Visit the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/graphiql&lt;/code&gt; path in your browser, and try running the following query there:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;query {
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;query {
   testField
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;You should get this response:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;{
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;{
   &quot;data&quot;: {
     &quot;testField&quot;: &quot;Hello World!&quot;
   }
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;There you go! Now that we’re done with our whirlwind tour of the &lt;code class=&quot;highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt; gem, let’s start digging a bit deeper.&lt;/p&gt;
+&lt;p&gt;There you go! Now that we’re done with our whirlwind tour of the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt; gem, let’s start digging a bit deeper.&lt;/p&gt;
 
 &lt;h2 id=&quot;here-be-dragons&quot;&gt;Here Be Dragons&lt;/h2&gt;
 
-&lt;p&gt;While the &lt;code class=&quot;highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt; gem has added a &lt;em&gt;ton&lt;/em&gt; of functionality to our app, it doesn’t really go into detail as to what the best practices are for actually &lt;em&gt;using&lt;/em&gt; the gem. Specifically, as mentioned at the beginning of this guide, two issues that are glossed over are:&lt;/p&gt;
+&lt;p&gt;While the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;graphql-ruby&lt;/code&gt; gem has added a &lt;em&gt;ton&lt;/em&gt; of functionality to our app, it doesn’t really go into detail as to what the best practices are for actually &lt;em&gt;using&lt;/em&gt; the gem. Specifically, as mentioned at the beginning of this guide, two issues that are glossed over are:&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;How to handle authorization, and…&lt;/li&gt;
   &lt;li&gt;How to efficiently query data.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;Just like the &lt;a href=&quot;https://graphql.org/learn/authorization/&quot;&gt;official documentation about authorization in GraphQL&lt;/a&gt;, the &lt;a href=&quot;https://graphql-ruby.org/authorization/overview.html#authorization-in-your-business-logic&quot;&gt;gem’s documentation&lt;/a&gt; also suggests pushing the responsibility for authorization into &lt;em&gt;business&lt;/em&gt; logic, specifically into model methods that accept &lt;code class=&quot;highlighter-rouge&quot;&gt;context&lt;/code&gt; and decide what kind of relation or data is accessible for &lt;em&gt;that&lt;/em&gt; user.&lt;/p&gt;
+&lt;p&gt;Just like the &lt;a href=&quot;https://graphql.org/learn/authorization/&quot;&gt;official documentation about authorization in GraphQL&lt;/a&gt;, the &lt;a href=&quot;https://graphql-ruby.org/authorization/overview.html#authorization-in-your-business-logic&quot;&gt;gem’s documentation&lt;/a&gt; also suggests pushing the responsibility for authorization into &lt;em&gt;business&lt;/em&gt; logic, specifically into model methods that accept &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;context&lt;/code&gt; and decide what kind of relation or data is accessible for &lt;em&gt;that&lt;/em&gt; user.&lt;/p&gt;
 
 &lt;p&gt;As for the potential for N+1 queries, it’s pretty much ignored altogether - I’m guessing that you’re expected to handle this on a case-by-case basis.&lt;/p&gt;
 
@@ -88,7 +88,7 @@
 
 &lt;h2 id=&quot;resolvers-authorize-and-fetch-data&quot;&gt;&lt;em&gt;Resolvers&lt;/em&gt; authorize and fetch data&lt;/h2&gt;
 
-&lt;p&gt;Let’s start by adding an &lt;code class=&quot;highlighter-rouge&quot;&gt;ApplicationQuery&lt;/code&gt; class that’ll act as the base class for &lt;em&gt;resolvers&lt;/em&gt; and &lt;em&gt;mutators&lt;/em&gt;:&lt;/p&gt;
+&lt;p&gt;Let’s start by adding an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ApplicationQuery&lt;/code&gt; class that’ll act as the base class for &lt;em&gt;resolvers&lt;/em&gt; and &lt;em&gt;mutators&lt;/em&gt;:&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/2270db1662f697fbbf8fd3303aca2029.js&quot;&gt;&lt;/script&gt;
 
@@ -96,7 +96,7 @@
 
 &lt;script src=&quot;https://gist.github.com/harigopal/124000d16b0188d283c6ed92763b1f4e.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;Notice how the &lt;code class=&quot;highlighter-rouge&quot;&gt;users&lt;/code&gt; method simply hands over the responsibility for loading the data to a &lt;code class=&quot;highlighter-rouge&quot;&gt;UsersResolver&lt;/code&gt; object:&lt;/p&gt;
+&lt;p&gt;Notice how the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;users&lt;/code&gt; method simply hands over the responsibility for loading the data to a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;UsersResolver&lt;/code&gt; object:&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/d498086083b1db7180e407b43dbf7193.js&quot;&gt;&lt;/script&gt;
 
@@ -105,7 +105,7 @@
 &lt;ol&gt;
   &lt;li&gt;All requests are individually authorized.&lt;/li&gt;
   &lt;li&gt;There is an assumption that once a query is authorized, all data returned by the resolver (or mutator) can be accessed by the authenticated user.&lt;/li&gt;
-  &lt;li&gt;Avoid N+1-s by making sure that the resolver method &lt;code class=&quot;highlighter-rouge&quot;&gt;includes&lt;/code&gt; all necessary data for the response.&lt;/li&gt;
+  &lt;li&gt;Avoid N+1-s by making sure that the resolver method &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;includes&lt;/code&gt; all necessary data for the response.&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;Before we move onto mutators, let’s also look at how we deal with queries that have arguments, using a variation of what we’ve done above:&lt;/p&gt;
@@ -115,9 +115,9 @@
 &lt;p&gt;Only a few things are different here:&lt;/p&gt;
 
 &lt;ol&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;args&lt;/code&gt; is passed to the resolver in addition to context.&lt;/li&gt;
-  &lt;li&gt;There’s a &lt;code class=&quot;highlighter-rouge&quot;&gt;property :id&lt;/code&gt; in the resolver class defining what data the query will work with.&lt;/li&gt;
-  &lt;li&gt;Instead of a relation, the &lt;code class=&quot;highlighter-rouge&quot;&gt;user&lt;/code&gt; method in the resolver returns a &lt;code class=&quot;highlighter-rouge&quot;&gt;User&lt;/code&gt; object, since the &lt;em&gt;type&lt;/em&gt; for the query is a single object.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;args&lt;/code&gt; is passed to the resolver in addition to context.&lt;/li&gt;
+  &lt;li&gt;There’s a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;property :id&lt;/code&gt; in the resolver class defining what data the query will work with.&lt;/li&gt;
+  &lt;li&gt;Instead of a relation, the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;user&lt;/code&gt; method in the resolver returns a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;User&lt;/code&gt; object, since the &lt;em&gt;type&lt;/em&gt; for the query is a single object.&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;h2 id=&quot;mutators-authorize-modify-and-supply-a-response&quot;&gt;&lt;em&gt;Mutators&lt;/em&gt; authorize, modify, and supply a response&lt;/h2&gt;
@@ -128,19 +128,19 @@
 
 &lt;script src=&quot;https://gist.github.com/harigopal/da0fe5301af5027e84ec0f0f9a5c83dc.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;Notice how there’s a call to &lt;code class=&quot;highlighter-rouge&quot;&gt;.valid?&lt;/code&gt; before the &lt;code class=&quot;highlighter-rouge&quot;&gt;.create_comment&lt;/code&gt; is called. This triggers validations that can be configured in the mutator class:&lt;/p&gt;
+&lt;p&gt;Notice how there’s a call to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.valid?&lt;/code&gt; before the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.create_comment&lt;/code&gt; is called. This triggers validations that can be configured in the mutator class:&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/d64f6273011582b657af7a8a0bc30797.js&quot;&gt;&lt;/script&gt;
 
 &lt;p&gt;Again, there’s very little that’s new here.&lt;/p&gt;
 
 &lt;ol&gt;
-  &lt;li&gt;Because &lt;code class=&quot;highlighter-rouge&quot;&gt;ApplicationQuery&lt;/code&gt; includes &lt;code class=&quot;highlighter-rouge&quot;&gt;ActiveModel::Model&lt;/code&gt;, we have access to all of the validation methods that we’re familiar with.&lt;/li&gt;
-  &lt;li&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;property&lt;/code&gt; helper simply combines &lt;code class=&quot;highlighter-rouge&quot;&gt;validates&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;attr_accessor&lt;/code&gt; into a single-step, and helps avoid bugs because the former depends on the latter.&lt;/li&gt;
-  &lt;li&gt;We can either process the request in the mutator directly in the &lt;code class=&quot;highlighter-rouge&quot;&gt;create_comment&lt;/code&gt; method, or pass it onto a service as shown in the example.&lt;/li&gt;
+  &lt;li&gt;Because &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ApplicationQuery&lt;/code&gt; includes &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ActiveModel::Model&lt;/code&gt;, we have access to all of the validation methods that we’re familiar with.&lt;/li&gt;
+  &lt;li&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;property&lt;/code&gt; helper simply combines &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;validates&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;attr_accessor&lt;/code&gt; into a single-step, and helps avoid bugs because the former depends on the latter.&lt;/li&gt;
+  &lt;li&gt;We can either process the request in the mutator directly in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create_comment&lt;/code&gt; method, or pass it onto a service as shown in the example.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;As with queries, there is an assumption that the &lt;code class=&quot;highlighter-rouge&quot;&gt;create_comment&lt;/code&gt; method will return an object that responds to the &lt;em&gt;fields&lt;/em&gt; mentioned in the mutation class. In this case, that’s &lt;code class=&quot;highlighter-rouge&quot;&gt;id&lt;/code&gt;, and as long as the service returns a &lt;code class=&quot;highlighter-rouge&quot;&gt;Comment&lt;/code&gt; object, everything should work as expected.&lt;/p&gt;
+&lt;p&gt;As with queries, there is an assumption that the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create_comment&lt;/code&gt; method will return an object that responds to the &lt;em&gt;fields&lt;/em&gt; mentioned in the mutation class. In this case, that’s &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;id&lt;/code&gt;, and as long as the service returns a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Comment&lt;/code&gt; object, everything should work as expected.&lt;/p&gt;
 
 &lt;h3 id=&quot;create-types-for-complex-returns&quot;&gt;Create types for complex returns&lt;/h3&gt;
 
@@ -148,7 +148,7 @@
 
 &lt;script src=&quot;https://gist.github.com/harigopal/caba32c4f40f70c6ff8204def6281602.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;Here, the custom &lt;code class=&quot;highlighter-rouge&quot;&gt;UpdatePostType&lt;/code&gt; is used to compose exactly what the UI requires in this imaginary app, when a post is updated.&lt;/p&gt;
+&lt;p&gt;Here, the custom &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;UpdatePostType&lt;/code&gt; is used to compose exactly what the UI requires in this imaginary app, when a post is updated.&lt;/p&gt;
 
 &lt;h2 id=&quot;what-are-the-advantages-of-this-approach&quot;&gt;What are the advantages of this approach?&lt;/h2&gt;
 
@@ -158,7 +158,7 @@
   &lt;li&gt;You have a self-documenting API. Testing it is a breeze thanks to GraphiQL.&lt;/li&gt;
   &lt;li&gt;The Rails server will crash with a useful error message if your code ever disobeys the type specification.&lt;/li&gt;
   &lt;li&gt;Pagination of resources is simple and straight-forward, thanks to &lt;a href=&quot;https://graphql-ruby.org/relay/connections.html&quot;&gt;built-in, well-thought-out conventions&lt;/a&gt; that cover a large variety of pagination-use-cases.&lt;/li&gt;
-  &lt;li&gt;Avoids a lot of bike-shedding. &lt;code class=&quot;highlighter-rouge&quot;&gt;PUT&lt;/code&gt; vs &lt;code class=&quot;highlighter-rouge&quot;&gt;PATCH&lt;/code&gt;? &lt;code class=&quot;highlighter-rouge&quot;&gt;400&lt;/code&gt; vs &lt;code class=&quot;highlighter-rouge&quot;&gt;422&lt;/code&gt;? How to handle deprecation? These questions, and more, are no longer concerns.&lt;/li&gt;
+  &lt;li&gt;Avoids a lot of bike-shedding. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PUT&lt;/code&gt; vs &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PATCH&lt;/code&gt;? &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;400&lt;/code&gt; vs &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;422&lt;/code&gt;? How to handle deprecation? These questions, and more, are no longer concerns.&lt;/li&gt;
   &lt;li&gt;The server’s response can be extended to include more standardized behavior.&lt;/li&gt;
 &lt;/ol&gt;
 
@@ -173,7 +173,7 @@
 
 &lt;p&gt;Your server always supplies a JSON response. This means that you can add more fields to it if you’d like.&lt;/p&gt;
 
-&lt;p&gt;In &lt;a href=&quot;https://www.pupilfirst.com&quot;&gt;PupilFirst&lt;/a&gt;, we’ve expanded the response object to include a &lt;code class=&quot;highlighter-rouge&quot;&gt;notifications&lt;/code&gt; field. If present, the response handler in the client automatically converts them into &lt;em&gt;flash&lt;/em&gt; notifications that are shown to the user. This helps us preserve a &lt;em&gt;Rails-like&lt;/em&gt; experience in our mutators, and keeps notifications &lt;em&gt;DRY&lt;/em&gt;:&lt;/p&gt;
+&lt;p&gt;In &lt;a href=&quot;https://www.pupilfirst.com&quot;&gt;PupilFirst&lt;/a&gt;, we’ve expanded the response object to include a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;notifications&lt;/code&gt; field. If present, the response handler in the client automatically converts them into &lt;em&gt;flash&lt;/em&gt; notifications that are shown to the user. This helps us preserve a &lt;em&gt;Rails-like&lt;/em&gt; experience in our mutators, and keeps notifications &lt;em&gt;DRY&lt;/em&gt;:&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/0b208181f942adb7cc5beccbfdd5531a.js&quot;&gt;&lt;/script&gt;
 
@@ -198,7 +198,7 @@
   &lt;li&gt;GraphQL doesn’t actually &lt;em&gt;do&lt;/em&gt; anything to solve over-fetching - it just specifies how to deliver the data once you’ve retrieved it. However, retrieving data correctly is &lt;a href=&quot;https://graphql.org/learn/thinking-in-graphs/#business-logic-layer&quot;&gt;still up to your &lt;em&gt;business logic&lt;/em&gt;&lt;/a&gt;, which is always vaguely defined in all documentation that I’ve come across.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;Arbitrarily loading relational data and incurring huge performance hits is one of the easiest mistakes to make with GraphQL, and it’s not a problem whose solution is clear. At this point, I think it’s appropriate to mention that Shopify has released a &lt;a href=&quot;#&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;graphql-batch&lt;/code&gt; gem&lt;/a&gt; that &lt;em&gt;claims&lt;/em&gt; to tackle this issue. Unfortunately, I think it’s poorly documented, and I couldn’t really make sense of how it’s supposed to work, but it may be worth looking at if you’re already &lt;em&gt;at scale&lt;/em&gt;, and dealing with issues like over-fetching.&lt;/p&gt;
+&lt;p&gt;Arbitrarily loading relational data and incurring huge performance hits is one of the easiest mistakes to make with GraphQL, and it’s not a problem whose solution is clear. At this point, I think it’s appropriate to mention that Shopify has released a &lt;a href=&quot;#&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;graphql-batch&lt;/code&gt; gem&lt;/a&gt; that &lt;em&gt;claims&lt;/em&gt; to tackle this issue. Unfortunately, I think it’s poorly documented, and I couldn’t really make sense of how it’s supposed to work, but it may be worth looking at if you’re already &lt;em&gt;at scale&lt;/em&gt;, and dealing with issues like over-fetching.&lt;/p&gt;
 
 &lt;h3 id=&quot;why-not-authorize-fields&quot;&gt;Why not authorize fields?&lt;/h3&gt;
 
@@ -214,7 +214,7 @@
 
 &lt;h2 id=&quot;a-real-world-example&quot;&gt;A real-world example&lt;/h2&gt;
 
-&lt;p&gt;If you’d like to take a look at a Rails application that uses this approach, take a look at codebase for &lt;a href=&quot;https://github.com/SVdotCO/pupilfirst&quot;&gt;the PupilFirst LMS&lt;/a&gt;. The patterns described here were created as &lt;a href=&quot;https://www.sv.co&quot;&gt;our team&lt;/a&gt; gradually switched to using ReasonML and ReasonReact on the front-end, and adopted GraphQL in order to leverage the presence of types and a compiler.&lt;/p&gt;</content><author><name></name></author><category term="react" /><category term="reasonreact" /><summary type="html">Introduction</summary></entry><entry><title type="html">Application State is not the answer</title><link href="https://blog.harigopal.in/guides/application-state-is-not-the-answer/" rel="alternate" type="text/html" title="Application State is not the answer" /><published>2019-10-05T11:00:00+05:30</published><updated>2019-10-05T11:00:00+05:30</updated><id>https://blog.harigopal.in/guides/application-state-is-not-the-answer</id><content type="html" xml:base="https://blog.harigopal.in/guides/application-state-is-not-the-answer/">&lt;p&gt;So… this is a total retraction of my &lt;a href=&quot;https://blog.harigopal.in/guides/application-state-in-reasonreact&quot;&gt;last&lt;/a&gt; &lt;a href=&quot;https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react&quot;&gt;two&lt;/a&gt; posts.&lt;/p&gt;
+&lt;p&gt;If you’d like to take a look at a Rails application that uses this approach, take a look at codebase for &lt;a href=&quot;https://github.com/SVdotCO/pupilfirst&quot;&gt;the PupilFirst LMS&lt;/a&gt;. The patterns described here were created as &lt;a href=&quot;https://www.sv.co&quot;&gt;our team&lt;/a&gt; gradually switched to using ReasonML and ReasonReact on the front-end, and adopted GraphQL in order to leverage the presence of types and a compiler.&lt;/p&gt;</content><author><name></name></author><category term="guides" /><category term="react" /><category term="reasonreact" /><summary type="html">Introduction</summary></entry><entry><title type="html">Application State is not the answer</title><link href="https://blog.harigopal.in/guides/application-state-is-not-the-answer/" rel="alternate" type="text/html" title="Application State is not the answer" /><published>2019-10-05T11:00:00+05:30</published><updated>2019-10-05T11:00:00+05:30</updated><id>https://blog.harigopal.in/guides/application-state-is-not-the-answer</id><content type="html" xml:base="https://blog.harigopal.in/guides/application-state-is-not-the-answer/">&lt;p&gt;So… this is a total retraction of my &lt;a href=&quot;https://blog.harigopal.in/guides/application-state-in-reasonreact&quot;&gt;last&lt;/a&gt; &lt;a href=&quot;https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react&quot;&gt;two&lt;/a&gt; posts.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201910/deja-vu.png&quot; alt=&quot;Deja vu&quot; /&gt;&lt;/p&gt;
 
@@ -274,21 +274,21 @@
 
 &lt;p&gt;As for my pet project, it’s future is uncertain. I started working on it when I was still a beginner with ReasonML, and the mistakes I made while learning have piled up. Its state management is, quite frankly, a mess. However, thanks to those mistakes, by the time I introduced ReasonML &amp;amp; ReasonReact to my full-time work, I knew enough to be conservative.&lt;/p&gt;
 
-&lt;p&gt;Right now, I’m focusing on building &lt;a href=&quot;https://www.pupilfirst.com&quot;&gt;PupilFirst&lt;/a&gt; - an LMS that my company open-sourced recently, and which we’ve been working on since 2013. It mixes Ruby, ReasonML &amp;amp; GraphQL, and is probably one of the largest open-source ReasonReact webapps out there.&lt;/p&gt;</content><author><name></name></author><category term="react" /><category term="reasonreact" /><summary type="html">So… this is a total retraction of my last two posts.</summary></entry><entry><title type="html">Revisiting Application State in ReasonReact</title><link href="https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/" rel="alternate" type="text/html" title="Revisiting Application State in ReasonReact" /><published>2018-09-08T15:30:00+05:30</published><updated>2018-09-08T15:30:00+05:30</updated><id>https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react</id><content type="html" xml:base="https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/">&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_1_oops.png&quot; alt=&quot;Oops&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Right now, I’m focusing on building &lt;a href=&quot;https://www.pupilfirst.com&quot;&gt;PupilFirst&lt;/a&gt; - an LMS that my company open-sourced recently, and which we’ve been working on since 2013. It mixes Ruby, ReasonML &amp;amp; GraphQL, and is probably one of the largest open-source ReasonReact webapps out there.&lt;/p&gt;</content><author><name></name></author><category term="guides" /><category term="react" /><category term="reasonreact" /><summary type="html">So… this is a total retraction of my last two posts.</summary></entry><entry><title type="html">Revisiting Application State in ReasonReact</title><link href="https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/" rel="alternate" type="text/html" title="Revisiting Application State in ReasonReact" /><published>2018-09-08T15:30:00+05:30</published><updated>2018-09-08T15:30:00+05:30</updated><id>https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react</id><content type="html" xml:base="https://blog.harigopal.in/guides/revisiting-application-state-in-reason-react/">&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_1_oops.png&quot; alt=&quot;Oops&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;tldr-aka-just-tell-me-what-you-were-wrong-about&quot;&gt;TL;DR (aka, just tell me what you were wrong about)&lt;/h2&gt;
 
 &lt;ol&gt;
-  &lt;li&gt;Passing &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; to all components is not a good idea. &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; contains &lt;em&gt;unresolved possible states&lt;/em&gt; that individual components usually don’t care about, but, which you’ll still be forced to handle since ReasonML is a strongly typed language.&lt;/li&gt;
-  &lt;li&gt;Instead of passing state, pass &lt;code class=&quot;highlighter-rouge&quot;&gt;ctx&lt;/code&gt; (context). My current approach is to pass a &lt;code class=&quot;highlighter-rouge&quot;&gt;ctx&lt;/code&gt; record to each component that contains the &lt;em&gt;resolved&lt;/em&gt; information &lt;em&gt;derived&lt;/em&gt; from state, that the particular component &lt;em&gt;needs&lt;/em&gt;. This allows the component to function with &lt;em&gt;certain knowledge&lt;/em&gt; about the context in which it will render.&lt;/li&gt;
-  &lt;li&gt;Passing &lt;code class=&quot;highlighter-rouge&quot;&gt;appSend&lt;/code&gt; to all components (like before) is fine — it’s just a function with which we &lt;em&gt;affect&lt;/em&gt; application state.&lt;/li&gt;
+  &lt;li&gt;Passing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appState&lt;/code&gt; to all components is not a good idea. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appState&lt;/code&gt; contains &lt;em&gt;unresolved possible states&lt;/em&gt; that individual components usually don’t care about, but, which you’ll still be forced to handle since ReasonML is a strongly typed language.&lt;/li&gt;
+  &lt;li&gt;Instead of passing state, pass &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ctx&lt;/code&gt; (context). My current approach is to pass a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ctx&lt;/code&gt; record to each component that contains the &lt;em&gt;resolved&lt;/em&gt; information &lt;em&gt;derived&lt;/em&gt; from state, that the particular component &lt;em&gt;needs&lt;/em&gt;. This allows the component to function with &lt;em&gt;certain knowledge&lt;/em&gt; about the context in which it will render.&lt;/li&gt;
+  &lt;li&gt;Passing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appSend&lt;/code&gt; to all components (like before) is fine — it’s just a function with which we &lt;em&gt;affect&lt;/em&gt; application state.&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;h2 id=&quot;and-in-much-more-detail&quot;&gt;And in much more detail…&lt;/h2&gt;
 
 &lt;p&gt;I’d written about a method to maintain &lt;a href=&quot;https://medium.com/@elvesbane/application-state-in-reasonreact-1626859366a8&quot;&gt;Application State in ReasonReact&lt;/a&gt; back in April, and I’ve worked with ReasonML a lot more since then, completing the conversion of &lt;a href=&quot;https://github.com/turakuapp/turaku-client/&quot;&gt;Turaku’s codebase&lt;/a&gt; from ES6 to Reason, and it turns out that my approach in the previous article didn’t &lt;em&gt;work&lt;/em&gt; as well as I expected it to.&lt;/p&gt;
 
-&lt;p&gt;Passing around application state as &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; is a bad idea with ReasonML. Passing around &lt;code class=&quot;highlighter-rouge&quot;&gt;appSend&lt;/code&gt; appears to be fine.&lt;/p&gt;
+&lt;p&gt;Passing around application state as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appState&lt;/code&gt; is a bad idea with ReasonML. Passing around &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appSend&lt;/code&gt; appears to be fine.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_2_return.png&quot; alt=&quot;Do not pass appState&quot; /&gt;&lt;/p&gt;
 
@@ -300,29 +300,29 @@
 
 &lt;script src=&quot;https://gist.github.com/harigopal/15dc0ae18cbfe96852755a9c3b505a59.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;Looking at the basic type &lt;code class=&quot;highlighter-rouge&quot;&gt;state&lt;/code&gt;, it’s pretty easy to tell that we’ve described our user’s state in the application as &lt;em&gt;always&lt;/em&gt; being one of two — either the user is signed out (and on a public page), or the user is signed in (and has some corresponding user data).&lt;/p&gt;
+&lt;p&gt;Looking at the basic type &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;state&lt;/code&gt;, it’s pretty easy to tell that we’ve described our user’s state in the application as &lt;em&gt;always&lt;/em&gt; being one of two — either the user is signed out (and on a public page), or the user is signed in (and has some corresponding user data).&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;Variants&lt;/em&gt; allow ReasonML’s compiler to ensure that whenever we handle a value of a &lt;em&gt;variant&lt;/em&gt; type, all of its possibilities are considered. For example, in the root component, when trying to determine which view to render, we could use &lt;code class=&quot;highlighter-rouge&quot;&gt;switch&lt;/code&gt;, like so:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Variants&lt;/em&gt; allow ReasonML’s compiler to ensure that whenever we handle a value of a &lt;em&gt;variant&lt;/em&gt; type, all of its possibilities are considered. For example, in the root component, when trying to determine which view to render, we could use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;switch&lt;/code&gt;, like so:&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/d902f64731da6718127a022dced3a0c1.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;The compiler can be configured to either issue warnings or raise errors if we’ve forgotten to deal with all the defined &lt;em&gt;variants&lt;/em&gt; that a type can &lt;em&gt;be&lt;/em&gt;. You’ll notice that I’m not passing &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; to any of these components, yet. So let’s try that with the &lt;code class=&quot;highlighter-rouge&quot;&gt;Dashboard&lt;/code&gt; component.&lt;/p&gt;
+&lt;p&gt;The compiler can be configured to either issue warnings or raise errors if we’ve forgotten to deal with all the defined &lt;em&gt;variants&lt;/em&gt; that a type can &lt;em&gt;be&lt;/em&gt;. You’ll notice that I’m not passing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appState&lt;/code&gt; to any of these components, yet. So let’s try that with the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dashboard&lt;/code&gt; component.&lt;/p&gt;
 
-&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;Dashboard&lt;/code&gt; contains the main user interface that a signed in user is expected to interact with. Let’s send it &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;appSend&lt;/code&gt; …&lt;/p&gt;
+&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dashboard&lt;/code&gt; contains the main user interface that a signed in user is expected to interact with. Let’s send it &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appState&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appSend&lt;/code&gt; …&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/e1b76503351eb7510389ac5c7dd56c66.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;… and then take a peek inside &lt;code class=&quot;highlighter-rouge&quot;&gt;Dashboard&lt;/code&gt; to see how we could render a list of available teams:&lt;/p&gt;
+&lt;p&gt;… and then take a peek inside &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dashboard&lt;/code&gt; to see how we could render a list of available teams:&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/9c687bd91dce3b2b6ebed0447a3f946d.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;The problem should be obvious now. &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; is a &lt;em&gt;variant&lt;/em&gt; (or can contain nested variants), and its contents can only be accessed through pattern-matching. Because of this, the component is being forced to handle all possible cases even though we know that the dashboard will never be rendered without a user being signed in.&lt;/p&gt;
+&lt;p&gt;The problem should be obvious now. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appState&lt;/code&gt; is a &lt;em&gt;variant&lt;/em&gt; (or can contain nested variants), and its contents can only be accessed through pattern-matching. Because of this, the component is being forced to handle all possible cases even though we know that the dashboard will never be rendered without a user being signed in.&lt;/p&gt;
 
 &lt;p&gt;Thankfully, the fix is simple. It is to &lt;strong&gt;not&lt;/strong&gt; pass application state around.&lt;/p&gt;
 
 &lt;p&gt;Application state is a structure that represents all possible states that the application could be in. However, the process of rendering an &lt;em&gt;inner&lt;/em&gt; component involves the &lt;em&gt;condensing&lt;/em&gt; of those possibilities. What we &lt;em&gt;should&lt;/em&gt; do, is to define the &lt;em&gt;context&lt;/em&gt; in which the component is expected to render.&lt;/p&gt;
 
-&lt;p&gt;In the above example, it is meaningless for the &lt;code class=&quot;highlighter-rouge&quot;&gt;Dashboard&lt;/code&gt; component to render for a signed out user, so the fix is to ensure that the component’s expected context includes the information that is available with a signed in user…&lt;/p&gt;
+&lt;p&gt;In the above example, it is meaningless for the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dashboard&lt;/code&gt; component to render for a signed out user, so the fix is to ensure that the component’s expected context includes the information that is available with a signed in user…&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/73081eca3487b7a8a4c4055c3e1f27ea.js&quot;&gt;&lt;/script&gt;
 
@@ -334,27 +334,27 @@
 
 &lt;p&gt;That’s it… except… it looks like we’re back to the days of &lt;em&gt;prop drilling&lt;/em&gt; - which I’d advocated against in my last article.&lt;/p&gt;
 
-&lt;p&gt;We are, but only partially. Note that we’re still passing &lt;code class=&quot;highlighter-rouge&quot;&gt;appSend&lt;/code&gt; around, allowing us to eliminate callback functions. &lt;code class=&quot;highlighter-rouge&quot;&gt;appSend&lt;/code&gt; gives components access to &lt;em&gt;all&lt;/em&gt; of the application state reducer’s &lt;em&gt;actions&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;We are, but only partially. Note that we’re still passing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appSend&lt;/code&gt; around, allowing us to eliminate callback functions. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appSend&lt;/code&gt; gives components access to &lt;em&gt;all&lt;/em&gt; of the application state reducer’s &lt;em&gt;actions&lt;/em&gt;.&lt;/p&gt;
 
-&lt;p&gt;This is also where the &lt;code class=&quot;highlighter-rouge&quot;&gt;ctx&lt;/code&gt; record comes in. I’ve found it really convenient to wrap everything in a single record so that I can pass it around functions - this also helps avoid the worst effects of prop drilling - where you’d have to thread new props around functions within components to get them where they need to be. By wrapping the props into &lt;code class=&quot;highlighter-rouge&quot;&gt;ctx&lt;/code&gt;, and treating it as a bag of values to be accessed wherever needed, we’re restricting the &lt;em&gt;threading / drilling&lt;/em&gt; to the entry and exit points of components.&lt;/p&gt;
+&lt;p&gt;This is also where the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ctx&lt;/code&gt; record comes in. I’ve found it really convenient to wrap everything in a single record so that I can pass it around functions - this also helps avoid the worst effects of prop drilling - where you’d have to thread new props around functions within components to get them where they need to be. By wrapping the props into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ctx&lt;/code&gt;, and treating it as a bag of values to be accessed wherever needed, we’re restricting the &lt;em&gt;threading / drilling&lt;/em&gt; to the entry and exit points of components.&lt;/p&gt;
 
-&lt;p&gt;It also makes sense for the &lt;code class=&quot;highlighter-rouge&quot;&gt;ctx&lt;/code&gt; record to grow, as it’s passed into deeper components, with parent components &lt;em&gt;resolving&lt;/em&gt; more of the possibilities of application state, and passing a more &lt;em&gt;definite&lt;/em&gt; context to their children.&lt;/p&gt;
+&lt;p&gt;It also makes sense for the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ctx&lt;/code&gt; record to grow, as it’s passed into deeper components, with parent components &lt;em&gt;resolving&lt;/em&gt; more of the possibilities of application state, and passing a more &lt;em&gt;definite&lt;/em&gt; context to their children.&lt;/p&gt;
 
-&lt;p&gt;Obviously, using &lt;code class=&quot;highlighter-rouge&quot;&gt;ctx&lt;/code&gt; record is optional. Passing individual props also works, and deciding between wrapping props or leaving them unwrapped seems to be a decision between reducing the overhead of prop-drilling, or improving the cleanliness of the component call-site.&lt;/p&gt;
+&lt;p&gt;Obviously, using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ctx&lt;/code&gt; record is optional. Passing individual props also works, and deciding between wrapping props or leaving them unwrapped seems to be a decision between reducing the overhead of prop-drilling, or improving the cleanliness of the component call-site.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_4_jetpack.png&quot; alt=&quot;A jetpack, not a backpack&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;so-whats-the-takeaway&quot;&gt;So what’s the takeaway?&lt;/h2&gt;
 
-&lt;p&gt;Passing &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; was a &lt;em&gt;pattern&lt;/em&gt; that worked well with dynamic languages. In fact, if we structure the state similar to how we’d write it in a dynamic language - without using the features that strong typing gives us (such as variants), then it’s possible to continue to use &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Passing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appState&lt;/code&gt; was a &lt;em&gt;pattern&lt;/em&gt; that worked well with dynamic languages. In fact, if we structure the state similar to how we’d write it in a dynamic language - without using the features that strong typing gives us (such as variants), then it’s possible to continue to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appState&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;But&lt;/em&gt;, if we use ReasonML &lt;em&gt;correctly&lt;/em&gt;, with the intention of &lt;em&gt;making illegal states unrepresentable&lt;/em&gt;, then old patterns prove insufficient. This partial retraction of mine grew out of a better understanding of how to write to functional code.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_5_fly.png&quot; alt=&quot;Bye bye&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><category term="react" /><category term="reason" /><category term="reasonml" /><category term="reasonreact" /><summary type="html"></summary></entry><entry><title type="html">Application State in ReasonReact</title><link href="https://blog.harigopal.in/guides/application-state-in-reasonreact/" rel="alternate" type="text/html" title="Application State in ReasonReact" /><published>2018-02-17T02:45:00+05:30</published><updated>2018-02-17T02:45:00+05:30</updated><id>https://blog.harigopal.in/guides/application-state-in-reasonreact</id><content type="html" xml:base="https://blog.harigopal.in/guides/application-state-in-reasonreact/">&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201802/callback_1.png&quot; alt=&quot;The Callback Relay Race - Page 1&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201809/frame_5_fly.png&quot; alt=&quot;Bye bye&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><category term="guides" /><category term="react" /><category term="reason" /><category term="reasonml" /><category term="reasonreact" /><summary type="html"></summary></entry><entry><title type="html">Application State in ReasonReact</title><link href="https://blog.harigopal.in/guides/application-state-in-reasonreact/" rel="alternate" type="text/html" title="Application State in ReasonReact" /><published>2018-02-17T02:45:00+05:30</published><updated>2018-02-17T02:45:00+05:30</updated><id>https://blog.harigopal.in/guides/application-state-in-reasonreact</id><content type="html" xml:base="https://blog.harigopal.in/guides/application-state-in-reasonreact/">&lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201802/callback_1.png&quot; alt=&quot;The Callback Relay Race - Page 1&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;tldr&quot;&gt;TL;DR?&lt;/h2&gt;
 
-&lt;p&gt;I’ve modified Jared Forsyth’s tutorial on ReasonReact, improving application state management. By sending two props, &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;appSend&lt;/code&gt; to all child components, we allow them influence shared state directly, instead of relying on a complex web of callbacks. Sound interesting?&lt;/p&gt;
+&lt;p&gt;I’ve modified Jared Forsyth’s tutorial on ReasonReact, improving application state management. By sending two props, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appState&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appSend&lt;/code&gt; to all child components, we allow them influence shared state directly, instead of relying on a complex web of callbacks. Sound interesting?&lt;/p&gt;
 
 &lt;h2 id=&quot;go-on&quot;&gt;Go on…&lt;/h2&gt;
 
@@ -368,7 +368,7 @@
 
 &lt;p&gt;Last year, &lt;a href=&quot;https://jaredforsyth.com&quot;&gt;Jared Forsyth&lt;/a&gt; published &lt;a href=&quot;https://jaredforsyth.com/2017/07/05/a-reason-react-tutorial/&quot;&gt;&lt;em&gt;A ReasonReact Tutorial&lt;/em&gt;&lt;/a&gt;, an excellent starting point for folks interested in building React applications with ReasonML. The tutorial involves building a simple Todo list app, using reducers to manage application state — a feature provided out-of-the-box by ReasonReact. The application structure looks &lt;em&gt;something&lt;/em&gt; like this:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;App implements reducer(action)
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;App implements reducer(action)
   -&amp;gt; TodoItem onToggle=send(Toggle)
   -&amp;gt; TodoInput onSubmit=send(AddItem(text))
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -377,7 +377,7 @@
 
 &lt;p&gt;This process of passing callbacks to child components is clunky. In larger applications, where a child component can be distant from root, adding new callbacks can deteriorate into something that looks like a relay race. Here’s an example:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;App implementes editCallback(), deleteCallback(), ...
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;App implementes editCallback(), deleteCallback(), ...
   -&amp;gt; TodoItem editCallback=editCallback deleteCallback=deleteCallback...
     -&amp;gt; TodoInlineEditor editCallback=editCallback deleteCallback=deleteCallback...
       =&amp;gt; Use editCallback()
@@ -387,21 +387,21 @@
 
 &lt;p&gt;&lt;img src=&quot;https://res.cloudinary.com/harigopal/image/upload/v1541686088/blog/201802/callback_2.png&quot; alt=&quot;The Callback Relay Race - Page 2&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;#&quot;&gt;Blair Anderson&lt;/a&gt; wrote an excellent article titled &lt;a href=&quot;https://medium.com/@blairanderson/you-probably-dont-need-redux-1b404204a07f&quot;&gt;“You Probably Don’t Need Redux”&lt;/a&gt; which explains how, in small-to-medium sized React applications, it’s often enough to pass two props — &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;setAppState&lt;/code&gt; to all components, allowing nested components direct access to the shared state, bypassing the need to add and &lt;em&gt;relay&lt;/em&gt; individual callbacks.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;#&quot;&gt;Blair Anderson&lt;/a&gt; wrote an excellent article titled &lt;a href=&quot;https://medium.com/@blairanderson/you-probably-dont-need-redux-1b404204a07f&quot;&gt;“You Probably Don’t Need Redux”&lt;/a&gt; which explains how, in small-to-medium sized React applications, it’s often enough to pass two props — &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appState&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;setAppState&lt;/code&gt; to all components, allowing nested components direct access to the shared state, bypassing the need to add and &lt;em&gt;relay&lt;/em&gt; individual callbacks.&lt;/p&gt;
 
-&lt;p&gt;My implementation of Jared’s tutorial mixes this idea in, and sends two props, &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;appSend&lt;/code&gt;, to all components that could influence shared state. For the sake of clarity, I’m only going to point out parts of the code that diverge from Jared’s tutorial.&lt;/p&gt;
+&lt;p&gt;My implementation of Jared’s tutorial mixes this idea in, and sends two props, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appState&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appSend&lt;/code&gt;, to all components that could influence shared state. For the sake of clarity, I’m only going to point out parts of the code that diverge from Jared’s tutorial.&lt;/p&gt;
 
 &lt;h2 id=&quot;a-reasonable-alternative&quot;&gt;A reasonable alternative&lt;/h2&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/974109e09597ac17ca71d09eb4000770.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; as the name indicates, is the shared state, stored by the root component. &lt;code class=&quot;highlighter-rouge&quot;&gt;appSend&lt;/code&gt; is the &lt;code class=&quot;highlighter-rouge&quot;&gt;send&lt;/code&gt; method made available to the &lt;code class=&quot;highlighter-rouge&quot;&gt;render&lt;/code&gt; method of the root component. We’re passing that alongside &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt;, to allow child components to trigger the root component’s reducer. The &lt;code class=&quot;highlighter-rouge&quot;&gt;TodoForm&lt;/code&gt; component doesn’t need the &lt;code class=&quot;highlighter-rouge&quot;&gt;appState&lt;/code&gt; prop because it never reads shared state.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appState&lt;/code&gt; as the name indicates, is the shared state, stored by the root component. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appSend&lt;/code&gt; is the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;send&lt;/code&gt; method made available to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;render&lt;/code&gt; method of the root component. We’re passing that alongside &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appState&lt;/code&gt;, to allow child components to trigger the root component’s reducer. The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TodoForm&lt;/code&gt; component doesn’t need the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appState&lt;/code&gt; prop because it never reads shared state.&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/978e4e5b08431bb420fdb7a9896ada12.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;When the &lt;code class=&quot;highlighter-rouge&quot;&gt;TodoItem&lt;/code&gt; component uses the prop &lt;code class=&quot;highlighter-rouge&quot;&gt;appSend&lt;/code&gt;, it passes an action &lt;code class=&quot;highlighter-rouge&quot;&gt;TodoApp.ToggleItem&lt;/code&gt;. To correctly resolve the it as &lt;code class=&quot;highlighter-rouge&quot;&gt;type action&lt;/code&gt;, we need to explicity mention the namespace — the shared module &lt;code class=&quot;highlighter-rouge&quot;&gt;TodoApp&lt;/code&gt;. Since all components need access to the type definition of &lt;em&gt;state&lt;/em&gt; and all possible &lt;em&gt;actions&lt;/em&gt;, they &lt;a href=&quot;https://github.com/harigopal/react-re-exp/blob/master/src/TodoApp.re&quot;&gt;must be placed in this separate shared module&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;When the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TodoItem&lt;/code&gt; component uses the prop &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;appSend&lt;/code&gt;, it passes an action &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TodoApp.ToggleItem&lt;/code&gt;. To correctly resolve the it as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type action&lt;/code&gt;, we need to explicity mention the namespace — the shared module &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TodoApp&lt;/code&gt;. Since all components need access to the type definition of &lt;em&gt;state&lt;/em&gt; and all possible &lt;em&gt;actions&lt;/em&gt;, they &lt;a href=&quot;https://github.com/harigopal/react-re-exp/blob/master/src/TodoApp.re&quot;&gt;must be placed in this separate shared module&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;My first attempt at implementing this pattern kept the types &lt;em&gt;state&lt;/em&gt; and &lt;em&gt;action&lt;/em&gt; in the root component module. However, that just led to a circular dependency issue: &lt;code class=&quot;highlighter-rouge&quot;&gt;App -&amp;gt; child -&amp;gt; App&lt;/code&gt;, blocking compilation. Extracting shared code to a different module fixed this.&lt;/p&gt;
+&lt;p&gt;My first attempt at implementing this pattern kept the types &lt;em&gt;state&lt;/em&gt; and &lt;em&gt;action&lt;/em&gt; in the root component module. However, that just led to a circular dependency issue: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;App -&amp;gt; child -&amp;gt; App&lt;/code&gt;, blocking compilation. Extracting shared code to a different module fixed this.&lt;/p&gt;
 
 &lt;p&gt;That’s pretty much it. Notice how there are no callback functions anywhere?&lt;/p&gt;
 
@@ -413,11 +413,11 @@
 
 &lt;p&gt;And given that we’re using a language with a strong, inferred, and most importantly, &lt;em&gt;sound&lt;/em&gt; type system, we get all of its benefits as well.&lt;/p&gt;
 
-&lt;p&gt;One thing that I’m not &lt;em&gt;totally&lt;/em&gt; happy with is that I was forced to &lt;code class=&quot;highlighter-rouge&quot;&gt;open TodoApp&lt;/code&gt; (first line in &lt;code class=&quot;highlighter-rouge&quot;&gt;App.re&lt;/code&gt; gist above) within the &lt;code class=&quot;highlighter-rouge&quot;&gt;App&lt;/code&gt; module. TodoApp defines the &lt;code class=&quot;highlighter-rouge&quot;&gt;state&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;action&lt;/code&gt; types that the &lt;code class=&quot;highlighter-rouge&quot;&gt;App&lt;/code&gt; component relies on, and I kept running into syntax errors when I tried to annotate types. All the other modules have manual type annotation when they first refer to either the shared &lt;code class=&quot;highlighter-rouge&quot;&gt;state&lt;/code&gt; or an &lt;code class=&quot;highlighter-rouge&quot;&gt;action&lt;/code&gt;. &lt;em&gt;Opening&lt;/em&gt; TodoApp in the &lt;code class=&quot;highlighter-rouge&quot;&gt;App&lt;/code&gt; module isn’t a big issue though, since it’s the root component.&lt;/p&gt;
+&lt;p&gt;One thing that I’m not &lt;em&gt;totally&lt;/em&gt; happy with is that I was forced to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;open TodoApp&lt;/code&gt; (first line in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;App.re&lt;/code&gt; gist above) within the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;App&lt;/code&gt; module. TodoApp defines the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;state&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;action&lt;/code&gt; types that the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;App&lt;/code&gt; component relies on, and I kept running into syntax errors when I tried to annotate types. All the other modules have manual type annotation when they first refer to either the shared &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;state&lt;/code&gt; or an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;action&lt;/code&gt;. &lt;em&gt;Opening&lt;/em&gt; TodoApp in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;App&lt;/code&gt; module isn’t a big issue though, since it’s the root component.&lt;/p&gt;
 
 &lt;p&gt;Re-visiting the earlier contrived example with our new pattern, we end up with:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;TodoApp implements state and action types, and the reducer.
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;TodoApp implements state and action types, and the reducer.
 
 App uses TodoApp.state, TodoApp.action and TodoApp.reducer
   -&amp;gt; TodoItem appState=App.state appSend=App.send
@@ -433,25 +433,25 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 
 &lt;p&gt;I’ve been working on a personal project, &lt;a href=&quot;https://www.turaku.com&quot;&gt;Turaku&lt;/a&gt; - a password manager for teams, with ES6 + React, for the past couple of months, and its increasing complexity meant that the pain of refactoring and adding new features was slowly increasing from &lt;em&gt;mere annoyance&lt;/em&gt; to &lt;em&gt;stinging&lt;/em&gt;. In my search for a more &lt;em&gt;robust&lt;/em&gt; environment, I was drifting towards Typescript when &lt;a href=&quot;#&quot;&gt;Jasim&lt;/a&gt; and &lt;a href=&quot;#&quot;&gt;Sherin&lt;/a&gt; of &lt;a href=&quot;#&quot;&gt;Protoship.io&lt;/a&gt; suggested ReasonML as a (better) alternative.&lt;/p&gt;
 
-&lt;p&gt;While I’m still getting used to ReasonML and ReasonReact, my initial impressions have been generally positive. Both the language and the library are evolving rapidly at the moment. For example, while I was working through Jared’s tutorial and trying to adapt it to my preferences, ReasonReact updated and replaced the &lt;code class=&quot;highlighter-rouge&quot;&gt;self.reduce&lt;/code&gt; method with the &lt;code class=&quot;highlighter-rouge&quot;&gt;self.send&lt;/code&gt; method which is much easier to comprehend and use.&lt;/p&gt;
+&lt;p&gt;While I’m still getting used to ReasonML and ReasonReact, my initial impressions have been generally positive. Both the language and the library are evolving rapidly at the moment. For example, while I was working through Jared’s tutorial and trying to adapt it to my preferences, ReasonReact updated and replaced the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;self.reduce&lt;/code&gt; method with the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;self.send&lt;/code&gt; method which is much easier to comprehend and use.&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/89cddfb3ce8f0b74cfc484e2529070c0.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;The ReasonML compiler error messages can be pretty confusing at times though. And all too often, it just barks that there’s &lt;em&gt;something&lt;/em&gt; wrong with my syntax on a line, informs me that it crashed because of this, and asks me to file a bug on Reason’s repository. &lt;code class=&quot;highlighter-rouge&quot;&gt;¯\_(ツ)_/¯&lt;/code&gt; Growing pains, I guess.&lt;/p&gt;
+&lt;p&gt;The ReasonML compiler error messages can be pretty confusing at times though. And all too often, it just barks that there’s &lt;em&gt;something&lt;/em&gt; wrong with my syntax on a line, informs me that it crashed because of this, and asks me to file a bug on Reason’s repository. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;¯\_(ツ)_/¯&lt;/code&gt; Growing pains, I guess.&lt;/p&gt;
 
-&lt;p&gt;Over the next couple of months, I’ll attempt a complete re-write of Turaku’s code into ReasonML. I’d been using &lt;code class=&quot;highlighter-rouge&quot;&gt;create-react-app&lt;/code&gt;, so the presence of &lt;a href=&quot;https://github.com/reasonml-community/reason-scripts&quot;&gt;reason-scripts&lt;/a&gt; makes it simple to get started. I’m sure I’ll be writing more related to this on a later date. :-)&lt;/p&gt;
+&lt;p&gt;Over the next couple of months, I’ll attempt a complete re-write of Turaku’s code into ReasonML. I’d been using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create-react-app&lt;/code&gt;, so the presence of &lt;a href=&quot;https://github.com/reasonml-community/reason-scripts&quot;&gt;reason-scripts&lt;/a&gt; makes it simple to get started. I’m sure I’ll be writing more related to this on a later date. :-)&lt;/p&gt;
 
 &lt;h3 id=&quot;credits&quot;&gt;Credits&lt;/h3&gt;
 
-&lt;p&gt;Art by Rekha Soman: &lt;a href=&quot;http://www.rekhasoman.com&quot; target=&quot;_blank&quot;&gt;www.rekhasoman.com&lt;/a&gt;&lt;/p&gt;</content><author><name></name></author><category term="react" /><category term="reason" /><category term="reasonml" /><category term="reasonreact" /><summary type="html"></summary></entry><entry><title type="html">Validating Rails API requests with Reform</title><link href="https://blog.harigopal.in/guides/validating-rails-api-requests-with-reform/" rel="alternate" type="text/html" title="Validating Rails API requests with Reform" /><published>2017-09-13T00:00:00+05:30</published><updated>2017-09-13T00:00:00+05:30</updated><id>https://blog.harigopal.in/guides/validating-rails-api-requests-with-reform</id><content type="html" xml:base="https://blog.harigopal.in/guides/validating-rails-api-requests-with-reform/">&lt;p&gt;I’ve written about the creation of custom exception classes to organize code in Rails web applications and APIs. However, while going through my previous article, I realized that my final example glossed over how request parameter validation failures would be detected by the API in the first place.&lt;/p&gt;
+&lt;p&gt;Art by Rekha Soman: &lt;a href=&quot;http://www.rekhasoman.com&quot; target=&quot;_blank&quot;&gt;www.rekhasoman.com&lt;/a&gt;&lt;/p&gt;</content><author><name></name></author><category term="guides" /><category term="react" /><category term="reason" /><category term="reasonml" /><category term="reasonreact" /><summary type="html"></summary></entry><entry><title type="html">Validating Rails API requests with Reform</title><link href="https://blog.harigopal.in/guides/validating-rails-api-requests-with-reform/" rel="alternate" type="text/html" title="Validating Rails API requests with Reform" /><published>2017-09-13T00:00:00+05:30</published><updated>2017-09-13T00:00:00+05:30</updated><id>https://blog.harigopal.in/guides/validating-rails-api-requests-with-reform</id><content type="html" xml:base="https://blog.harigopal.in/guides/validating-rails-api-requests-with-reform/">&lt;p&gt;I’ve written about the creation of custom exception classes to organize code in Rails web applications and APIs. However, while going through my previous article, I realized that my final example glossed over how request parameter validation failures would be detected by the API in the first place.&lt;/p&gt;
 
 &lt;p&gt;Today I want to discuss a pattern that I haven’t seen in the wild - one which uses &lt;em&gt;Reform&lt;/em&gt; - form objects, decoupled from models (their description) - and exception classes to &lt;em&gt;beautifully&lt;/em&gt; manage API parameter validation.&lt;/p&gt;
 
 &lt;h2 id=&quot;an-intro-to-form-objects-for-those-unfamiliar-with-it&quot;&gt;An intro to form objects, for those unfamiliar with it.&lt;/h2&gt;
 
-&lt;p&gt;If you haven’t used form objects before, know that they allow you to decouple validation of input from the user (via forms), and the validation of data managed by a &lt;code class=&quot;highlighter-rouge&quot;&gt;Model&lt;/code&gt;. My primary reason for favoring this separation is that it allows the model validations to be less constrained than form validation.&lt;/p&gt;
+&lt;p&gt;If you haven’t used form objects before, know that they allow you to decouple validation of input from the user (via forms), and the validation of data managed by a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Model&lt;/code&gt;. My primary reason for favoring this separation is that it allows the model validations to be less constrained than form validation.&lt;/p&gt;
 
-&lt;p&gt;Validations failures from a model should be &lt;strong&gt;unexpected&lt;/strong&gt;, whereas form validations are always &lt;strong&gt;expected&lt;/strong&gt; (users make mistakes) and thus should be handled as a natural part of your application. Decoupling in this manner also makes it easy to manage multiple forms that interact with one or more models, with different validation requirements. Google &lt;code class=&quot;highlighter-rouge&quot;&gt;form validation vs model validation&lt;/code&gt; to learn more.&lt;/p&gt;
+&lt;p&gt;Validations failures from a model should be &lt;strong&gt;unexpected&lt;/strong&gt;, whereas form validations are always &lt;strong&gt;expected&lt;/strong&gt; (users make mistakes) and thus should be handled as a natural part of your application. Decoupling in this manner also makes it easy to manage multiple forms that interact with one or more models, with different validation requirements. Google &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;form validation vs model validation&lt;/code&gt; to learn more.&lt;/p&gt;
 
 &lt;h2 id=&quot;but-api-s-dont-have-forms-right&quot;&gt;But API-s don’t &lt;em&gt;have&lt;/em&gt; forms. Right?&lt;/h2&gt;
 
@@ -462,45 +462,45 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 &lt;p&gt;Let’s assume that we need to implement a simple &lt;em&gt;invite&lt;/em&gt; route for our API - to invite other users to join our platform. It accepts just two parameters:&lt;/p&gt;
 
 &lt;ol&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;name&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;email&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;name&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;email&lt;/code&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;…and responds with a &lt;code class=&quot;highlighter-rouge&quot;&gt;200 OK&lt;/code&gt; if the invitation can be processed.&lt;/p&gt;
+&lt;p&gt;…and responds with a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;200 OK&lt;/code&gt; if the invitation can be processed.&lt;/p&gt;
 
 &lt;p&gt;However, as with all such requests, there are conditions which must be fulfilled before the request can be executed. Let’s list down three simple requirements:&lt;/p&gt;
 
 &lt;ol&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;email&lt;/code&gt; is required.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;email&lt;/code&gt; must look like an email address.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;name&lt;/code&gt; is optional, but if present, it must be longer than 3 characters.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;email&lt;/code&gt; is required.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;email&lt;/code&gt; must look like an email address.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;name&lt;/code&gt; is optional, but if present, it must be longer than 3 characters.&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;The last one is a bit contrived, but this is just a demonstration. ¯_(ツ)_/¯&lt;/p&gt;
 
 &lt;h2 id=&quot;create-a-reform-form&quot;&gt;Create a Reform Form.&lt;/h2&gt;
 
-&lt;p&gt;Let’s get the basics out of the way. Setting up &lt;em&gt;Reform&lt;/em&gt; should be pretty simple. Add &lt;code class=&quot;highlighter-rouge&quot;&gt;gem 'reform-rails', '~&amp;gt; 0.1.7'&lt;/code&gt; to your &lt;code class=&quot;highlighter-rouge&quot;&gt;Gemfile&lt;/code&gt;, and run &lt;code class=&quot;highlighter-rouge&quot;&gt;bundle install&lt;/code&gt;. That should be it. Now, let’s build our form object.&lt;/p&gt;
+&lt;p&gt;Let’s get the basics out of the way. Setting up &lt;em&gt;Reform&lt;/em&gt; should be pretty simple. Add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gem &apos;reform-rails&apos;, &apos;~&amp;gt; 0.1.7&apos;&lt;/code&gt; to your &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Gemfile&lt;/code&gt;, and run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bundle install&lt;/code&gt;. That should be it. Now, let’s build our form object.&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/1de28e963edeed26e9580fb00749e2a3.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;reform-rails&lt;/code&gt; allows you to write validations in much the same way that you’d write validations for regular Rails models. Granted that this is a very simple form, but even complex Reform forms are readable, and its API is rich and flexible.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reform-rails&lt;/code&gt; allows you to write validations in much the same way that you’d write validations for regular Rails models. Granted that this is a very simple form, but even complex Reform forms are readable, and its API is rich and flexible.&lt;/p&gt;
 
-&lt;p&gt;If you’re confused by &lt;code class=&quot;highlighter-rouge&quot;&gt;email: true&lt;/code&gt;, I’m assuming the presence of a custom Rails validator. For an example, check out &lt;a href=&quot;http://guides.rubyonrails.org/active_record_validations.html#custom-validators&quot;&gt;Rails’ documentation on adding custom validators&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you’re confused by &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;email: true&lt;/code&gt;, I’m assuming the presence of a custom Rails validator. For an example, check out &lt;a href=&quot;http://guides.rubyonrails.org/active_record_validations.html#custom-validators&quot;&gt;Rails’ documentation on adding custom validators&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;Note that I’m overriding the default &lt;code class=&quot;highlighter-rouge&quot;&gt;save&lt;/code&gt; method, since I don’t want Reform touching the model. I advise keeping code handling the &lt;em&gt;actual&lt;/em&gt; invitation out of the form. Our form is responsible for data validation, not operations. &lt;a href=&quot;/guides/extending-ruby-on-rails-with-service-objects&quot;&gt;Leave business logic to services.&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Note that I’m overriding the default &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;save&lt;/code&gt; method, since I don’t want Reform touching the model. I advise keeping code handling the &lt;em&gt;actual&lt;/em&gt; invitation out of the form. Our form is responsible for data validation, not operations. &lt;a href=&quot;/guides/extending-ruby-on-rails-with-service-objects&quot;&gt;Leave business logic to services.&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;set-up-the-endpoint&quot;&gt;Set up the endpoint.&lt;/h2&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/ec811f2bc3cf7e9f18006a3a3349c4dd.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;&lt;em&gt;Reform&lt;/em&gt; requires explicit validation which, I think, reads better than the &lt;em&gt;Rails way&lt;/em&gt;. Unlike Rails’ &lt;code class=&quot;highlighter-rouge&quot;&gt;if @user.save&lt;/code&gt;, &lt;em&gt;Reform&lt;/em&gt; asks the form object to validate the form with the supplied params, &lt;em&gt;and then&lt;/em&gt; do something if the validation passes (or something else when it fails).&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Reform&lt;/em&gt; requires explicit validation which, I think, reads better than the &lt;em&gt;Rails way&lt;/em&gt;. Unlike Rails’ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;if @user.save&lt;/code&gt;, &lt;em&gt;Reform&lt;/em&gt; asks the form object to validate the form with the supplied params, &lt;em&gt;and then&lt;/em&gt; do something if the validation passes (or something else when it fails).&lt;/p&gt;
 
-&lt;p&gt;In this case, a failure to validate lets us raise &lt;code class=&quot;highlighter-rouge&quot;&gt;ValidationException&lt;/code&gt;, passing it the form object. This is a custom exception which &lt;a href=&quot;/guides/exceptions-as-first-class-citizens-on-rails&quot;&gt;I’d elaborated on in a previous article&lt;/a&gt;. Let’s take another look.&lt;/p&gt;
+&lt;p&gt;In this case, a failure to validate lets us raise &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ValidationException&lt;/code&gt;, passing it the form object. This is a custom exception which &lt;a href=&quot;/guides/exceptions-as-first-class-citizens-on-rails&quot;&gt;I’d elaborated on in a previous article&lt;/a&gt;. Let’s take another look.&lt;/p&gt;
 
 &lt;h2 id=&quot;validationfailureexception&quot;&gt;ValidationFailureException&lt;/h2&gt;
 
-&lt;p&gt;I’m going to extend an &lt;code class=&quot;highlighter-rouge&quot;&gt;ApplicationException&lt;/code&gt; class that I went into detail in my article on exception classes:&lt;/p&gt;
+&lt;p&gt;I’m going to extend an &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ApplicationException&lt;/code&gt; class that I went into detail in my article on exception classes:&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/ab851d1f2a0a8bb8a4a70409ad03c2b2.js&quot;&gt;&lt;/script&gt;
 
@@ -510,15 +510,15 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 
 &lt;p&gt;Isn’t that beautiful?&lt;/p&gt;
 
-&lt;p&gt;Those validation errors can now be used by the client to display the failure to the user. Obviously, this needs to be set up only once. As long as you validate params with Reform, and pass the form with the errors to &lt;code class=&quot;highlighter-rouge&quot;&gt;ValidationFailureException&lt;/code&gt; when raising it, responses in a standard format are taken care of.&lt;/p&gt;
+&lt;p&gt;Those validation errors can now be used by the client to display the failure to the user. Obviously, this needs to be set up only once. As long as you validate params with Reform, and pass the form with the errors to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ValidationFailureException&lt;/code&gt; when raising it, responses in a standard format are taken care of.&lt;/p&gt;
 
 &lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;Form objects are a great abstraction that allow us to deal with of the process of validating user input in one place. If you’re building an API for other developers or the public, good documentation is an absolute necessity. And while invalid form submissions showing users what’s wrong is commonplace, APIs doing something similar for their clients is &lt;em&gt;rare&lt;/em&gt;.&lt;/p&gt;
 
-&lt;p&gt;Using Reform, it’s possible to give consumers of your API insights into what went wrong the same way a user entering incorrect information into a form is treated. Sure, once set up, an API client won’t make (the same) mistake again. But when integrating with a new API, a little help can go a long way.&lt;/p&gt;</content><author><name></name></author><category term="ruby" /><category term="rails" /><category term="services" /><summary type="html">I’ve written about the creation of custom exception classes to organize code in Rails web applications and APIs. However, while going through my previous article, I realized that my final example glossed over how request parameter validation failures would be detected by the API in the first place.</summary></entry><entry><title type="html">Extending Ruby on Rails with Service Objects</title><link href="https://blog.harigopal.in/guides/extending-ruby-on-rails-with-service-objects/" rel="alternate" type="text/html" title="Extending Ruby on Rails with Service Objects" /><published>2017-04-15T00:00:00+05:30</published><updated>2017-04-15T00:00:00+05:30</updated><id>https://blog.harigopal.in/guides/extending-ruby-on-rails-with-service-objects</id><content type="html" xml:base="https://blog.harigopal.in/guides/extending-ruby-on-rails-with-service-objects/">&lt;p&gt;Service objects are a pattern that I believe should be part of Rails’ default. This extends the basic MVC model by introducing services to implement business logic (instead of stuffing it into a model). While Rails’ default assumption that each model would hold its own business logic is &lt;em&gt;sound&lt;/em&gt;, it doesn’t scale well when the application’s size increases.&lt;/p&gt;
+&lt;p&gt;Using Reform, it’s possible to give consumers of your API insights into what went wrong the same way a user entering incorrect information into a form is treated. Sure, once set up, an API client won’t make (the same) mistake again. But when integrating with a new API, a little help can go a long way.&lt;/p&gt;</content><author><name></name></author><category term="guides" /><category term="ruby" /><category term="rails" /><category term="services" /><summary type="html">I’ve written about the creation of custom exception classes to organize code in Rails web applications and APIs. However, while going through my previous article, I realized that my final example glossed over how request parameter validation failures would be detected by the API in the first place.</summary></entry><entry><title type="html">Extending Ruby on Rails with Service Objects</title><link href="https://blog.harigopal.in/guides/extending-ruby-on-rails-with-service-objects/" rel="alternate" type="text/html" title="Extending Ruby on Rails with Service Objects" /><published>2017-04-15T00:00:00+05:30</published><updated>2017-04-15T00:00:00+05:30</updated><id>https://blog.harigopal.in/guides/extending-ruby-on-rails-with-service-objects</id><content type="html" xml:base="https://blog.harigopal.in/guides/extending-ruby-on-rails-with-service-objects/">&lt;p&gt;Service objects are a pattern that I believe should be part of Rails’ default. This extends the basic MVC model by introducing services to implement business logic (instead of stuffing it into a model). While Rails’ default assumption that each model would hold its own business logic is &lt;em&gt;sound&lt;/em&gt;, it doesn’t scale well when the application’s size increases.&lt;/p&gt;
 
-&lt;p&gt;There are a lot of articles suggesting patterns on where and how to store services. My approach is mostly the same, but with a few &lt;em&gt;upgrades&lt;/em&gt;. This is what an example &lt;code class=&quot;highlighter-rouge&quot;&gt;app/services&lt;/code&gt; folder might look like:&lt;/p&gt;
+&lt;p&gt;There are a lot of articles suggesting patterns on where and how to store services. My approach is mostly the same, but with a few &lt;em&gt;upgrades&lt;/em&gt;. This is what an example &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;app/services&lt;/code&gt; folder might look like:&lt;/p&gt;
 
 &lt;script src=&quot;https://gist.github.com/harigopal/c0b2ddb53f3b8e0d5875c00f33beda51.js&quot;&gt;&lt;/script&gt;
 
@@ -526,7 +526,7 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 
 &lt;h2 id=&quot;one-or-few-responsibilities&quot;&gt;One, or few responsibilities&lt;/h2&gt;
 
-&lt;p&gt;Naming plays a big role here - try to keep the name as specific as possible to avoid the temptation to &lt;em&gt;extend&lt;/em&gt; the responsibility of a service object. So, instead of &lt;code class=&quot;highlighter-rouge&quot;&gt;Users::SlackService&lt;/code&gt;, it might be a better idea to call it &lt;code class=&quot;highlighter-rouge&quot;&gt;Users::SendSlackMessageService&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Naming plays a big role here - try to keep the name as specific as possible to avoid the temptation to &lt;em&gt;extend&lt;/em&gt; the responsibility of a service object. So, instead of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Users::SlackService&lt;/code&gt;, it might be a better idea to call it &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Users::SendSlackMessageService&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;Unlike models, with their attached database tables, it’s cheap (zero cost, really) to create new services - spin new ones up whenever you encounter business logic that needs to be implemented.&lt;/p&gt;
 
@@ -540,7 +540,7 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 
 &lt;script src=&quot;https://gist.github.com/harigopal/5789ff9820bb7d86bd815654cd16c8b7.js&quot;&gt;&lt;/script&gt;
 
-&lt;p&gt;Frequently, business logic may not tie in directly to &lt;em&gt;any&lt;/em&gt; model. In this example, there’s a third-party service that the application needs to interact with, so the module its grouped under is simply the name of the service. The &lt;code class=&quot;highlighter-rouge&quot;&gt;execute&lt;/code&gt; method is also replaced with a &lt;code class=&quot;highlighter-rouge&quot;&gt;posts&lt;/code&gt; method to indicate that the service returns something, instead of simply performing an action.&lt;/p&gt;
+&lt;p&gt;Frequently, business logic may not tie in directly to &lt;em&gt;any&lt;/em&gt; model. In this example, there’s a third-party service that the application needs to interact with, so the module its grouped under is simply the name of the service. The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;execute&lt;/code&gt; method is also replaced with a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;posts&lt;/code&gt; method to indicate that the service returns something, instead of simply performing an action.&lt;/p&gt;
 
 &lt;h2 id=&quot;concerns-to-share-abilities&quot;&gt;Concerns to share abilities&lt;/h2&gt;
 
@@ -558,7 +558,7 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 
 &lt;p&gt;If you’re working on a non-trivial project, services can be a massive boon. There’s definitely a &lt;em&gt;back-to-the-roots&lt;/em&gt; feel to it, and that’s deliberate - Ruby is an expressive, easy-to-read language, and service objects are plain Ruby classes that describe all the little pieces that form the building blocks of your application.&lt;/p&gt;
 
-&lt;p&gt;I’ve heard it said that a someone looking through your &lt;code class=&quot;highlighter-rouge&quot;&gt;services&lt;/code&gt; folder should get a fair idea of what your application &lt;em&gt;does&lt;/em&gt;, and I think that’s an inevitable end-result if you write service objects properly.&lt;/p&gt;</content><author><name></name></author><category term="ruby" /><category term="rails" /><category term="services" /><summary type="html">Service objects are a pattern that I believe should be part of Rails’ default. This extends the basic MVC model by introducing services to implement business logic (instead of stuffing it into a model). While Rails’ default assumption that each model would hold its own business logic is sound, it doesn’t scale well when the application’s size increases.</summary></entry><entry><title type="html">Exceptions as first-class citizens on Rails</title><link href="https://blog.harigopal.in/guides/exceptions-as-first-class-citizens-on-rails/" rel="alternate" type="text/html" title="Exceptions as first-class citizens on Rails" /><published>2017-02-03T00:00:00+05:30</published><updated>2017-02-03T00:00:00+05:30</updated><id>https://blog.harigopal.in/guides/exceptions-as-first-class-citizens-on-rails</id><content type="html" xml:base="https://blog.harigopal.in/guides/exceptions-as-first-class-citizens-on-rails/">&lt;p&gt;I want to share a pattern that I’ve repeated multiple times in the past when developing API-s with Rails, which grants the ability to respond to invalid requests with a standardized message format by raising an exception.&lt;/p&gt;
+&lt;p&gt;I’ve heard it said that a someone looking through your &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;services&lt;/code&gt; folder should get a fair idea of what your application &lt;em&gt;does&lt;/em&gt;, and I think that’s an inevitable end-result if you write service objects properly.&lt;/p&gt;</content><author><name></name></author><category term="guides" /><category term="ruby" /><category term="rails" /><category term="services" /><summary type="html">Service objects are a pattern that I believe should be part of Rails’ default. This extends the basic MVC model by introducing services to implement business logic (instead of stuffing it into a model). While Rails’ default assumption that each model would hold its own business logic is sound, it doesn’t scale well when the application’s size increases.</summary></entry><entry><title type="html">Exceptions as first-class citizens on Rails</title><link href="https://blog.harigopal.in/guides/exceptions-as-first-class-citizens-on-rails/" rel="alternate" type="text/html" title="Exceptions as first-class citizens on Rails" /><published>2017-02-03T00:00:00+05:30</published><updated>2017-02-03T00:00:00+05:30</updated><id>https://blog.harigopal.in/guides/exceptions-as-first-class-citizens-on-rails</id><content type="html" xml:base="https://blog.harigopal.in/guides/exceptions-as-first-class-citizens-on-rails/">&lt;p&gt;I want to share a pattern that I’ve repeated multiple times in the past when developing API-s with Rails, which grants the ability to respond to invalid requests with a standardized message format by raising an exception.&lt;/p&gt;
 
 &lt;p&gt;To be clear, I’m talking about &lt;em&gt;exceptions&lt;/em&gt;, and not &lt;em&gt;errors&lt;/em&gt;. To quote a &lt;a href=&quot;https://wiki.haskell.org/Error_vs._Exception&quot;&gt;Haskell wiki page on the topic&lt;/a&gt;:&lt;/p&gt;
 
@@ -600,9 +600,9 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 
 &lt;h2 id=&quot;first-class&quot;&gt;First-class&lt;/h2&gt;
 
-&lt;p&gt;I organize my exceptions inside the &lt;code class=&quot;highlighter-rouge&quot;&gt;app&lt;/code&gt; folder, treating it as equal to any of the other piece of the Rails application:&lt;/p&gt;
+&lt;p&gt;I organize my exceptions inside the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;app&lt;/code&gt; folder, treating it as equal to any of the other piece of the Rails application:&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Rails.root
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Rails.root
 ├── app
 ... ├── channels
     ├── controllers
@@ -623,8 +623,8 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
   &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;AuthenticationFailureException&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ApplicationException&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;initialize&lt;/span&gt;
       &lt;span class=&quot;vi&quot;&gt;@code&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:authentication_failure&lt;/span&gt;
-      &lt;span class=&quot;vi&quot;&gt;@message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'Could not validate authorization'&lt;/span&gt;
-      &lt;span class=&quot;vi&quot;&gt;@description&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'Please authenticate and acquire JWT before attempting to access restricted routes. JWT should be passed in the Authorization header.'&lt;/span&gt;
+      &lt;span class=&quot;vi&quot;&gt;@message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;Could not validate authorization&apos;&lt;/span&gt;
+      &lt;span class=&quot;vi&quot;&gt;@description&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;Please authenticate and acquire JWT before attempting to access restricted routes. JWT should be passed in the Authorization header.&apos;&lt;/span&gt;
       &lt;span class=&quot;vi&quot;&gt;@status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;401&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
@@ -632,15 +632,15 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;code&lt;/code&gt; is useful for clients to programmatically handle these responses.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;message&lt;/code&gt; is a short error message.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;description&lt;/code&gt; is a longer message that can help developers understand the reason for the exception, and fix or incorporate it into the design of the client.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;status&lt;/code&gt; is an over-ride status code for the HTTP response.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;code&lt;/code&gt; is useful for clients to programmatically handle these responses.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;message&lt;/code&gt; is a short error message.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;description&lt;/code&gt; is a longer message that can help developers understand the reason for the exception, and fix or incorporate it into the design of the client.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;status&lt;/code&gt; is an over-ride status code for the HTTP response.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&quot;applicationexception&quot;&gt;ApplicationException&lt;/h2&gt;
 
-&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;ApplicationException&lt;/code&gt; class defines the response object and a default HTTP status code.&lt;/p&gt;
+&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ApplicationException&lt;/code&gt; class defines the response object and a default HTTP status code.&lt;/p&gt;
 
 &lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ApplicationException&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;StandardError&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;response&lt;/span&gt;
@@ -655,7 +655,7 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 
 &lt;h2 id=&quot;bringing-it-to-life-with-rescue_from&quot;&gt;Bringing it to life with rescue_from&lt;/h2&gt;
 
-&lt;p&gt;On the &lt;code class=&quot;highlighter-rouge&quot;&gt;ApplicationController&lt;/code&gt;, we handle raised &lt;code class=&quot;highlighter-rouge&quot;&gt;ApplicationException&lt;/code&gt;-s as follows:&lt;/p&gt;
+&lt;p&gt;On the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ApplicationController&lt;/code&gt;, we handle raised &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ApplicationException&lt;/code&gt;-s as follows:&lt;/p&gt;
 
 &lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ApplicationController&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ActionController&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;API&lt;/span&gt;
   &lt;span class=&quot;c1&quot;&gt;# ...&lt;/span&gt;
@@ -674,14 +674,14 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 
 &lt;h2 id=&quot;adding-more-detail-to-exceptions&quot;&gt;Adding more detail to exceptions&lt;/h2&gt;
 
-&lt;p&gt;Note that the second preview example included a &lt;code class=&quot;highlighter-rouge&quot;&gt;validation_errors&lt;/code&gt; key with extra information about the event. Using plain objects allows us to add or modify the response as per our requirements.&lt;/p&gt;
+&lt;p&gt;Note that the second preview example included a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;validation_errors&lt;/code&gt; key with extra information about the event. Using plain objects allows us to add or modify the response as per our requirements.&lt;/p&gt;
 
 &lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;module&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Users&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ValidationFailureException&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ApplicationException&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;initialize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;user&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
       &lt;span class=&quot;vi&quot;&gt;@code&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:validation_failure&lt;/span&gt;
-      &lt;span class=&quot;vi&quot;&gt;@message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'Validation of params failed'&lt;/span&gt;
-      &lt;span class=&quot;vi&quot;&gt;@description&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'The server could not validate the parameters present with the request. Please check the validation_errors key (hash) for more details.'&lt;/span&gt;
+      &lt;span class=&quot;vi&quot;&gt;@message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;Validation of params failed&apos;&lt;/span&gt;
+      &lt;span class=&quot;vi&quot;&gt;@description&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;The server could not validate the parameters present with the request. Please check the validation_errors key (hash) for more details.&apos;&lt;/span&gt;
       &lt;span class=&quot;vi&quot;&gt;@user&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;user&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 
@@ -694,7 +694,7 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 
 &lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
 
-&lt;p&gt;I’ve used variants of this pattern multiple times over the years, and find it a &lt;em&gt;clean&lt;/em&gt; way to handle &lt;em&gt;exceptional&lt;/em&gt; situations that require a simple response to indicate failure. To see this pattern in action in a project, check out &lt;a href=&quot;https://github.com/godreams/admin-server&quot;&gt;GoDreams Admin Server&lt;/a&gt;.&lt;/p&gt;</content><author><name></name></author><category term="ruby" /><category term="rails" /><category term="exceptions" /><summary type="html">I want to share a pattern that I’ve repeated multiple times in the past when developing API-s with Rails, which grants the ability to respond to invalid requests with a standardized message format by raising an exception.</summary></entry><entry><title type="html">Mixing React with jQuery</title><link href="https://blog.harigopal.in/guides/mixing-react-with-jquery/" rel="alternate" type="text/html" title="Mixing React with jQuery" /><published>2016-12-29T00:00:00+05:30</published><updated>2016-12-29T00:00:00+05:30</updated><id>https://blog.harigopal.in/guides/mixing-react-with-jquery</id><content type="html" xml:base="https://blog.harigopal.in/guides/mixing-react-with-jquery/">&lt;p&gt;For the past two weeks, I’ve been merrily mixing jQuery into my React components, and I have a few gotchas to share. jQuery certainly needs no introduction, but if you’re new to React, check out &lt;a href=&quot;https://facebook.github.io/react&quot;&gt;Facebook’s &lt;em&gt;excellent&lt;/em&gt; documentation on it&lt;/a&gt;, and try building something with it - it’s a peek into the future!&lt;/p&gt;
+&lt;p&gt;I’ve used variants of this pattern multiple times over the years, and find it a &lt;em&gt;clean&lt;/em&gt; way to handle &lt;em&gt;exceptional&lt;/em&gt; situations that require a simple response to indicate failure. To see this pattern in action in a project, check out &lt;a href=&quot;https://github.com/godreams/admin-server&quot;&gt;GoDreams Admin Server&lt;/a&gt;.&lt;/p&gt;</content><author><name></name></author><category term="guides" /><category term="ruby" /><category term="rails" /><category term="exceptions" /><summary type="html">I want to share a pattern that I’ve repeated multiple times in the past when developing API-s with Rails, which grants the ability to respond to invalid requests with a standardized message format by raising an exception.</summary></entry><entry><title type="html">Mixing React with jQuery</title><link href="https://blog.harigopal.in/guides/mixing-react-with-jquery/" rel="alternate" type="text/html" title="Mixing React with jQuery" /><published>2016-12-29T00:00:00+05:30</published><updated>2016-12-29T00:00:00+05:30</updated><id>https://blog.harigopal.in/guides/mixing-react-with-jquery</id><content type="html" xml:base="https://blog.harigopal.in/guides/mixing-react-with-jquery/">&lt;p&gt;For the past two weeks, I’ve been merrily mixing jQuery into my React components, and I have a few gotchas to share. jQuery certainly needs no introduction, but if you’re new to React, check out &lt;a href=&quot;https://facebook.github.io/react&quot;&gt;Facebook’s &lt;em&gt;excellent&lt;/em&gt; documentation on it&lt;/a&gt;, and try building something with it - it’s a peek into the future!&lt;/p&gt;
 
 &lt;h2 id=&quot;why-even-do-that&quot;&gt;Why even do that?&lt;/h2&gt;
 
@@ -712,44 +712,44 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 
 &lt;div class=&quot;language-jsx highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ExerciseRecord&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;React&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Component&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
   &lt;span class=&quot;nx&quot;&gt;componentDidMount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;.js-date-input&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;myFavDatePicker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;.js-date-input&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;myFavDatePicker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 
   &lt;span class=&quot;nx&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-      &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;form&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;onSubmit=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;handleSubmit&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;form&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;onSubmit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;handleSubmit&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
         &lt;span class=&quot;si&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;props&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;exercises&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;exercise&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
           &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
             &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;div&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
               &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;label&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;exercise&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;}&lt;/span&gt; done on&lt;span class=&quot;p&quot;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;label&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
-              &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;input&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;className=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'js-date-input'&lt;/span&gt;
-                     &lt;span class=&quot;na&quot;&gt;name=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;dates[&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;exercise&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;/&amp;gt;&lt;/span&gt;
+              &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;input&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;className&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;js-date-input&apos;&lt;/span&gt;
+                     &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;dates[&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;exercise&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;/&amp;gt;&lt;/span&gt;
             &lt;span class=&quot;p&quot;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;div&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
           &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
         &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;input&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;type=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;submit&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;/&amp;gt;&lt;/span&gt;
-      &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;form&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;input&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;submit&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;/&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;form&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;&amp;gt;&lt;/span&gt;
     );
-  &lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;
+  }
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;The problem above is that jQuery code doesn’t account for changes made by React, which means that the datepickers are initialized only once. Any modification of &lt;code class=&quot;highlighter-rouge&quot;&gt;this.props.exercises&lt;/code&gt; (from a parent component) that causes a re-render of this component would introduce new fields without an active datepicker.&lt;/p&gt;
+&lt;p&gt;The problem above is that jQuery code doesn’t account for changes made by React, which means that the datepickers are initialized only once. Any modification of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;this.props.exercises&lt;/code&gt; (from a parent component) that causes a re-render of this component would introduce new fields without an active datepicker.&lt;/p&gt;
 
 &lt;h3 id=&quot;the-fix-extract-and-control&quot;&gt;The fix: Extract and control&lt;/h3&gt;
 
 &lt;p&gt;I see two possible fixes for this situation:&lt;/p&gt;
 
 &lt;ol&gt;
-  &lt;li&gt;The simplest fix would be to use &lt;code class=&quot;highlighter-rouge&quot;&gt;componentDidUpdate&lt;/code&gt; to initialize datepickers on all updates.&lt;/li&gt;
-  &lt;li&gt;Extract the responsibility to a new &lt;code class=&quot;highlighter-rouge&quot;&gt;DateInput&lt;/code&gt; component.&lt;/li&gt;
+  &lt;li&gt;The simplest fix would be to use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;componentDidUpdate&lt;/code&gt; to initialize datepickers on all updates.&lt;/li&gt;
+  &lt;li&gt;Extract the responsibility to a new &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DateInput&lt;/code&gt; component.&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;Repeated initializations could cause issues with the datepicker, so my preferred approach would be to perform an extraction:&lt;/p&gt;
 
 &lt;div class=&quot;language-jsx highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;DateInput&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;React&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;component&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
   &lt;span class=&quot;nx&quot;&gt;componentDidMount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;.js-date-input-&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;props&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;myFavDatePicker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;.js-date-input-&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;props&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;myFavDatePicker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 
   &lt;span class=&quot;nx&quot;&gt;handleChange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
@@ -759,24 +759,24 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 
   &lt;span class=&quot;nx&quot;&gt;render&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-      &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;input&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;className=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;js-date-input-&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;props&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;
-             &lt;span class=&quot;na&quot;&gt;onChange=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;handleChange&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;/&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;input&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;className&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;js-date-input-&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;props&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;
+             &lt;span class=&quot;na&quot;&gt;onChange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;handleChange&lt;/span&gt; &lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;/&amp;gt;&lt;/span&gt;
     &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Note how I’ve used the &lt;code class=&quot;highlighter-rouge&quot;&gt;key&lt;/code&gt; prop to uniquely identify the input. The &lt;code class=&quot;highlighter-rouge&quot;&gt;key&lt;/code&gt; can serve another purpose, which I’ll discuss in a bit.&lt;/p&gt;
+&lt;p&gt;Note how I’ve used the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;key&lt;/code&gt; prop to uniquely identify the input. The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;key&lt;/code&gt; can serve another purpose, which I’ll discuss in a bit.&lt;/p&gt;
 
 &lt;h2 id=&quot;clean-up-after-yourself&quot;&gt;Clean-up after yourself&lt;/h2&gt;
 
 &lt;p&gt;In the above example, we’ve created a component to manage creation and updation of the datepicker element. We should go one step further and ensure that the component can also manage its own destruction.&lt;/p&gt;
 
-&lt;p&gt;jQuery libraries often modify or introduce new elements into the DOM, which is often placed at the bottom of &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;body&amp;gt;&lt;/code&gt;, placing it outside the React container. If the React component is unmounted, this leaves open the very real possibility that it’ll leave behind junk in the DOM. Cleaning up after yourself should be simple if the library supports it (most do):&lt;/p&gt;
+&lt;p&gt;jQuery libraries often modify or introduce new elements into the DOM, which is often placed at the bottom of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;body&amp;gt;&lt;/code&gt;, placing it outside the React container. If the React component is unmounted, this leaves open the very real possibility that it’ll leave behind junk in the DOM. Cleaning up after yourself should be simple if the library supports it (most do):&lt;/p&gt;
 
 &lt;div class=&quot;language-jsx highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;DateInput&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;React&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;component&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
   &lt;span class=&quot;nx&quot;&gt;componentWillUnmount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;.js-date-input-&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;props&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;myFavDatePicker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;destroy&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;.js-date-input-&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;props&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;myFavDatePicker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;destroy&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
   &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
@@ -784,22 +784,22 @@ App uses TodoApp.state, TodoApp.action and TodoApp.reducer
 
 &lt;h2 id=&quot;using-key-to-regenerate-components&quot;&gt;Using &lt;em&gt;key&lt;/em&gt; to regenerate components&lt;/h2&gt;
 
-&lt;p&gt;In rare cases, direct manipulations of the DOM from jQuery can lead to a situation which renders React unable to update the component. In such situations, it’s up to you to alter the &lt;code class=&quot;highlighter-rouge&quot;&gt;key&lt;/code&gt; prop passed to the component.&lt;/p&gt;
+&lt;p&gt;In rare cases, direct manipulations of the DOM from jQuery can lead to a situation which renders React unable to update the component. In such situations, it’s up to you to alter the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;key&lt;/code&gt; prop passed to the component.&lt;/p&gt;
 
-&lt;p&gt;Updating &lt;code class=&quot;highlighter-rouge&quot;&gt;key&lt;/code&gt; instructs React to discard the previous component and create a new one. This gives you a pristine component to work with. In such situations it might be wise to ponder whether a more conventional solution can be had by employing clever(er) coding.&lt;/p&gt;
+&lt;p&gt;Updating &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;key&lt;/code&gt; instructs React to discard the previous component and create a new one. This gives you a pristine component to work with. In such situations it might be wise to ponder whether a more conventional solution can be had by employing clever(er) coding.&lt;/p&gt;
 
 &lt;h2 id=&quot;communication-with-the-jquery-world-outside&quot;&gt;Communication with the jQuery world outside&lt;/h2&gt;
 
 &lt;p&gt;If you’re like me, then you’re probably introducing React components into an existing project (that uses jQuery), instead of building a entirely React-based application. So unless your component is trivial, you’ll need a good way to let the jQuery-driven world outside communicate with the React (root) component.&lt;/p&gt;
 
-&lt;p&gt;React’s &lt;a href=&quot;https://facebook.github.io/react/blog/2015/10/01/react-render-and-top-level-api.html&quot;&gt;Top Level API&lt;/a&gt; makes this super easy. Use &lt;code class=&quot;highlighter-rouge&quot;&gt;ReactDOM.render&lt;/code&gt; to create or update existing components, and &lt;code class=&quot;highlighter-rouge&quot;&gt;ReactDOM.unmountComponentAtNode&lt;/code&gt; to destroy existing ones.&lt;/p&gt;
+&lt;p&gt;React’s &lt;a href=&quot;https://facebook.github.io/react/blog/2015/10/01/react-render-and-top-level-api.html&quot;&gt;Top Level API&lt;/a&gt; makes this super easy. Use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ReactDOM.render&lt;/code&gt; to create or update existing components, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ReactDOM.unmountComponentAtNode&lt;/code&gt; to destroy existing ones.&lt;/p&gt;
 
-&lt;p&gt;Whichever you pick, &lt;strong&gt;do not&lt;/strong&gt; do what I did the first time; &lt;code class=&quot;highlighter-rouge&quot;&gt;$('.react-container'').html('')&lt;/code&gt; will leave behind loaded React components in memory. Ouch.&lt;/p&gt;
+&lt;p&gt;Whichever you pick, &lt;strong&gt;do not&lt;/strong&gt; do what I did the first time; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$(&apos;.react-container&apos;&apos;).html(&apos;&apos;)&lt;/code&gt; will leave behind loaded React components in memory. Ouch.&lt;/p&gt;
 
 &lt;h2 id=&quot;server-side-rendering-is-a-no-go&quot;&gt;Server-side rendering is a no-go&lt;/h2&gt;
 
-&lt;p&gt;A lot of jQuery code simply won’t execute without &lt;code class=&quot;highlighter-rouge&quot;&gt;window&lt;/code&gt; being available - which it isn’t on the server. So if you want to render server-side you’ll have to avoid using jQuery for initial render of all components, which can be pretty tricky.&lt;/p&gt;
+&lt;p&gt;A lot of jQuery code simply won’t execute without &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;window&lt;/code&gt; being available - which it isn’t on the server. So if you want to render server-side you’ll have to avoid using jQuery for initial render of all components, which can be pretty tricky.&lt;/p&gt;
 
 &lt;h2 id=&quot;wrap-up&quot;&gt;Wrap-up&lt;/h2&gt;
 
-&lt;p&gt;The bottom line is that jQuery is beloved by many, and if using jQuery makes adopting React more palatable then by all means, mix and enjoy. But as the saying goes, &lt;em&gt;enjoy responsibly&lt;/em&gt; - keeping the quirks and drawbacks in mind will let you combine the best of both worlds. Cheers!&lt;/p&gt;</content><author><name></name></author><category term="react" /><category term="jquery" /><category term="rails" /><category term="javascript" /><summary type="html">For the past two weeks, I’ve been merrily mixing jQuery into my React components, and I have a few gotchas to share. jQuery certainly needs no introduction, but if you’re new to React, check out Facebook’s excellent documentation on it, and try building something with it - it’s a peek into the future!</summary></entry><entry><title type="html">The next step</title><link href="https://blog.harigopal.in/blogging/the-next-step/" rel="alternate" type="text/html" title="The next step" /><published>2016-12-18T00:00:00+05:30</published><updated>2016-12-18T00:00:00+05:30</updated><id>https://blog.harigopal.in/blogging/the-next-step</id><content type="html" xml:base="https://blog.harigopal.in/blogging/the-next-step/">&lt;p&gt;&lt;strong&gt;Objective:&lt;/strong&gt; I’m going to post my thoughts on the programming-related topics - whether they are interesting tidbits from my day-to-day work, ideas that I’ve encountered in my wanderings across the web, or things that I’ve learned from conversations with friends. This won’t be easy, but then good things rarely are.&lt;/p&gt;</content><author><name></name></author><summary type="html">Objective: I’m going to post my thoughts on the programming-related topics - whether they are interesting tidbits from my day-to-day work, ideas that I’ve encountered in my wanderings across the web, or things that I’ve learned from conversations with friends. This won’t be easy, but then good things rarely are.</summary></entry></feed>
+&lt;p&gt;The bottom line is that jQuery is beloved by many, and if using jQuery makes adopting React more palatable then by all means, mix and enjoy. But as the saying goes, &lt;em&gt;enjoy responsibly&lt;/em&gt; - keeping the quirks and drawbacks in mind will let you combine the best of both worlds. Cheers!&lt;/p&gt;</content><author><name></name></author><category term="guides" /><category term="react" /><category term="jquery" /><category term="rails" /><category term="javascript" /><summary type="html">For the past two weeks, I’ve been merrily mixing jQuery into my React components, and I have a few gotchas to share. jQuery certainly needs no introduction, but if you’re new to React, check out Facebook’s excellent documentation on it, and try building something with it - it’s a peek into the future!</summary></entry><entry><title type="html">The next step</title><link href="https://blog.harigopal.in/blogging/the-next-step/" rel="alternate" type="text/html" title="The next step" /><published>2016-12-18T00:00:00+05:30</published><updated>2016-12-18T00:00:00+05:30</updated><id>https://blog.harigopal.in/blogging/the-next-step</id><content type="html" xml:base="https://blog.harigopal.in/blogging/the-next-step/">&lt;p&gt;&lt;strong&gt;Objective:&lt;/strong&gt; I’m going to post my thoughts on the programming-related topics - whether they are interesting tidbits from my day-to-day work, ideas that I’ve encountered in my wanderings across the web, or things that I’ve learned from conversations with friends. This won’t be easy, but then good things rarely are.&lt;/p&gt;</content><author><name></name></author><category term="blogging" /><summary type="html">Objective: I’m going to post my thoughts on the programming-related topics - whether they are interesting tidbits from my day-to-day work, ideas that I’ve encountered in my wanderings across the web, or things that I’ve learned from conversations with friends. This won’t be easy, but then good things rarely are.</summary></entry></feed>
