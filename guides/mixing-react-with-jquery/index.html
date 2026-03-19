@@ -7,9 +7,9 @@
   
   <meta charset="utf-8">
   <link type="application/atom+xml" rel="alternate" href="https://blog.harigopal.in/feed.xml" title="Hari Gopal" />
-  <!-- Begin Jekyll SEO tag v2.7.1 -->
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>Mixing React with jQuery | Hari Gopal</title>
-<meta name="generator" content="Jekyll v4.2.0" />
+<meta name="generator" content="Jekyll v4.4.1" />
 <meta property="og:title" content="Mixing React with jQuery" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="For the past two weeks, I’ve been merrily mixing jQuery into my React components, and I have a few gotchas to share. jQuery certainly needs no introduction, but if you’re new to React, check out Facebook’s excellent documentation on it, and try building something with it - it’s a peek into the future!" />
@@ -22,7 +22,7 @@
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Mixing React with jQuery" />
 <script type="application/ld+json">
-{"@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/mixing-react-with-jquery/"},"description":"For the past two weeks, I’ve been merrily mixing jQuery into my React components, and I have a few gotchas to share. jQuery certainly needs no introduction, but if you’re new to React, check out Facebook’s excellent documentation on it, and try building something with it - it’s a peek into the future!","headline":"Mixing React with jQuery","dateModified":"2016-12-29T00:00:00+05:30","url":"https://blog.harigopal.in/guides/mixing-react-with-jquery/","datePublished":"2016-12-29T00:00:00+05:30","@context":"https://schema.org"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2016-12-29T00:00:00+05:30","datePublished":"2016-12-29T00:00:00+05:30","description":"For the past two weeks, I’ve been merrily mixing jQuery into my React components, and I have a few gotchas to share. jQuery certainly needs no introduction, but if you’re new to React, check out Facebook’s excellent documentation on it, and try building something with it - it’s a peek into the future!","headline":"Mixing React with jQuery","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.harigopal.in/guides/mixing-react-with-jquery/"},"url":"https://blog.harigopal.in/guides/mixing-react-with-jquery/"}</script>
 <!-- End Jekyll SEO tag -->
 
   <link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700|Nunito+Sans:400,400i,700&display=swap"
@@ -45,8 +45,12 @@
     <!-- End Google Analytics -->
     </head>
 
-<body><header class="header__background bg-black text-white py-20 px-4 md:px-12 lg:px-16 xl:px-20">
-  <div class="flex flex-col lg:flex-row items-center lg:justify-between lg:items-center">
+<body><header
+  class="header__background bg-black text-white py-20 px-4 md:px-12 lg:px-16 xl:px-20"
+>
+  <div
+    class="flex flex-col lg:flex-row items-center lg:justify-between lg:items-center"
+  >
     <a href="/">
       <!-- <h1 class="text-5xl md:text-6xl font-serif">Hari Gopal</h1> -->
       <img src="/assets/images/title.svg" class="max-w-xs" />
@@ -54,16 +58,19 @@
 
     <div class="text-3xl mt-8 lg:mt-0">
       <a href="/about">
-        <img class="h-8 inline-block" src="/assets/images/address-card-solid.svg" />
+        <img
+          class="h-8 inline-block"
+          src="/assets/images/address-card-solid.svg"
+        />
       </a>
       <a href="https://github.com/harigopal" class="ml-2">
         <img class="h-8 inline-block" src="/assets/images/github-brands.svg" />
       </a>
       <a href="https://www.linkedin.com/in/hari-gopal" class="ml-2">
-        <img class="h-8 inline-block" src="/assets/images/linkedin-brands.svg" />
-      </a>
-      <a href="https://twitter.com/harigopal" class="ml-2">
-        <img class="h-8 inline-block" src="/assets/images/twitter-square-brands.svg" />
+        <img
+          class="h-8 inline-block"
+          src="/assets/images/linkedin-brands.svg"
+        />
       </a>
     </div>
   </div>
@@ -87,16 +94,16 @@
 
 <p>Let’s take the case of using your friendly neighborhood datepicker inside a component.</p>
 
-<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">ExerciseRecord</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
-  <span class="nx">componentDidMount</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">$</span><span class="p">(</span><span class="dl">'</span><span class="s1">.js-date-input</span><span class="dl">'</span><span class="p">).</span><span class="nx">myFavDatePicker</span><span class="p">();</span>
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">ExerciseRecord</span> <span class="kd">extends</span> <span class="nc">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+  <span class="nf">componentDidMount</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nf">$</span><span class="p">(</span><span class="dl">'</span><span class="s1">.js-date-input</span><span class="dl">'</span><span class="p">).</span><span class="nf">myFavDatePicker</span><span class="p">();</span>
   <span class="p">}</span>
 
-  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">(</span>
+  <span class="nf">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return </span><span class="p">(</span>
       <span class="p">&lt;</span><span class="nt">form</span> <span class="na">onSubmit</span><span class="p">=</span><span class="si">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">handleSubmit</span> <span class="si">}</span><span class="p">&gt;</span>
-        <span class="si">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">exercises</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exercise</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
-          <span class="k">return</span> <span class="p">(</span>
+        <span class="si">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">exercises</span><span class="p">.</span><span class="nf">map</span><span class="p">(</span><span class="nf">function </span><span class="p">(</span><span class="nx">exercise</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return </span><span class="p">(</span>
             <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
               <span class="p">&lt;</span><span class="nt">label</span><span class="p">&gt;</span><span class="si">{</span> <span class="nx">exercise</span> <span class="si">}</span> done on<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
               <span class="p">&lt;</span><span class="nt">input</span> <span class="na">className</span><span class="p">=</span><span class="s">'js-date-input'</span>
@@ -124,18 +131,18 @@
 
 <p>Repeated initializations could cause issues with the datepicker, so my preferred approach would be to perform an extraction:</p>
 
-<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">DateInput</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">component</span> <span class="p">{</span>
-  <span class="nx">componentDidMount</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">$</span><span class="p">(</span><span class="dl">'</span><span class="s1">.js-date-input-</span><span class="dl">'</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">key</span><span class="p">).</span><span class="nx">myFavDatePicker</span><span class="p">();</span>
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">DateInput</span> <span class="kd">extends</span> <span class="nc">React</span><span class="p">.</span><span class="nx">component</span> <span class="p">{</span>
+  <span class="nf">componentDidMount</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nf">$</span><span class="p">(</span><span class="dl">'</span><span class="s1">.js-date-input-</span><span class="dl">'</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">key</span><span class="p">).</span><span class="nf">myFavDatePicker</span><span class="p">();</span>
   <span class="p">}</span>
 
-  <span class="nx">handleChange</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">(</span><span class="nx">date</span><span class="p">:</span> <span class="nx">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nx">val</span><span class="p">());</span>
+  <span class="nf">handleChange</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nf">setState</span><span class="p">(</span><span class="nx">date</span><span class="p">:</span> <span class="nf">$</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">).</span><span class="nf">val</span><span class="p">());</span>
     <span class="c1">// and maybe pass it back up the chain?</span>
   <span class="p">}</span>
 
-  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">(</span>
+  <span class="nf">render</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return </span><span class="p">(</span>
       <span class="p">&lt;</span><span class="nt">input</span> <span class="na">className</span><span class="p">=</span><span class="si">{</span> <span class="dl">'</span><span class="s1">js-date-input-</span><span class="dl">'</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">key</span> <span class="si">}</span>
              <span class="na">onChange</span><span class="p">=</span><span class="si">{</span> <span class="k">this</span><span class="p">.</span><span class="nx">handleChange</span> <span class="si">}</span><span class="p">/&gt;</span>
     <span class="p">);</span>
@@ -151,9 +158,9 @@
 
 <p>jQuery libraries often modify or introduce new elements into the DOM, which is often placed at the bottom of <code class="language-plaintext highlighter-rouge">&lt;body&gt;</code>, placing it outside the React container. If the React component is unmounted, this leaves open the very real possibility that it’ll leave behind junk in the DOM. Cleaning up after yourself should be simple if the library supports it (most do):</p>
 
-<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">DateInput</span> <span class="kd">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">component</span> <span class="p">{</span>
-  <span class="nx">componentWillUnmount</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">$</span><span class="p">(</span><span class="dl">'</span><span class="s1">.js-date-input-</span><span class="dl">'</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">key</span><span class="p">).</span><span class="nx">myFavDatePicker</span><span class="p">(</span><span class="dl">'</span><span class="s1">destroy</span><span class="dl">'</span><span class="p">);</span>
+<div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">DateInput</span> <span class="kd">extends</span> <span class="nc">React</span><span class="p">.</span><span class="nx">component</span> <span class="p">{</span>
+  <span class="nf">componentWillUnmount</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nf">$</span><span class="p">(</span><span class="dl">'</span><span class="s1">.js-date-input-</span><span class="dl">'</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">key</span><span class="p">).</span><span class="nf">myFavDatePicker</span><span class="p">(</span><span class="dl">'</span><span class="s1">destroy</span><span class="dl">'</span><span class="p">);</span>
   <span class="p">}</span>
   <span class="p">...</span>
 <span class="p">}</span>
